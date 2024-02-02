@@ -3,19 +3,19 @@
 import org.gradle.api.JavaVersion
 
 object Versions {
-    val java = JavaVersion.VERSION_1_8
+    val java = JavaVersion.VERSION_11
     const val commonsText = "1.9"
     const val coroutines = "1.4.3"
     const val dependencyUpdate = "0.38.0"
     const val dokka = "1.4.30"
     const val dom4j = "2.1.3"
-    const val graal = "21.0.0.2"
+    const val graal = "21.1.0"
     const val hamcrest = "1.3"
     const val hamkrest = "1.8.0.1"
     const val hocon = "1.4.3"
     const val jacksonMinor = "2.12"
     const val jackson = "$jacksonMinor.2"
-    const val jacoco = "0.8.6"
+    const val jacoco = "0.8.11"
     const val jaxen = "1.2.0"
     const val jgit = "5.13.3.202401111512-r"
     const val jmh = "1.25.2"
