@@ -9,7 +9,7 @@ object Versions {
     const val dependencyUpdate = "0.38.0"
     const val dokka = "1.4.30"
     const val dom4j = "2.1.3"
-    const val graal = "21.1.0"
+    const val graal = "23.0.3"
     const val hamcrest = "1.3"
     const val hamkrest = "1.8.0.1"
     const val hocon = "1.4.3"
