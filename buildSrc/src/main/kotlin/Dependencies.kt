@@ -31,7 +31,7 @@ object Versions {
     const val spek = "1.1.5"
     const val spotless = "5.11.1"
     const val taskTree = "1.5"
-    const val toml4j = "0.7.2"
+    const val toml4j = "0.7.3"
     const val yaml = "1.28"
 
     // Since 1.8, the minimum supported runtime version is JDK 11.
