@@ -9,7 +9,7 @@ val signPublications by extra { getPrivateProperty("signPublications") }
 val useAliyun by extra { shouldUseAliyun() }
 
 tasks.named<Wrapper>("wrapper") {
-    gradleVersion = "7.0"
+    gradleVersion = "7.6.3"
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -164,7 +164,7 @@ subprojects {
         //benchmarkMode = ["thrpt"] // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
         batchSize = 1
         // Batch size: number of benchmark method calls per operation. (some benchmark modes can ignore this setting)
-        fork = 1 // How many times to forks a single benchmark. Use 0 to disable forking altogether
+        fork = 1 // How many times to fork a single benchmark. Use 0 to disable forking altogether
         //operationsPerInvocation = 1 // Operations per invocation.
         timeOnIteration = "1s" // Time to spend at each measurement iteration.
         threads = 4 // Number of worker threads to run with.
@@ -261,7 +261,7 @@ subprojects {
                     licenses {
                         license {
                             name.set("The Apache Software License, Version 2.0")
-                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                         }
                     }
                     developers {
