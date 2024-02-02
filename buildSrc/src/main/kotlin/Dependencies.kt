@@ -1,3 +1,5 @@
+@file:Suppress("ConstPropertyName", "MemberVisibilityCanBePrivate")
+
 import org.gradle.api.JavaVersion
 
 object Versions {
@@ -10,7 +12,7 @@ object Versions {
     const val graal = "21.0.0.2"
     const val hamcrest = "1.3"
     const val hamkrest = "1.8.0.1"
-    const val hocon = "1.4.1"
+    const val hocon = "1.4.3"
     const val jacksonMinor = "2.12"
     const val jackson = "$jacksonMinor.2"
     const val jacoco = "0.8.6"
