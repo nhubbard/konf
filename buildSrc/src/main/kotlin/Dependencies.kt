@@ -15,7 +15,7 @@ object Versions {
     const val jackson = "$jacksonMinor.2"
     const val jacoco = "0.8.6"
     const val jaxen = "1.2.0"
-    const val jgit = "5.11.0.202103091610-r"
+    const val jgit = "5.13.3.202401111512-r"
     const val jmh = "1.25.2"
     const val jmhPlugin = "0.5.3"
     const val junit = "5.7.1"
