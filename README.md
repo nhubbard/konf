@@ -2,7 +2,7 @@
 
 **TODO: Much of the content in this README is out of date and needs to be fixed.**
 
-[![Java 8+](https://img.shields.io/badge/Java-8+-4c7e9f.svg)](http://java.oracle.com)
+[![Java 17+](https://img.shields.io/badge/Java-17+-4c7e9f.svg)](http://java.oracle.com)
 [![Maven metadata URL](https://img.shields.io/maven-central/v/com.nhubbard/konfig)](https://search.maven.org/artifact/com.nhubbard/konfig)
 [![JitPack](https://img.shields.io/jitpack/v/github/nhubbard/konfig)](https://jitpack.io/#nhubbard/konfig)
 [![Build Status](https://travis-ci.org/nhubbard/konfig.svg?branch=master)](https://travis-ci.org/nhubbard/konfig)
@@ -64,7 +64,7 @@ A type-safe cascading configuration library for Kotlin/Java/Android, supporting 
 
 ## Prerequisites
 
-- JDK 8 or higher
+- JDK 17 or higher
 - tested on Android SDK 23 or higher
 
 ## Use in your projects
