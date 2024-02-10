@@ -20,13 +20,18 @@ package com.nhubbard.konfig
 import java.util.Collections
 
 /**
- * Tree node that represents internal structure of config/source.
+ * Tree node that represents the internal structure of config/source.
  */
 interface TreeNode {
     /**
      * Children nodes in this tree node with their names as keys.
      */
     val children: MutableMap<String, TreeNode>
+
+    /**
+     * The comments assigned to this tree node.
+     */
+    var comments: String
 
     /**
      * Associate path with specified node.
@@ -74,10 +79,10 @@ interface TreeNode {
     }
 
     /**
-     * Whether this tree node contains node(s) in specified path or not.
+     * Whether this tree node contains node(s) in the specified path or not.
      *
      * @param path item path
-     * @return `true` if this tree node contains node(s) in specified path, `false` otherwise
+     * @return `true` if this tree node contains node(s) in a specified path, `false` otherwise
      */
     operator fun contains(path: Path): Boolean {
         return if (path.isEmpty()) {
@@ -95,11 +100,11 @@ interface TreeNode {
     }
 
     /**
-     * Returns tree node in specified path if this tree node contains value(s) in specified path,
+     * Returns tree node in the specified path if this tree node contains value(s) in the specified path,
      * `null` otherwise.
      *
      * @param path item path
-     * @return tree node in specified path if this tree node contains value(s) in specified path,
+     * @return tree node in the specified path if this tree node contains value(s) in the specified path,
      * `null` otherwise
      */
     fun getOrNull(path: Path): TreeNode? {
@@ -114,11 +119,11 @@ interface TreeNode {
     }
 
     /**
-     * Returns tree node in specified path if this tree node contains value(s) in specified path,
+     * Returns tree node in the specified path if this tree node contains value(s) in the specified path,
      * `null` otherwise.
      *
      * @param path item path
-     * @return tree node in specified path if this tree node contains value(s) in specified path,
+     * @return tree node in the specified path if this tree node contains value(s) in the specified path,
      * `null` otherwise
      */
     fun getOrNull(path: String): TreeNode? = getOrNull(path.toPath())
@@ -131,10 +136,10 @@ interface TreeNode {
      */
     fun withFallback(fallback: TreeNode): TreeNode {
         fun traverseTree(facade: TreeNode, fallback: TreeNode, path: Path): TreeNode {
-            if (facade is LeafNode || fallback is LeafNode) {
-                return facade
+            return if (facade is LeafNode || fallback is LeafNode) {
+                facade
             } else {
-                return ContainerNode(
+                ContainerNode(
                     facade.children.toMutableMap().also { map ->
                         for ((key, child) in fallback.children) {
                             if (key in facade.children) {
@@ -261,10 +266,10 @@ interface TreeNode {
                 val newChildren = children.mapValues { (_, child) ->
                     child.withoutPlaceHolder()
                 }
-                if (newChildren.isNotEmpty() && newChildren.all { (_, child) -> child is MapNode && child.isPlaceHolder }) {
-                    return ContainerNode.placeHolder()
+                return if (newChildren.isNotEmpty() && newChildren.all { (_, child) -> child is MapNode && child.isPlaceHolder }) {
+                    ContainerNode.placeHolder()
                 } else {
-                    return withMap(newChildren.filterValues { !(it is MapNode && it.isPlaceHolder) })
+                    withMap(newChildren.filterValues { !(it is MapNode && it.isPlaceHolder) })
                 }
             }
             else -> return this
@@ -272,25 +277,27 @@ interface TreeNode {
     }
 
     fun isEmpty(): Boolean {
-        when (this) {
-            is EmptyNode -> return true
+        return when (this) {
+            is EmptyNode -> true
             is MapNode -> {
-                return children.isEmpty() || children.all { (_, child) -> child.isEmpty() }
+                children.isEmpty() || children.all { (_, child) -> child.isEmpty() }
             }
-            else -> return false
+
+            else -> false
         }
     }
 
     fun isPlaceHolderNode(): Boolean {
-        when (this) {
+        return when (this) {
             is MapNode -> {
                 if (isPlaceHolder) {
-                    return true
+                    true
                 } else {
-                    return children.isNotEmpty() && children.all { (_, child) -> child.isPlaceHolderNode() }
+                    children.isNotEmpty() && children.all { (_, child) -> child.isPlaceHolderNode() }
                 }
             }
-            else -> return false
+
+            else -> false
         }
     }
 }
@@ -320,16 +327,18 @@ interface ListNode : LeafNode {
 /**
  * Tree node that contains children nodes.
  */
-open class ContainerNode(
+open class ContainerNode @JvmOverloads constructor(
     override val children: MutableMap<String, TreeNode>,
-    override var isPlaceHolder: Boolean = false
+    override var isPlaceHolder: Boolean = false,
+    override var comments: String = ""
 ) : MapNode {
+
     override fun withMap(map: Map<String, TreeNode>): MapNode {
         val isPlaceHolder = map.isEmpty() && this.isPlaceHolder
-        if (map is MutableMap<String, TreeNode>) {
-            return ContainerNode(map, isPlaceHolder)
+        return if (map is MutableMap<String, TreeNode>) {
+            ContainerNode(map, isPlaceHolder, comments)
         } else {
-            return ContainerNode(map.toMutableMap(), isPlaceHolder)
+            ContainerNode(map.toMutableMap(), isPlaceHolder, comments)
         }
     }
 
@@ -340,8 +349,9 @@ open class ContainerNode(
 }
 
 /**
- * Tree node that represents a empty tree.
+ * Tree node that represents an empty tree.
  */
 object EmptyNode : LeafNode {
     override val children: MutableMap<String, TreeNode> = emptyMutableMap
+    override var comments: String = ""
 }

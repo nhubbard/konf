@@ -21,10 +21,7 @@ import com.nhubbard.konfig.Config
 import com.nhubbard.konfig.source.Loader
 import com.nhubbard.konfig.source.Source
 import com.nhubbard.konfig.tempDirectory
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.eclipse.jgit.lib.Constants
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -81,7 +78,7 @@ fun Loader.watchGit(
                     load(source)
                 }
                 onLoad?.invoke(newConfig, source)
-                GlobalScope.launch(context) {
+                MainScope().launch(context) {
                     while (true) {
                         delay(unit.toMillis(period))
                         val newSource = provider.git(repo, file, directory, branch, optional)

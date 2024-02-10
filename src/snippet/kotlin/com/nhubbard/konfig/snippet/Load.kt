@@ -19,7 +19,7 @@ package com.nhubbard.konfig.snippet
 
 import com.nhubbard.konfig.Config
 
-fun main(args: Array<String>) {
+fun main() {
     val config = Config { addSpec(Server) }
     // values in source is loaded into new layer in child config
     val childConfig = config.from.env()

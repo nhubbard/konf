@@ -23,5 +23,7 @@ import java.time.ZonedDateTime
  * Deserializer for [ZonedDateTime].
  */
 object ZoneDateTimeDeserializer : JSR310Deserializer<ZonedDateTime>(ZonedDateTime::class.java) {
+    private fun readResolve(): Any = ZoneDateTimeDeserializer
+
     override fun parse(string: String): ZonedDateTime = ZonedDateTime.parse(string)
 }

@@ -30,7 +30,7 @@ object ServerSpec : ConfigSpec() {
     val tcpPort by required<Int>()
 }
 
-fun main(args: Array<String>) {
+fun main() {
     val file = File("server.yml")
     //language=YAML
     file.writeText(
@@ -41,13 +41,13 @@ fun main(args: Array<String>) {
         """.trimIndent()
     )
     file.deleteOnExit()
-    val config = Config { addSpec(ServerSpec) }
+    var config = Config { addSpec(ServerSpec) }
         .from.yaml.file("server.yml")
         .from.json.resource("server.json")
         .from.env()
         .from.systemProperties()
     run {
-        val config = Config { addSpec(ServerSpec) }.withSource(
+        config = Config { addSpec(ServerSpec) }.withSource(
             Source.from.yaml.file("server.yml") +
                     Source.from.json.resource("server.json") +
                     Source.from.env() +
@@ -55,16 +55,16 @@ fun main(args: Array<String>) {
         )
     }
     run {
-        val config = Config { addSpec(ServerSpec) }
+        config = Config { addSpec(ServerSpec) }
             .from.yaml.watchFile("server.yml")
             .from.json.resource("server.json")
             .from.env()
             .from.systemProperties()
     }
-    val server = Server(config[ServerSpec.host], config[ServerSpec.tcpPort])
+    var server = Server(config[ServerSpec.host], config[ServerSpec.tcpPort])
     server.start()
     run {
-        val server = Config()
+        server = Config()
             .from.yaml.file("server.yml")
             .from.json.resource("server.json")
             .from.env()
@@ -74,7 +74,7 @@ fun main(args: Array<String>) {
         server.start()
     }
     run {
-        val server = (
+        server = (
                 Source.from.yaml.file("server.yml") +
                         Source.from.json.resource("server.json") +
                         Source.from.env() +

@@ -22,7 +22,7 @@ import com.nhubbard.konfig.tempFile
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
-fun main(args: Array<String>) {
+fun main() {
     val config = Config { addSpec(Server) }
     config[Server.tcpPort] = 1000
     val map = config.toMap()

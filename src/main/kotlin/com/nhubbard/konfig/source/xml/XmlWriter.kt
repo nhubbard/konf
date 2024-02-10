@@ -27,7 +27,7 @@ import org.dom4j.io.XMLWriter
 import java.io.OutputStream
 
 /**
- * Writer for XML source.
+ * Writer for the XML source.
  */
 class XmlWriter(val config: Config) : Writer {
     private fun Map<String, String>.toDocument(): Document {
@@ -59,6 +59,6 @@ class XmlWriter(val config: Config) : Writer {
 }
 
 /**
- * Returns writer for XML source.
+ * Returns writer for the XML source.
  */
 val Config.toXml: Writer get() = XmlWriter(this)

@@ -28,7 +28,7 @@ import java.io.InputStream
 import java.io.Reader
 
 /**
- * Provider for XML source.
+ * Provider for the XML source.
  */
 @RegisterExtension(["xml"])
 object XmlProvider : Provider {

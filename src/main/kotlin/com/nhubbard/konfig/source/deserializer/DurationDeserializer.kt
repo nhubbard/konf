@@ -26,6 +26,8 @@ import java.time.Duration
  * Deserializer for [Duration].
  */
 object DurationDeserializer : JSR310Deserializer<Duration>(Duration::class.java) {
+    private fun readResolve(): Any = DurationDeserializer
+
     override fun parse(string: String): Duration {
         return try {
             Duration.parse(string)

@@ -19,7 +19,7 @@ package com.nhubbard.konfig.snippet
 
 import com.nhubbard.konfig.Config
 
-fun main(args: Array<String>) {
+fun main() {
     val config = Config { addSpec(Server) }
     config[Server.tcpPort] = 1000
     // fork from parent config

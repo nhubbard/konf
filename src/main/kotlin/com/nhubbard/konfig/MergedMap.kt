@@ -38,7 +38,7 @@ class MergedMap<K, V>(val fallback: MutableMap<K, V>, val facade: MutableMap<K, 
     }
 
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
-        get() = keys.map { it to getValue(it) }.toMap(LinkedHashMap()).entries
+        get() = keys.associateWithTo(LinkedHashMap()) { getValue(it) }.entries
     override val keys: MutableSet<K>
         get() = facade.keys.union(fallback.keys).toMutableSet()
     override val values: MutableCollection<V>

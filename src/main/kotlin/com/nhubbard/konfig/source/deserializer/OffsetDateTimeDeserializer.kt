@@ -23,5 +23,6 @@ import java.time.OffsetDateTime
  * Deserializer for [OffsetDateTime].
  */
 object OffsetDateTimeDeserializer : JSR310Deserializer<OffsetDateTime>(OffsetDateTime::class.java) {
+    private fun readResolve(): Any = OffsetDateTimeDeserializer
     override fun parse(string: String): OffsetDateTime = OffsetDateTime.parse(string)
 }

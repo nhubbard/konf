@@ -27,7 +27,7 @@ import java.io.InputStream
 import java.io.Reader
 
 /**
- * Provider for TOML source.
+ * Provider for the TOML source.
  */
 @RegisterExtension(["toml"])
 object TomlProvider : Provider {

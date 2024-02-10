@@ -17,11 +17,12 @@
 
 package com.nhubbard.konfig.source.hocon
 
+import com.nhubbard.konfig.*
 import com.typesafe.config.ConfigRenderOptions
 import com.typesafe.config.ConfigValueFactory
-import com.nhubbard.konfig.Config
 import com.nhubbard.konfig.source.Writer
 import com.nhubbard.konfig.source.base.toHierarchicalMap
+import com.typesafe.config.ConfigValue
 import java.io.OutputStream
 
 /**
@@ -43,9 +44,24 @@ class HoconWriter(val config: Config) : Writer {
         }
     }
 
+    private fun TreeNode.toConfigValue(): ConfigValue {
+        val value = when (this) {
+            is ValueNode -> ConfigValueFactory.fromAnyRef(value)
+            is ListNode -> ConfigValueFactory.fromIterable(list.map { it.toConfigValue() })
+            else -> ConfigValueFactory.fromMap(children.mapValues { (_, value) -> value.toConfigValue() })
+        }
+        return comments.takeIf { it.isNotEmpty() }?.let {
+            value.withOrigin(value.origin().withComments(it.split("\n")))
+        } ?: value
+    }
+
     override fun toText(): String {
-        return ConfigValueFactory.fromMap(config.toHierarchicalMap()).render(renderOpts)
-            .replace("\n", System.lineSeparator())
+        val output = if (config.isEnabled(Feature.WRITE_DESCRIPTIONS_AS_COMMENTS)) {
+            config.toTree().toConfigValue().render(renderOpts.setComments(true))
+        } else {
+            ConfigValueFactory.fromMap(config.toHierarchicalMap()).render(renderOpts)
+        }
+        return output.replace("\n", System.lineSeparator())
     }
 }
 

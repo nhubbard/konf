@@ -32,11 +32,11 @@ import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Provides source from various input format.
+ * Provides a source from various input formats.
  */
 interface Provider {
     /**
-     * Returns a new source from specified reader.
+     * Returns a new source from the specified reader.
      *
      * @param reader specified reader for reading character streams
      * @return a new source from specified reader
@@ -52,7 +52,7 @@ interface Provider {
     fun inputStream(inputStream: InputStream): Source
 
     /**
-     * Returns a new source from specified file.
+     * Returns a new source from the specified file.
      *
      * @param file specified file
      * @param optional whether this source is optional
@@ -71,11 +71,11 @@ interface Provider {
     }
 
     /**
-     * Returns a new source from specified file path.
+     * Returns a new source from the specified file path.
      *
      * @param file specified file path
      * @param optional whether this source is optional
-     * @return a new source from specified file path
+     * @return a new source from the specified file path
      */
     fun file(file: String, optional: Boolean = false): Source = file(File(file), optional)
 
@@ -90,10 +90,10 @@ interface Provider {
     }
 
     /**
-     * Returns a new source from specified byte array.
+     * Returns a new source from the specified byte array.
      *
      * @param content specified byte array
-     * @return a new source from specified byte array
+     * @return a new source from the specified byte array
      */
     fun bytes(content: ByteArray): Source {
         return content.inputStream().use {
@@ -102,12 +102,12 @@ interface Provider {
     }
 
     /**
-     * Returns a new source from specified portion of byte array.
+     * Returns a new source from the specified portion of byte array.
      *
      * @param content specified byte array
      * @param offset the start offset of the portion of the array to read
      * @param length the length of the portion of the array to read
-     * @return a new source from specified portion of byte array
+     * @return a new source from the specified portion of byte array
      */
     fun bytes(content: ByteArray, offset: Int, length: Int): Source {
         return content.inputStream(offset, length).use {
@@ -273,7 +273,7 @@ interface Provider {
         }
 
         /**
-         * Register extension with the corresponding provider.
+         * Register this extension with the corresponding provider.
          *
          * @param extension the file extension
          * @param provider the corresponding provider
@@ -291,12 +291,12 @@ interface Provider {
             extensionToProvider.remove(extension)
 
         /**
-         * Returns corresponding provider based on extension.
+         * Returns the corresponding provider based on an extension.
          *
          * Returns null if the specific extension is unregistered.
          *
          * @param extension the file extension
-         * @return the corresponding provider based on extension
+         * @return the corresponding provider based on an extension
          */
         fun of(extension: String): Provider? =
             extensionToProvider[extension]

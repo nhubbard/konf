@@ -26,7 +26,7 @@ import java.io.Reader
 import java.util.*
 
 /**
- * Provider for properties source.
+ * Provider for the properties source.
  */
 object PropertiesProvider : Provider {
     @Suppress("UNCHECKED_CAST")

@@ -21,6 +21,6 @@ import com.nhubbard.konfig.source.DefaultLoaders
 import com.nhubbard.konfig.source.Loader
 
 /**
- * Loader for XML source.
+ * Loader for the XML source.
  */
 val DefaultLoaders.xml get() = Loader(config, XmlProvider.orMapped())

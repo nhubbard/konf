@@ -26,7 +26,7 @@ open class ConfigException : RuntimeException {
 }
 
 /**
- * Exception indicates that there is existed item with same name in config.
+ * Exception indicates that there is existed item with the same name in config.
  */
 class RepeatedItemException(val name: String) : ConfigException("item $name has been added")
 
@@ -56,7 +56,7 @@ class UnsetValueException(val name: String) : ConfigException("$name is unset") 
 }
 
 /**
- * Exception indicates that the specified item has default value.
+ * Exception indicates that the specified item has the default value.
  */
 class GetDefaultValueException(val name: String) : ConfigException("$name has default value") {
     constructor(item: Item<*>) : this(item.asName)
@@ -70,13 +70,13 @@ class NoSuchItemException(val name: String) : ConfigException("cannot find $name
 }
 
 /**
- * Exception indicates that item cannot be added to this config because it has child layer.
+ * Exception indicates that item cannot be added to this config because it has the child layer.
  */
 class LayerFrozenException(val config: Config) :
     ConfigException("config ${config.name} has child layer, cannot add new item")
 
 /**
- * Exception indicates that expected value in specified path is not existed in the source.
+ * Exception indicates that the expected value in the specified path is not existed in the source.
  */
 class NoSuchPathException(val path: String) :
     ConfigException("cannot find path \"$path\" in config spec")

@@ -52,6 +52,7 @@ object EmptyStringNode : SubstitutableNode, ListNode {
     override val list: List<TreeNode> = listOf()
     override val originalValue: Any? = null
     override val substituted: Boolean = false
+    override var comments: String = ""
     override fun substitute(value: String): TreeNode {
         check(value.isEmpty())
         return this
@@ -61,7 +62,8 @@ object EmptyStringNode : SubstitutableNode, ListNode {
 class SingleStringListNode(
     override val value: String,
     override val substituted: Boolean = false,
-    override val originalValue: Any? = null
+    override val originalValue: Any? = null,
+    override var comments: String = ""
 ) : SubstitutableNode, ListNode {
     override val children: MutableMap<String, TreeNode> = Collections.unmodifiableMap(
         mutableMapOf("0" to value.asTree())
@@ -77,8 +79,9 @@ class SingleStringListNode(
 class ListStringNode(
     override val value: String,
     override val substituted: Boolean = false,
-    override val originalValue: Any? = null
-) : ListSourceNode(value.split(',').map { ValueSourceNode(it) }), SubstitutableNode {
+    override val originalValue: Any? = null,
+    override var comments: String = ""
+) : ListSourceNode(value.split(',').map { ValueSourceNode(it) }, comments = comments), SubstitutableNode {
     override fun substitute(value: String): TreeNode =
         value.promoteToList(true, originalValue ?: this.value)
 
@@ -110,10 +113,10 @@ fun ContainerNode.promoteToList(): TreeNode {
     }.takeWhile {
         it != null
     }.filterNotNull().toList()
-    if (list.isNotEmpty() && list.toSet() == children.keys) {
-        return ListSourceNode(list.map { children[it]!! })
+    return if (list.isNotEmpty() && list.toSet() == children.keys) {
+        ListSourceNode(list.map { children[it]!! })
     } else {
-        return this
+        this
     }
 }
 
@@ -121,7 +124,7 @@ fun ContainerNode.promoteToList(): TreeNode {
  * Returns a map in flat format for this config.
  *
  * The returned map contains all items in this config.
- * This map can be loaded into config as [com.uchuhimo.konf.source.base.FlatSource] using
+ * This map can be loaded into config as [com.nhubbard.konfig.source.base.FlatSource] using
  * `config.from.map.flat(map)`.
  */
 fun Config.toFlatMap(): Map<String, String> {

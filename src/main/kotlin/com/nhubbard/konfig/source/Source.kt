@@ -62,14 +62,7 @@ import java.time.YearMonth
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
-import java.util.ArrayDeque
-import java.util.Collections
-import java.util.Date
-import java.util.Queue
-import java.util.SortedMap
-import java.util.SortedSet
-import java.util.TreeMap
-import java.util.TreeSet
+import java.util.*
 import java.util.regex.Pattern
 import kotlin.Byte
 import kotlin.Char
@@ -79,6 +72,9 @@ import kotlin.Int
 import kotlin.Long
 import kotlin.Short
 import kotlin.String
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.starProjectedType
@@ -88,12 +84,12 @@ import com.fasterxml.jackson.databind.node.NullNode as JacksonNullNode
  * Source to provide values for config.
  *
  * When config loads values from source, config will iterate all items in it, and
- * retrieve value with path of each item from source.
- * When source contains single value, a series of `is` operations can be used to
- * judge the actual type of value, and `to` operation can be used to get the value
- * with specified type.
- * When source contains multiple value, `contains` operations can be used to check
- * whether value(s) in specified path is in this source, and `get` operations can be used
+ * retrieve the value with the path of each item from source.
+ * When the source contains a single value, a series of `is` operations can be used to
+ * judge the actual type of the value, and a `to` operation can be used to get the value
+ * with the specified type.
+ * When the source contains multiple values, `contains` operations can be used to check
+ * whether value(s) in the specified path are in this source, and `get` operations can be used
  * to retrieve the corresponding sub-source.
  */
 interface Source {
@@ -108,12 +104,12 @@ interface Source {
     /**
      * Information about this source.
      *
-     * Info is in form of key-value pairs.
+     * Info is in the form of key-value pairs.
      */
     val info: SourceInfo
 
     /**
-     * a tree node that represents internal structure of this source.
+     * a tree node that represents the internal structure of this source.
      */
     val tree: TreeNode
 
@@ -123,19 +119,19 @@ interface Source {
     val features: Map<Feature, Boolean> get() = emptyMap()
 
     /**
-     * Whether this source contains value(s) in specified path or not.
+     * Whether this source contains value(s) in the specified path or not.
      *
      * @param path item path
-     * @return `true` if this source contains value(s) in specified path, `false` otherwise
+     * @return `true` if this source contains value(s) in the specified path, `false` otherwise
      */
     operator fun contains(path: Path): Boolean = path in tree
 
     /**
-     * Returns sub-source in specified path if this source contains value(s) in specified path,
+     * Returns sub-source in the specified path if this source contains value(s) in the specified path,
      * `null` otherwise.
      *
      * @param path item path
-     * @return sub-source in specified path if this source contains value(s) in specified path,
+     * @return sub-source in the specified path if this source contains value(s) in the specified path,
      * `null` otherwise
      */
     fun getOrNull(path: Path): Source? {
@@ -171,7 +167,7 @@ interface Source {
             currentKey = currentKey.toLittleCamelCase()
         }
         if (isEnabled(Feature.LOAD_KEYS_CASE_INSENSITIVELY)) {
-            currentKey = currentKey.toLowerCase()
+            currentKey = currentKey.lowercase(Locale.getDefault())
         }
         return currentKey
     }
@@ -182,7 +178,7 @@ interface Source {
             currentPath = currentPath.map { it.toLittleCamelCase() }
         }
         if (lowercased || isEnabled(Feature.LOAD_KEYS_CASE_INSENSITIVELY)) {
-            currentPath = currentPath.map { it.toLowerCase() }
+            currentPath = currentPath.map { it.lowercase(Locale.getDefault()) }
         }
         return currentPath
     }
@@ -192,12 +188,12 @@ interface Source {
     }
 
     /**
-     * Returns sub-source in specified path.
+     * Returns sub-source in the specified path.
      *
      * Throws [NoSuchPathException] if there is no value in specified path.
      *
      * @param path item path
-     * @return sub-source in specified path
+     * @return sub-source in the specified path
      * @throws NoSuchPathException
      */
     operator fun get(path: Path): Source = getOrNull(path) ?: throw NoSuchPathException(this, path)
@@ -211,22 +207,22 @@ interface Source {
     operator fun contains(prefix: String): Boolean = contains(prefix.toPath())
 
     /**
-     * Returns sub-source in specified path if this source contains value(s) in specified path,
+     * Returns sub-source in the specified path if this source contains value(s) in the specified path,
      * `null` otherwise.
      *
      * @param path item path
-     * @return sub-source in specified path if this source contains value(s) in specified path,
+     * @return sub-source in the specified path if this source contains value(s) in the specified path,
      * `null` otherwise
      */
     fun getOrNull(path: String): Source? = getOrNull(path.toPath())
 
     /**
-     * Returns sub-source in specified path.
+     * Returns sub-source in the specified path.
      *
      * Throws [NoSuchPathException] if there is no value in specified path.
      *
      * @param path item path
-     * @return sub-source in specified path
+     * @return sub-source in the specified path
      * @throws NoSuchPathException
      */
     operator fun get(path: String): Source = get(path.toPath())
@@ -265,7 +261,7 @@ interface Source {
      * Returns a source backing by specified fallback source.
      *
      * When config fails to retrieve values from this source, it will try to retrieve them from
-     * fallback source.
+     * the fallback source.
      *
      * @param fallback fallback source
      * @return a source backing by specified fallback source
@@ -288,7 +284,7 @@ interface Source {
      *
      * See [StringSubstitutor](https://commons.apache.org/proper/commons-text/apidocs/org/apache/commons/text/StringSubstitutor.html)
      * for detailed substitution rules. An exception is when the string is in reference format like `${path}`,
-     * the whole node will be replace by a reference to the sub-tree in the specified path.
+     * the whole node will be replaced by a reference to the subtree in the specified path.
      *
      * @param root the root source for substitution
      * @param enabled whether enabled or let the source decide by itself
@@ -389,9 +385,9 @@ interface Source {
 }
 
 /**
- * Returns a value casted from source.
+ * Returns a value cast from source.
  *
- * @return a value casted from source
+ * @return a value cast from source
  */
 inline fun <reified T> Source.toValue(): T {
     return Config().withSource(this).toValue()
@@ -445,22 +441,22 @@ private fun TreeNode.substituted(
 }
 
 private fun TreeNode.lowercased(): TreeNode {
-    if (this is ContainerNode) {
-        return withMap(
+    return if (this is ContainerNode) {
+        withMap(
             children.mapKeys { (key, _) ->
-                key.toLowerCase()
+                key.lowercase(Locale.getDefault())
             }.mapValues { (_, child) ->
                 child.lowercased()
             }
         )
     } else {
-        return this
+        this
     }
 }
 
 private fun TreeNode.littleCamelCased(): TreeNode {
-    if (this is ContainerNode) {
-        return withMap(
+    return if (this is ContainerNode) {
+        withMap(
             children.mapKeys { (key, _) ->
                 key.toLittleCamelCase()
             }.mapValues { (_, child) ->
@@ -468,12 +464,12 @@ private fun TreeNode.littleCamelCased(): TreeNode {
             }
         )
     } else {
-        return this
+        this
     }
 }
 
 class TreeLookup(val root: TreeNode, val source: Source, errorWhenUndefined: Boolean) : StringLookup {
-    val substitutor: StringSubstitutor = StringSubstitutor(
+    private val substitutor: StringSubstitutor = StringSubstitutor(
         StringLookupFactory.INSTANCE.interpolatorStringLookup(this)
     ).apply {
         isEnableSubstitutionInVariables = true
@@ -519,7 +515,7 @@ open class BaseSource(
 ) : Source
 
 /**
- * Information of source for debugging.
+ * Information of the source for debugging.
  */
 class SourceInfo(
     private val info: MutableMap<String, String> = mutableMapOf()
@@ -665,8 +661,8 @@ private inline fun <reified T> TreeNode.cast(source: Source): T {
 
 internal fun stringToBoolean(value: String): Boolean {
     return when {
-        value.toLowerCase() == "true" -> true
-        value.toLowerCase() == "false" -> false
+        value.lowercase(Locale.getDefault()) == "true" -> true
+        value.lowercase(Locale.getDefault()) == "false" -> false
         else -> throw ParseException("$value cannot be parsed to a boolean")
     }
 }
@@ -924,18 +920,13 @@ private fun TreeNode.toValue(source: Source, type: JavaType, mapper: ObjectMappe
                     )
                 }
             } else {
-                val value = castOrNull(source, clazz)
-                if (value != null) {
-                    return value
-                } else {
-                    try {
-                        return mapper.readValue<Any>(
-                            TreeTraversingParser(withoutPlaceHolder().toJsonNode(source), mapper),
-                            type
-                        )
-                    } catch (cause: JsonProcessingException) {
-                        throw ObjectMappingException("${this.toHierarchical()} in ${source.description}", clazz, cause)
-                    }
+                return castOrNull(source, clazz) ?: try {
+                    mapper.readValue<Any>(
+                        TreeTraversingParser(withoutPlaceHolder().toJsonNode(source), mapper),
+                        type
+                    )
+                } catch (cause: JsonProcessingException) {
+                    throw ObjectMappingException("${this.toHierarchical()} in ${source.description}", clazz, cause)
                 }
             }
         }
@@ -1086,13 +1077,15 @@ private fun implOf(clazz: Class<*>): Class<*> =
         else -> clazz
     }
 
-fun Any.asTree(): TreeNode =
+fun Any.asTree(): TreeNode = asTree("")
+
+fun Any.asTree(comment: String = ""): TreeNode =
     when (this) {
         is TreeNode -> this
         is Source -> this.tree
         is List<*> ->
             @Suppress("UNCHECKED_CAST")
-            ListSourceNode((this as List<Any>).map { it.asTree() })
+            ListSourceNode((this as List<Any>).map { it.asTree() }, comments = comment)
         is Map<*, *> -> {
             when {
                 this.size == 0 -> ContainerNode(mutableMapOf())
@@ -1101,7 +1094,7 @@ fun Any.asTree(): TreeNode =
                     ContainerNode(
                         (this as Map<String, Any>).mapValues { (_, value) ->
                             value.asTree()
-                        }.toMutableMap()
+                        }.toMutableMap(), comments = comment
                     )
                 }
                 this.iterator().next().key!!::class in listOf(
@@ -1116,13 +1109,13 @@ fun Any.asTree(): TreeNode =
                     ContainerNode(
                         (this as Map<Any, Any>).map { (key, value) ->
                             key.toString() to value.asTree()
-                        }.toMap().toMutableMap()
+                        }.toMap().toMutableMap(), comments = comment
                     )
                 }
-                else -> ValueSourceNode(this)
+                else -> ValueSourceNode(this, comments = comment)
             }
         }
-        else -> ValueSourceNode(this)
+        else -> ValueSourceNode(this, comments = comment)
     }
 
 fun Any.asSource(type: String = "", info: SourceInfo = SourceInfo()): Source =

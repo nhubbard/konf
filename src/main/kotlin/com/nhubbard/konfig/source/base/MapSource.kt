@@ -33,7 +33,7 @@ open class MapSource(
  * Returns a hierarchical map for this config.
  *
  * The returned map contains all items in this config.
- * This map can be loaded into config as [com.uchuhimo.konf.source.base.MapSource] using
+ * This map can be loaded into config as [com.nhubbard.konfig.source.base.MapSource] using
  * `config.from.map.hierarchical(map)`.
  */
 @Suppress("UNCHECKED_CAST")
@@ -49,10 +49,10 @@ fun Config.toHierarchicalMap(): Map<String, Any> {
 fun TreeNode.toHierarchical(): Any = withoutPlaceHolder().toHierarchicalInternal()
 
 private fun TreeNode.toHierarchicalInternal(): Any {
-    when (this) {
-        is ValueNode -> return value
-        is ListNode -> return list.map { it.toHierarchicalInternal() }
-        else -> return children.mapValues { (_, child) -> child.toHierarchicalInternal() }
+    return when (this) {
+        is ValueNode -> value
+        is ListNode -> list.map { it.toHierarchicalInternal() }
+        else -> children.mapValues { (_, child) -> child.toHierarchicalInternal() }
     }
 }
 

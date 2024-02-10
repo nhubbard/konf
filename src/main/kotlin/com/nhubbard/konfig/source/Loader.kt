@@ -20,10 +20,7 @@ package com.nhubbard.konfig.source
 import com.nhubbard.konfig.Config
 import com.nhubbard.konfig.Feature
 import com.nhubbard.konfig.Path
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.InputStream
 import java.io.Reader
@@ -44,11 +41,11 @@ import kotlin.coroutines.CoroutineContext
  */
 class Loader(
     /**
-     * Parent config for all child configs loading source in this loader.
+     * Parent config for all child configs loading the source in this loader.
      */
     val config: Config,
     /**
-     * Source provider to provide source from various input format.
+     * Source provider to provide the source from various input format.
      */
     val provider: Provider
 ) {
@@ -83,11 +80,11 @@ class Loader(
         config.withSource(provider.file(file, optional))
 
     /**
-     * Returns a child config containing values from specified file path.
+     * Returns a child config containing values from the specified file path.
      *
      * @param file specified file path
      * @param optional whether the source is optional
-     * @return a child config containing values from specified file path
+     * @return a child config containing values from the specified file path
      */
     fun file(file: String, optional: Boolean = this.optional): Config =
         config.withSource(provider.file(file, optional))
@@ -135,7 +132,7 @@ class Loader(
                     StandardWatchEventKinds.ENTRY_CREATE
                 )
                 var digest = absoluteFile.digest
-                GlobalScope.launch(context) {
+                MainScope().launch(context) {
                     while (true) {
                         delay(unit.toMillis(delayTime))
                         if (isMac) {
@@ -186,7 +183,7 @@ class Loader(
     }
 
     /**
-     * Returns a child config containing values from specified file path,
+     * Returns a child config containing values from the specified file path,
      * and reloads values when file content has been changed.
      *
      * @param file specified file path
@@ -217,7 +214,7 @@ class Loader(
         config.withSource(provider.string(content))
 
     /**
-     * Returns a child config containing values from specified byte array.
+     * Returns a child config containing values from the specified byte array.
      *
      * @param content specified byte array
      * @return a child config containing values from specified byte array
@@ -226,12 +223,12 @@ class Loader(
         config.withSource(provider.bytes(content))
 
     /**
-     * Returns a child config containing values from specified portion of byte array.
+     * Returns a child config containing values from the specified portion of byte array.
      *
      * @param content specified byte array
      * @param offset the start offset of the portion of the array to read
      * @param length the length of the portion of the array to read
-     * @return a child config containing values from specified portion of byte array
+     * @return a child config containing values from the specified portion of byte array
      */
     fun bytes(content: ByteArray, offset: Int, length: Int): Config =
         config.withSource(provider.bytes(content, offset, length))
@@ -262,7 +259,7 @@ class Loader(
      *
      * @param url specified url
      * @param period reload period. The default value is 5.
-     * @param unit time unit of reload period. The default value is [TimeUnit.SECONDS].
+     * @param unit time unit of the reload period. The default value is [TimeUnit.SECONDS].
      * @param context context of the coroutine. The default value is [Dispatchers.Default].
      * @param optional whether the source is optional
      * @param onLoad function invoked after the updated URL is loaded
@@ -282,7 +279,7 @@ class Loader(
                     load(source)
                 }
                 onLoad?.invoke(newConfig, source)
-                GlobalScope.launch(context) {
+                MainScope().launch(context) {
                     while (true) {
                         delay(unit.toMillis(period))
                         val newSource = provider.url(url, optional)
@@ -303,7 +300,7 @@ class Loader(
      *
      * @param url specified url string
      * @param period reload period. The default value is 5.
-     * @param unit time unit of reload period. The default value is [TimeUnit.SECONDS].
+     * @param unit time unit of the reload period. The default value is [TimeUnit.SECONDS].
      * @param context context of the coroutine. The default value is [Dispatchers.Default].
      * @param optional whether the source is optional
      * @param onLoad function invoked after the updated URL is loaded

@@ -21,6 +21,9 @@ import com.moandjiezana.toml.BooleanValueReaderWriter.BOOLEAN_VALUE_READER_WRITE
 import com.moandjiezana.toml.DateValueReaderWriter.DATE_VALUE_READER_WRITER
 import com.moandjiezana.toml.NumberValueReaderWriter.NUMBER_VALUE_READER_WRITER
 import com.moandjiezana.toml.StringValueReaderWriter.STRING_VALUE_READER_WRITER
+import com.nhubbard.konfig.ListNode
+import com.nhubbard.konfig.TreeNode
+import com.nhubbard.konfig.ValueNode
 import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
@@ -93,7 +96,7 @@ internal object Toml4jValueWriters {
                 return valueWriter
             }
         }
-        return NewMapValueWriter
+        error("Can't find writer for ${value::class.qualifiedName}")
     }
 
     private val VALUE_WRITERS = arrayOf<ValueWriter>(
@@ -107,23 +110,35 @@ internal object Toml4jValueWriters {
 }
 
 internal object NewArrayValueWriter : ArrayValueWriter() {
-    override fun canWrite(value: Any?): Boolean = isArrayish(value)
+    override fun canWrite(value: Any?): Boolean = isArrayish(value) || value is ListNode
 
     override fun write(o: Any, context: WriterContext) {
-        val values = normalize(o)
+        val node = o as? ListNode
+        val values = normalize(node?.list ?: o)
 
+        context.writeComments(node)
         context.write('[')
         context.writeArrayDelimiterPadding()
 
         var first = true
         var firstWriter: ValueWriter? = null
 
+        val hasAnyComments = values.any { it is TreeNode && it.comments.isNotEmpty() }
+        if (hasAnyComments) context.write('\n')
+
         for (value in values) {
+            if (value == null) continue
+
+            val fromNode = value as? TreeNode
+            val fromValue = fromNode?.value ?: value
+
+            if (hasAnyComments) context.indent()
+
             if (first) {
-                firstWriter = Toml4jValueWriters.findWriterFor(value!!)
+                firstWriter = Toml4jValueWriters.findWriterFor(fromValue)
                 first = false
             } else {
-                val writer = Toml4jValueWriters.findWriterFor(value!!)
+                val writer = Toml4jValueWriters.findWriterFor(fromValue)
                 if (writer !== firstWriter) {
                     throw IllegalStateException(
                         context.contextPath +
@@ -131,35 +146,61 @@ internal object NewArrayValueWriter : ArrayValueWriter() {
                                 " but found " + writer
                     )
                 }
+                if (hasAnyComments)
+                    context.write('\n')
                 context.write(", ")
             }
 
-            val writer = Toml4jValueWriters.findWriterFor(value)
+            val writer = Toml4jValueWriters.findWriterFor(fromValue)
             val isNestedOldValue = NewMapValueWriter.isNested
             if (writer == NewMapValueWriter) {
                 NewMapValueWriter.isNested = true
             }
-            writer.write(value, context)
+            context.writeComments(fromNode)
+            writer.write(fromValue, context)
             if (writer == NewMapValueWriter) {
                 NewMapValueWriter.isNested = isNestedOldValue
             }
         }
 
         context.writeArrayDelimiterPadding()
+        if (hasAnyComments)
+            context.write('\n')
         context.write(']')
     }
+}
+
+private val TreeNode.value: Any
+    get() = when (this) {
+        is ValueNode -> this.value
+        is ListNode -> this.list
+        else -> this.children
+    }
+
+private fun WriterContext.writeComments(node: TreeNode?, newLineAfter: Boolean = true) {
+    if (node == null || node.comments.isEmpty()) return
+    val comments = node.comments.split("\n")
+    comments.forEach { comment ->
+        write('\n')
+        indent()
+        write("# $comment")
+    }
+    if (newLineAfter) write('\n')
 }
 
 internal object NewMapValueWriter : ValueWriter {
 
     override fun canWrite(value: Any): Boolean {
-        return value is Map<*, *>
+        return value is Map<*, *> || (value is TreeNode && value !is ValueNode && value !is ListNode)
     }
 
     var isNested: Boolean = false
 
     override fun write(value: Any, context: WriterContext) {
-        val from = value as Map<*, *>
+        val node = value as? TreeNode
+        val from = node?.children ?: value as Map<*, *>
+
+        context.writeComments(node, newLineAfter = false)
 
         if (hasPrimitiveValues(from)) {
             if (isNested) {
@@ -173,10 +214,14 @@ internal object NewMapValueWriter : ValueWriter {
         // Render primitive types and arrays of primitive first so they are
         // grouped under the same table (if there is one)
         for ((key, value1) in from) {
-            val fromValue = value1 ?: continue
+            if (value1 == null) continue
+
+            val fromNode = value1 as? TreeNode
+            val fromValue = fromNode?.value ?: value1
 
             val valueWriter = Toml4jValueWriters.findWriterFor(fromValue)
-            if (valueWriter.isPrimitiveType()) {
+            if (valueWriter.isPrimitiveType) {
+                context.writeComments(fromNode)
                 context.indent()
                 context.write(quoteKey(key!!)).write(" = ")
                 valueWriter.write(fromValue, context)
@@ -186,6 +231,7 @@ internal object NewMapValueWriter : ValueWriter {
                 context.write('\n')
             } else if (valueWriter === NewArrayValueWriter) {
                 context.setArrayKey(key.toString())
+                context.writeComments(fromNode)
                 context.write(quoteKey(key!!)).write(" = ")
                 valueWriter.write(fromValue, context)
                 if (isNested) {
@@ -199,9 +245,8 @@ internal object NewMapValueWriter : ValueWriter {
         for (key in from.keys) {
             val fromValue = from[key] ?: continue
 
-            val valueWriter = Toml4jValueWriters.findWriterFor(fromValue)
-            if (valueWriter === this) {
-                valueWriter.write(fromValue, context.pushTable(quoteKey(key!!)))
+            if (canWrite(fromValue)) {
+                write(fromValue, context.pushTable(quoteKey(key!!)))
             }
         }
         if (isNested) {
@@ -228,10 +273,13 @@ internal object NewMapValueWriter : ValueWriter {
 
     private fun hasPrimitiveValues(values: Map<*, *>): Boolean {
         for (key in values.keys) {
-            val fromValue = values[key] ?: continue
+            val value = values[key] ?: continue
+
+            val fromNode = value as? TreeNode
+            val fromValue = fromNode?.value ?: value
 
             val valueWriter = Toml4jValueWriters.findWriterFor(fromValue)
-            if (valueWriter.isPrimitiveType() || valueWriter === NewArrayValueWriter) {
+            if (valueWriter.isPrimitiveType || valueWriter === NewArrayValueWriter) {
                 return true
             }
         }

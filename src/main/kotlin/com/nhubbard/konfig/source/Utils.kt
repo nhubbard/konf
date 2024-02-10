@@ -58,24 +58,15 @@ internal fun parseDuration(input: String): Long {
         unitString += "s"
 
     // note that this is deliberately case-sensitive
-    val units = if (unitString == "" || unitString == "ms" || unitString == "millis" ||
-        unitString == "milliseconds"
-    ) {
-        TimeUnit.MILLISECONDS
-    } else if (unitString == "us" || unitString == "micros" || unitString == "microseconds") {
-        TimeUnit.MICROSECONDS
-    } else if (unitString == "ns" || unitString == "nanos" || unitString == "nanoseconds") {
-        TimeUnit.NANOSECONDS
-    } else if (unitString == "d" || unitString == "days") {
-        TimeUnit.DAYS
-    } else if (unitString == "h" || unitString == "hours") {
-        TimeUnit.HOURS
-    } else if (unitString == "s" || unitString == "seconds") {
-        TimeUnit.SECONDS
-    } else if (unitString == "m" || unitString == "minutes") {
-        TimeUnit.MINUTES
-    } else {
-        throw ParseException("Could not parse time unit '$originalUnitString' (try ns, us, ms, s, m, h, d)")
+    val units = when (unitString) {
+        "", "ms", "millis", "milliseconds" -> TimeUnit.MILLISECONDS
+        "us", "micros", "microseconds" -> TimeUnit.MICROSECONDS
+        "ns", "nanos", "nanoseconds" -> TimeUnit.NANOSECONDS
+        "d", "days" -> TimeUnit.DAYS
+        "h", "hours" -> TimeUnit.HOURS
+        "s", "seconds" -> TimeUnit.SECONDS
+        "m", "minutes" -> TimeUnit.MINUTES
+        else -> throw ParseException("Could not parse time unit '$originalUnitString' (try ns, us, ms, s, m, h, d)")
     }
 
     return try {

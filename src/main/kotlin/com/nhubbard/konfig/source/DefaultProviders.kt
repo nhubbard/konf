@@ -38,13 +38,13 @@ object DefaultProviders {
     val json = JsonProvider
 
     /**
-     * Provider for properties source.
+     * Provider for the properties source.
      */
     @JvmField
     val properties = PropertiesProvider
 
     /**
-     * Provider for map source.
+     * Provider for the map source.
      */
     @JvmField
     val map = DefaultMapProviders
@@ -66,11 +66,11 @@ object DefaultProviders {
     fun systemProperties(): Source = PropertiesProvider.system()
 
     /**
-     * Returns corresponding provider based on extension.
+     * Returns the corresponding provider based on its extension.
      *
      * @param extension the file extension
      * @param source the source description for error message
-     * @return the corresponding provider based on extension
+     * @return the corresponding provider based on its extension
      */
     fun dispatchExtension(extension: String, source: String = ""): Provider =
         Provider.of(extension) ?: throw UnsupportedExtensionException(source)
@@ -78,7 +78,7 @@ object DefaultProviders {
     /**
      * Returns a source from specified file.
      *
-     * Format of the file is auto-detected from the file extension.
+     * The format of the file is auto-detected from the file extension.
      * Supported file formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -97,9 +97,9 @@ object DefaultProviders {
     fun file(file: File, optional: Boolean = false): Source = dispatchExtension(file.extension, file.name).file(file, optional)
 
     /**
-     * Returns a source from specified file path.
+     * Returns a source from the specified file path.
      *
-     * Format of the file is auto-detected from the file extension.
+     * The format of the file is auto-detected from the file extension.
      * Supported file formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -120,7 +120,7 @@ object DefaultProviders {
     /**
      * Returns a source from specified url.
      *
-     * Format of the url is auto-detected from the url extension.
+     * The format of the url is auto-detected from the url extension.
      * Supported url formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -142,7 +142,7 @@ object DefaultProviders {
     /**
      * Returns a source from specified url string.
      *
-     * Format of the url is auto-detected from the url extension.
+     * The format of the url is auto-detected from the url extension.
      * Supported url formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -162,7 +162,7 @@ object DefaultProviders {
 }
 
 /**
- * Providers for map of variant formats.
+ * Providers for the map of variant formats.
  */
 object DefaultMapProviders {
     /**

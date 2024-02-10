@@ -138,6 +138,29 @@ open class BaseConfig(
             (node as ItemNode).item to name
         } + (parent?.itemWithNames ?: listOf())
 
+    override fun toTree(): TreeNode {
+        return ContainerNode(mutableMapOf()).apply {
+            lock.read {
+                itemWithNames.forEach { (item, name) ->
+                    val value = try {
+                        getOrNull(item, errorWhenNotFound = true).toCompatibleValue(mapper)
+                    } catch (_: UnsetValueException) {
+                        return@forEach
+                    }
+                    set(name, value.asTree(item.description))
+                }
+                // Add spec descriptions
+                specs.forEach { spec ->
+                    val path = spec.prefix.toPath()
+                    val node = tree.getOrNull(path)
+                    if (node != null && node.comments.isNotEmpty()) {
+                        getOrNull(path)?.comments = node.comments
+                    }
+                }
+            }
+        }
+    }
+
     override fun toMap(): Map<String, Any> {
         return lock.read {
             itemWithNames.map { (item, name) ->
@@ -175,7 +198,6 @@ open class BaseConfig(
     ): Any? {
         val valueState = lock.read { nodeByItem[item]?.value }
         if (valueState != null) {
-            @Suppress("UNCHECKED_CAST")
             when (valueState) {
                 is ValueState.Unset ->
                     if (errorWhenNotFound) {
@@ -229,13 +251,13 @@ open class BaseConfig(
                 }
             }
         } else {
-            if (parent != null) {
-                return parent!!.getOrNull(item, errorWhenNotFound, errorWhenGetDefault, lazyContext)
+            return if (parent != null) {
+                parent!!.getOrNull(item, errorWhenNotFound, errorWhenGetDefault, lazyContext)
             } else {
                 if (errorWhenNotFound) {
                     throw NoSuchItemException(item)
                 } else {
-                    return null
+                    null
                 }
             }
         }
@@ -318,15 +340,15 @@ open class BaseConfig(
         containsInLayer(path) || (parent?.contains(path) ?: false)
 
     override fun nameOf(item: Item<*>): String {
-        return nameByItem[item] ?: {
-            val name = lock.read { tree.firstPath { it is ItemNode && it.item == item } }?.name
-            if (name != null) {
-                nameByItem[item] = name
-                name
+        return nameByItem[item] ?: run {
+            val name1 = lock.read { tree.firstPath { it is ItemNode && it.item == item } }?.name
+            if (name1 != null) {
+                nameByItem[item] = name1
+                name1
             } else {
                 parent?.nameOf(item) ?: throw NoSuchItemException(item)
             }
-        }()
+        }
     }
 
     open fun addBeforeSetFunction(beforeSetFunction: (item: Item<*>, value: Any?) -> Unit) {
@@ -638,6 +660,13 @@ open class BaseConfig(
                     throw RepeatedItemException(name)
                 }
             }
+            val description = spec.description
+            if (description.isNotEmpty()) {
+                val node = this.tree.getOrNull(spec.prefix.toPath())
+                if (node != null && node.comments.isEmpty()) {
+                    node.comments = description
+                }
+            }
             spec.innerSpecs.forEach { innerSpec ->
                 addSpec(innerSpec.withPrefix(spec.prefix))
             }
@@ -730,13 +759,15 @@ open class BaseConfig(
         return "Config(items=${toMap()})"
     }
 
-    class ItemNode(override var value: ValueState, val item: Item<*>) : ValueNode
+    class ItemNode(override var value: ValueState, val item: Item<*>) : ValueNode {
+        override var comments = this.item.description
+    }
 
     data class Value<T>(var value: T)
 
     sealed class ValueState {
-        object Unset : ValueState()
-        object Null : ValueState()
+        data object Unset : ValueState()
+        data object Null : ValueState()
         data class Lazy<T>(val thunk: (config: ItemContainer) -> T) : ValueState()
         data class Value(val value: Any) : ValueState()
         data class Default(val value: Any?) : ValueState()

@@ -15,22 +15,25 @@
  * limitations under the License.
  */
 
+@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+
 package com.nhubbard.konfig.snippet
 
 import com.nhubbard.konfig.Config
 import com.nhubbard.konfig.ConfigSpec
 
-fun main(args: Array<String>) {
+fun main() {
     val config = Config()
     config.addSpec(Server)
+    var host: String
     run {
-        val host = config[Server.host]
+        host = config[Server.host]
     }
     run {
-        val host = config.get<String>("server.host")
+        host = config["server.host"]
     }
     run {
-        val host = config<String>("server.host")
+        host = config("server.host")
     }
     config.contains(Server.host)
     // or
@@ -52,7 +55,7 @@ fun main(args: Array<String>) {
         handler.cancel()
     }
     run {
-        val handler = Server.host.beforeSet { config, value -> println("the host will change to $value") }
+        val handler = Server.host.beforeSet { _, value -> println("the host will change to $value") }
         handler.cancel()
     }
     run {
@@ -60,7 +63,7 @@ fun main(args: Array<String>) {
         handler.cancel()
     }
     run {
-        val handler = Server.host.afterSet { config, value -> println("the host has changed to $value") }
+        val handler = Server.host.afterSet { _, value -> println("the host has changed to $value") }
         handler.cancel()
     }
     run {

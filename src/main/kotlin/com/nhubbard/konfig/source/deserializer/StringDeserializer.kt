@@ -21,9 +21,12 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.deser.impl.NullsConstantProvider
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer as JacksonStringDeserializer
 
 object StringDeserializer : JacksonStringDeserializer() {
+    private fun readResolve(): Any = StringDeserializer
+
     override fun _deserializeFromArray(p: JsonParser, ctxt: DeserializationContext): String? {
         val t = p.nextToken()
         if (t == JsonToken.END_ARRAY && ctxt.isEnabled(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT)) {
@@ -51,7 +54,7 @@ object StringDeserializer : JacksonStringDeserializer() {
             val str = if (t == JsonToken.VALUE_STRING) {
                 p.text
             } else {
-                _parseString(p, ctxt)
+                _parseString(p, ctxt, NullsConstantProvider.nuller())
             }
             if (sb.isEmpty()) {
                 sb.append(str)

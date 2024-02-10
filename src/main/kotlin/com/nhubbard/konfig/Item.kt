@@ -25,8 +25,8 @@ import com.fasterxml.jackson.databind.type.TypeFactory
  *
  * Item can be associated with value in config, containing metadata for the value.
  * The metadata for value includes name, path, type, description and so on.
- * Item can be used as key to operate value in config, guaranteeing type safety.
- * There are three kinds of item: [required item][RequiredItem], [optional item][OptionalItem]
+ * The item can be used as a key to operate on a value in config, guaranteeing type safety.
+ * There are three kinds of items: [required item][RequiredItem], [optional item][OptionalItem]
  * and [lazy item][LazyItem].
  *
  * @param T type of value that can be associated with this item.
@@ -65,7 +65,6 @@ sealed class Item<T>(
     /**
      * Type of value that can be associated with this item.
      */
-    @Suppress("LeakingThis")
     val type: JavaType = type ?: TypeFactory.defaultInstance().constructType(this::class.java)
         .findSuperType(Item::class.java).bindings.typeParameters[0]
 
@@ -184,7 +183,7 @@ interface Handler : AutoCloseable {
 typealias Path = List<String>
 
 /**
- * Returns corresponding item name of the item path.
+ * Returns the corresponding item name of the item path.
  *
  * @receiver item path
  * @return item name
@@ -192,7 +191,7 @@ typealias Path = List<String>
 val Path.name: String get() = joinToString(".")
 
 /**
- * Returns corresponding item path of the item name.
+ * Returns the corresponding item path of the item name.
  *
  * @receiver item name
  * @return item path
@@ -237,8 +236,8 @@ open class RequiredItem<T> @JvmOverloads constructor(
 /**
  * Optional item with default value.
  *
- * Before associated with specified value, default value will be returned when accessing.
- * After associated with specified value, the specified value will be returned when accessing.
+ * Before being associated with the specified value, the default value will be returned when accessing.
+ * After being associated with the specified value, the specified value will be returned when accessing.
  */
 open class OptionalItem<T> @JvmOverloads constructor(
     spec: Spec,
@@ -264,9 +263,9 @@ open class OptionalItem<T> @JvmOverloads constructor(
  * Lazy item evaluated value every time from thunk before associated with specified value.
  *
  * Before associated with specified value, value evaluated from thunk will be returned when accessing.
- * After associated with specified value, the specified value will be returned when accessing.
- * Returned value of the thunk will not be cached. The thunk will be evaluated every time
- * when needed to reflect modifying of other values in config.
+ * After being associated with the specified value, the specified value will be returned when accessing.
+ * The returned value of the thunk will not be cached.
+ * The thunk will be evaluated every time when needed to reflect modifying of other values in config.
  */
 open class LazyItem<T> @JvmOverloads constructor(
     spec: Spec,

@@ -29,6 +29,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor
 import org.yaml.snakeyaml.nodes.Node
 import org.yaml.snakeyaml.nodes.ScalarNode
 import org.yaml.snakeyaml.nodes.Tag
+import java.io.Closeable
 import java.io.InputStream
 import java.io.Reader
 
@@ -38,22 +39,24 @@ import java.io.Reader
 @RegisterExtension(["yml", "yaml"])
 object YamlProvider : Provider {
     override fun reader(reader: Reader): Source {
-        val yaml = Yaml(YamlConstructor())
-        val value = yaml.load<Any>(reader)
-        if (value == "null") {
-            return mapOf<String, Any>().asSource("YAML")
-        } else {
-            return value.asSource("YAML")
-        }
+        return load(reader)
     }
 
     override fun inputStream(inputStream: InputStream): Source {
+        return load(inputStream)
+    }
+
+    private fun load(input: Any): Source {
         val yaml = Yaml(YamlConstructor())
-        val value = yaml.load<Any>(inputStream)
-        if (value == "null") {
-            return mapOf<String, Any>().asSource("YAML")
+        val value: Any = when (input) {
+            is Reader -> yaml.load<Any>(input)
+            is InputStream -> yaml.load(input)
+            else -> error("This is an impossible condition.")
+        }
+        return if (value == "null") {
+            mapOf<String, Any>().asSource("YAML")
         } else {
-            return value.asSource("YAML")
+            value.asSource("YAML")
         }
     }
 

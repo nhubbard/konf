@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
+
 package com.nhubbard.konfig.snippet
 
 import com.nhubbard.konfig.Config
@@ -23,17 +25,18 @@ import com.nhubbard.konfig.source.base.toHierarchicalMap
 import com.nhubbard.konfig.source.json.toJson
 import com.nhubbard.konfig.tempFile
 
-fun main(args: Array<String>) {
+fun main() {
     val config = Config { addSpec(Server) }
     config[Server.tcpPort] = 1000
+    var map: Map<String, Any>
     run {
-        val map = config.toMap()
+        map = config.toMap()
     }
     run {
-        val map = config.toHierarchicalMap()
+        map = config.toHierarchicalMap()
     }
     run {
-        val map = config.toFlatMap()
+        map = config.toFlatMap()
     }
     val file = tempFile(suffix = ".json")
     config.toJson.toFile(file)

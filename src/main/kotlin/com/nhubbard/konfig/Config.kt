@@ -32,11 +32,11 @@ import kotlin.reflect.KProperty
  * Config containing items and associated values.
  *
  * Config contains items, which can be loaded with [addSpec].
- * Config contains values, each of which is associated with corresponding item.
+ * Config contains values, each of which is associated with the corresponding item.
  * Values can be loaded from [source][Source] with [withSource] or [from].
  *
  * Config contains read-write access operations for item.
- * Items in config is in one of three states:
+ * The items in config are in one of three states:
  * - Unset. Item has not associated value in this state.
  *   Use [unset] to change item to this state.
  * - Unevaluated. Item is lazy and the associated value will be evaluated when accessing.
@@ -49,7 +49,7 @@ import kotlin.reflect.KProperty
  * The forked config is called child config, and the original config is called parent config.
  * A config without parent config is called root config. The new layer added by child config
  * is called facade layer.
- * Config with ancestor configs has multiple layers. All set operation is executed in facade layer
+ * Config with ancestor configs has multiple layers. All set operations are executed in the facade layer
  * of config.
  * Descendant config inherits items and values in ancestor configs, and can override values for
  * items in ancestor configs. Overridden values in config will affect itself and its descendant
@@ -57,11 +57,11 @@ import kotlin.reflect.KProperty
  * ancestor configs too. [invoke] can be used to create a root config, and [withLayer] can be used
  * to create a child config from specified config.
  *
- * All methods in Config is thread-safe.
+ * All methods in Config are thread-safe.
  */
 interface Config : ItemContainer {
     /**
-     * Associate item with specified value without type checking.
+     * Associate item with the specified value without type checking.
      *
      * @param item config item
      * @param value associated value
@@ -77,7 +77,7 @@ interface Config : ItemContainer {
     operator fun <T> set(item: Item<T>, value: T)
 
     /**
-     * Find item with specified name, and associate it with specified value.
+     * Find the item with specified name, and associate it with specified value.
      *
      * @param name item name
      * @param value associated value
@@ -102,14 +102,14 @@ interface Config : ItemContainer {
     fun <T> lazySet(name: String, thunk: (config: ItemContainer) -> T)
 
     /**
-     * Discard associated value of specified item.
+     * Discard the associated value of specified item.
      *
      * @param item config item
      */
     fun unset(item: Item<*>)
 
     /**
-     * Discard associated value of item with specified name.
+     * Discard the associated value of item with specified name.
      *
      * @param name item name
      */
@@ -167,12 +167,12 @@ interface Config : ItemContainer {
      * Returns a property that can read/set associated value for item with specified name.
      *
      * @param name item name
-     * @return a property that can read/set associated value for item with specified name
+     * @return a property that can read/set associated value for item with the specified name
      */
     fun <T> property(name: String): ReadWriteProperty<Any?, T>
 
     /**
-     * Name of facade layer of config.
+     * The name of the config facade layer.
      *
      * Layer name provides information for facade layer in a cascading config.
      */
@@ -234,8 +234,8 @@ interface Config : ItemContainer {
     /**
      * Load item into facade layer with the specified prefix.
      *
-     * Same item cannot be added twice.
-     * The item cannot have same qualified name with existed items in config.
+     * The same item cannot be added twice.
+     * The item cannot have the same qualified name with existed items in config.
      *
      * @param item config item
      * @param prefix prefix for the config item
@@ -243,10 +243,10 @@ interface Config : ItemContainer {
     fun addItem(item: Item<*>, prefix: String = "")
 
     /**
-     * Load items in specified config spec into facade layer.
+     * Load items in specified config spec into the facade layer.
      *
-     * Same config spec cannot be added twice.
-     * All items in specified config spec cannot have same qualified name with existed items in config.
+     * The same config spec cannot be added twice.
+     * All items in specified config spec cannot have the same qualified name as existing items in config.
      *
      * @param spec config spec
      */
@@ -269,20 +269,20 @@ interface Config : ItemContainer {
     fun withLayer(name: String = ""): Config
 
     /**
-     * Returns a child config containing values from specified source.
+     * Returns a child config containing values from the specified source.
      *
-     * Values from specified source will be loaded into facade layer of the returned child config
+     * Values from the specified source will be loaded into the facade layer of the returned child config
      * without affecting this config.
      *
      * @param source config source
-     * @return a child config containing value from specified source
+     * @return a child config containing value from the specified source
      */
     fun withSource(source: Source): Config
 
     /**
      * Returns a child config containing values loaded by specified trigger.
      *
-     * Values loaded by specified trigger will be loaded into facade layer of
+     * Values loaded by specified trigger will be loaded into the facade layer of
      * the returned child config without affecting this config.
      *
      * @param description trigger description
@@ -316,7 +316,7 @@ interface Config : ItemContainer {
     /**
      * Returns default loaders for this config.
      *
-     * It is a fluent API for loading source from default loaders.
+     * It is a fluent API for loading sources from default loaders.
      *
      * @return default loaders for this config
      */
@@ -326,7 +326,7 @@ interface Config : ItemContainer {
     /**
      * Returns default loaders for this config.
      *
-     * It is a fluent API for loading source from default loaders.
+     * It is a fluent API for loading sources from default loaders.
      */
     val from: DefaultLoaders get() = DefaultLoaders(this)
 
@@ -338,12 +338,21 @@ interface Config : ItemContainer {
     /**
      * Returns a map in key-value format for this config.
      *
-     * The returned map contains all items in this config, with item name as key and
+     * The returned map contains all items in this config, with item name as the key and
      * associated value as value.
-     * This map can be loaded into config as [com.uchuhimo.konf.source.base.KVSource] using
+     * This map can be loaded into config as [com.nhubbard.konfig.source.base.KVSource] using
      * `config.from.map.kv(map)`.
      */
     fun toMap(): Map<String, Any>
+
+    /**
+     * Convert this config to a tree node.
+     *
+     * @return a tree node
+     */
+    fun toTree(): TreeNode {
+        return toMap().kvToTree()
+    }
 
     /**
      * Enables the specified feature and returns this config.
@@ -388,17 +397,17 @@ interface Config : ItemContainer {
 }
 
 /**
- * Returns a property that can read/set associated value casted from config.
+ * Returns a property that can read/set, associated with the value cast from config.
  *
- * @return a property that can read/set associated value casted from config
+ * @return a property that can read/set associated with the value cast from config
  */
 inline fun <reified T> Config.cast() =
     object : RequiredConfigProperty<T>(this.withPrefix("root").withLayer(), name = "root") {}
 
 /**
- * Returns a value casted from config.
+ * Returns a value cast from config.
  *
- * @return a value casted from config
+ * @return a value cast from config
  */
 inline fun <reified T> Config.toValue(): T {
     val value by cast<T>()
@@ -445,7 +454,7 @@ open class RequiredConfigProperty<T>(
 }
 
 /**
- * Returns a property that can read/set associated value for specified optional item.
+ * Returns a property that can read/set associated value for the specified optional item.
  *
  * @param default default value returned before associating this item with specified value
  * @param prefix prefix for the config item
@@ -488,7 +497,7 @@ open class OptionalConfigProperty<T>(
 }
 
 /**
- * Returns a property that can read/set associated value for specified lazy item.
+ * Returns a property that can read/set associated value for the specified lazy item.
  *
  * @param prefix prefix for the config item
  * @param name item name without prefix
@@ -530,11 +539,11 @@ open class LazyConfigProperty<T>(
     }
 }
 
-/**
- * Convert the config to a tree node.
- *
- * @return a tree node
- */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@Deprecated(
+    "Use method in Config.",
+    replaceWith = ReplaceWith("toTree()")
+)
 fun Config.toTree(): TreeNode {
-    return toMap().kvToTree()
+    return toTree()
 }

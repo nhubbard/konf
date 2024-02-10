@@ -21,6 +21,6 @@ import com.nhubbard.konfig.source.DefaultLoaders
 import com.nhubbard.konfig.source.Loader
 
 /**
- * Loader for TOML source.
+ * Loader for the TOML source.
  */
 val DefaultLoaders.toml get() = Loader(config, TomlProvider.orMapped())

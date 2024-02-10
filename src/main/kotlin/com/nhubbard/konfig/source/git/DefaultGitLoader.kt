@@ -29,7 +29,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Returns a child config containing values from a specified git repository.
  *
- * Format of the url is auto-detected from the url extension.
+ * The format of the url is auto-detected from the url extension.
  * Supported url formats and the corresponding extensions:
  * - HOCON: conf
  * - JSON: json
@@ -38,16 +38,15 @@ import kotlin.coroutines.CoroutineContext
  * - XML: xml
  * - YAML: yml, yaml
  *
- * Throws [UnsupportedExtensionException] if the url extension is unsupported.
+ * Throws [com.nhubbard.konfig.source.UnsupportedExtensionException] if the url extension is unsupported.
  *
  * @param repo git repository
  * @param file file in the git repository
  * @param dir local directory of the git repository
  * @param branch the initial branch
  * @param optional whether the source is optional
- * @param action additional action when cloning/pulling
  * @return a child config containing values from a specified git repository
- * @throws UnsupportedExtensionException
+ * @throws com.nhubbard.konfig.source.UnsupportedExtensionException
  */
 fun DefaultLoaders.git(
     repo: String,
@@ -71,19 +70,19 @@ fun DefaultLoaders.git(
  * - XML: xml
  * - YAML: yml, yaml
  *
- * Throws [UnsupportedExtensionException] if the url extension is unsupported.
+ * Throws [com.nhubbard.konfig.source.UnsupportedExtensionException] if the url extension is unsupported.
  *
  * @param repo git repository
  * @param file file in the git repository
  * @param dir local directory of the git repository
  * @param branch the initial branch
  * @param period reload period. The default value is 1.
- * @param unit time unit of reload period. The default value is [TimeUnit.MINUTES].
+ * @param unit time unit of the reload period. The default value is [TimeUnit.MINUTES].
  * @param context context of the coroutine. The default value is [Dispatchers.Default].
  * @param optional whether the source is optional
  * @param onLoad function invoked after the updated git file is loaded
  * @return a child config containing values from a specified git repository
- * @throws UnsupportedExtensionException
+ * @throws com.nhubbard.konfig.source.UnsupportedExtensionException
  */
 fun DefaultLoaders.watchGit(
     repo: String,

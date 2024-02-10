@@ -73,7 +73,7 @@ interface ItemContainer : Iterable<Item<*>> {
     override operator fun iterator(): Iterator<Item<*>>
 
     /**
-     * Whether this item container contains specified item or not.
+     * Whether this item container contains the specified item or not.
      *
      * @param item config item
      * @return `true` if this item container contains specified item, `false` otherwise
@@ -121,7 +121,7 @@ interface ItemContainer : Iterable<Item<*>> {
         }
 
     /**
-     * List of qualified names of items in this item container.
+     * List of qualified item names in this item container.
      */
     val nameOfItems: List<String> get() = itemWithNames.map { it.second }
 

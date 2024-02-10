@@ -18,16 +18,9 @@
 package com.nhubbard.konfig
 
 import java.io.File
-
-/**
- * Throws [UnsupportedOperationException].
- *
- * @throws UnsupportedOperationException
- */
-@Suppress("NOTHING_TO_INLINE")
-inline fun unsupported(): Nothing {
-    throw UnsupportedOperationException()
-}
+import java.nio.file.Files.createTempDirectory
+import java.nio.file.Paths
+import kotlin.io.path.createTempFile
 
 internal fun getUnits(s: String): String {
     var i = s.length - 1
@@ -126,9 +119,17 @@ fun tempDirectory(
     suffix: String? = null,
     directory: File? = null
 ): File {
-    return createTempDir(prefix, suffix, directory)
+    val dirPath = directory?.toPath() ?: Paths.get(System.getProperty("java.io.tmpdir"))
+    val tempDir = createTempDirectory(dirPath, prefix + (suffix ?: ""))
+    return tempDir.toFile()
 }
 
-fun tempFile(prefix: String = "tmp", suffix: String? = null, directory: File? = null): File {
-    return createTempFile(prefix, suffix, directory)
+fun tempFile(
+    prefix: String = "tmp",
+    suffix: String? = null,
+    directory: File? = null
+): File {
+    val dirPath = directory?.toPath() ?: Paths.get(System.getProperty("java.io.tmpdir"))
+    val tempFile = createTempFile(dirPath, prefix, suffix ?: "")
+    return tempFile.toFile()
 }

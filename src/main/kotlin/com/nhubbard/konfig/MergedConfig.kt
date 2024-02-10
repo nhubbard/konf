@@ -160,15 +160,15 @@ open class MergedConfig(val fallback: BaseConfig, val facade: BaseConfig) :
                         return fallback.getOrNull(item, errorWhenNotFound, errorWhenGetDefault, lazyContext)
                     }
                     is GetDefaultValueException -> {
-                        try {
-                            return fallback.getOrNull(item, errorWhenNotFound, errorWhenGetDefault, lazyContext)
+                        return try {
+                            fallback.getOrNull(item, errorWhenNotFound, errorWhenGetDefault, lazyContext)
                         } catch (ex: Exception) {
                             when (ex) {
                                 is UnsetValueException -> {
                                     if (errorWhenGetDefault) {
                                         throw GetDefaultValueException(item)
                                     } else {
-                                        return (item as OptionalItem).default
+                                        (item as OptionalItem).default
                                     }
                                 }
                                 else -> throw ex

@@ -28,8 +28,8 @@ import kotlin.reflect.KProperty
  *
  * Config spec describes a group of items with common prefix, which can be loaded into config
  * together using [Config.addSpec].
- * Config spec also provides convenient API to specify item in it without hand-written object
- * declaration.
+ * Config spec also provides a convenient API to specify items in it without hand-crafted object
+ * declarations.
  *
  * @see Config
  */
@@ -37,14 +37,20 @@ interface Spec {
     /**
      * Common prefix for items in this config spec.
      *
-     * An empty prefix means names of items in this config spec are unqualified.
+     * An empty prefix means the names of items in this config spec are unqualified.
      */
     val prefix: String
 
     /**
+     * The description of the spec.
+     */
+    val description: String
+        get() = ""
+
+    /**
      * Qualify item name with prefix of this config spec.
      *
-     * When prefix is empty, original item name will be returned.
+     * When the prefix is empty, the original item name will be returned.
      *
      * @param item the config item
      * @return qualified item name
@@ -164,15 +170,28 @@ interface Spec {
         return if (newPrefix.isEmpty()) {
             this
         } else {
-            ConfigSpec((newPrefix + prefix).name, items, innerSpecs)
+            ConfigSpec((newPrefix + prefix).name, items, innerSpecs, description)
         }
+    }
+
+    /**
+     * Returns config spec with the specified description.
+     *
+     * @param description description
+     * @return config spec with the specified description
+     */
+    fun withDescription(description: String): Spec {
+        if (this.description == description)
+            return this
+        return ConfigSpec(prefix, items, innerSpecs, description)
     }
 
     companion object {
         /**
-         * A dummy implementation for [Spec].
+         * A placeholder implementation for [Spec].
          *
-         * It will swallow all items added to it. Used for items belonged to no config spec.
+         * It will swallow all items added to it.
+         * Used for items that don't belong to a config spec.
          */
         val dummy: Spec = object : Spec {
             override val prefix: String = ""

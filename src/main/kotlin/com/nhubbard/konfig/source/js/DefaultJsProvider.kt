@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnusedReceiverParameter", "unused")
+
 package com.nhubbard.konfig.source.js
 
 import com.nhubbard.konfig.source.DefaultProviders

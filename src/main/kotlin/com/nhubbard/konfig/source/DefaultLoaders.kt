@@ -54,7 +54,7 @@ class DefaultLoaders(
     fun Provider.orMapped(): Provider =
         if (transform != null) this.map(transform) else this
 
-    fun Source.orMapped(): Source = transform?.invoke(this) ?: this
+    private fun Source.orMapped(): Source = transform?.invoke(this) ?: this
 
     /**
      * Returns default loaders applied the given [transform] function.
@@ -381,7 +381,7 @@ class MapLoader(
      */
     private val transform: ((Source) -> Source)? = null
 ) {
-    fun Source.orMapped(): Source = transform?.invoke(this) ?: this
+    private fun Source.orMapped(): Source = transform?.invoke(this) ?: this
 
     /**
      * Returns a child config containing values from specified hierarchical map.

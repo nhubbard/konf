@@ -34,7 +34,7 @@ import java.io.File
  * - XML: xml
  * - YAML: yml, yaml
  *
- * Throws [UnsupportedExtensionException] if the url extension is unsupported.
+ * Throws [com.nhubbard.konfig.source.UnsupportedExtensionException] if the url extension is unsupported.
  *
  * @param repo git repository
  * @param file file in the git repository
@@ -42,7 +42,7 @@ import java.io.File
  * @param branch the initial branch
  * @param optional whether the source is optional
  * @return a source from a specified git repository
- * @throws UnsupportedExtensionException
+ * @throws com.nhubbard.konfig.source.UnsupportedExtensionException
  */
 fun DefaultProviders.git(
     repo: String,

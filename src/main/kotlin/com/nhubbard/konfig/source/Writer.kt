@@ -22,11 +22,11 @@ import java.io.OutputStream
 import java.io.StringWriter
 
 /**
- * Save config to various output format.
+ * Save config to various output formats.
  */
 interface Writer {
     /**
-     * Save to specified writer.
+     * Save to the specified writer.
      *
      * @param writer specified writer for writing character streams
      */
@@ -54,7 +54,7 @@ interface Writer {
     }
 
     /**
-     * Save to specified file path.
+     * Save to the specified file path.
      *
      * @param file specified file path
      * @param mkdirs create all parent folders before writing
@@ -69,7 +69,7 @@ interface Writer {
     fun toText(): String = StringWriter().apply { toWriter(this) }.toString()
 
     /**
-     * Save to byte array.
+     * Save to a byte array.
      *
      * @return byte array
      */

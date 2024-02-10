@@ -47,40 +47,40 @@ class MergedSource(val facade: Source, val fallback: Source) : Source {
     override fun substituted(root: Source, enabled: Boolean, errorWhenUndefined: Boolean): Source {
         val substitutedFacade = facade.substituted(root, enabled, errorWhenUndefined)
         val substitutedFallback = fallback.substituted(root, enabled, errorWhenUndefined)
-        if (substitutedFacade === facade && substitutedFallback === fallback) {
-            return this
+        return if (substitutedFacade === facade && substitutedFallback === fallback) {
+            this
         } else {
-            return MergedSource(substitutedFacade, substitutedFallback)
+            MergedSource(substitutedFacade, substitutedFallback)
         }
     }
 
     override fun lowercased(enabled: Boolean): Source {
         val lowercasedFacade = facade.lowercased(enabled)
         val lowercasedFallback = fallback.lowercased(enabled)
-        if (lowercasedFacade === facade && lowercasedFallback === fallback) {
-            return this
+        return if (lowercasedFacade === facade && lowercasedFallback === fallback) {
+            this
         } else {
-            return MergedSource(lowercasedFacade, lowercasedFallback)
+            MergedSource(lowercasedFacade, lowercasedFallback)
         }
     }
 
     override fun littleCamelCased(enabled: Boolean): Source {
         val littleCamelCasedFacade = facade.littleCamelCased(enabled)
         val littleCamelCasedFallback = fallback.littleCamelCased(enabled)
-        if (littleCamelCasedFacade === facade && littleCamelCasedFallback === fallback) {
-            return this
+        return if (littleCamelCasedFacade === facade && littleCamelCasedFallback === fallback) {
+            this
         } else {
-            return MergedSource(littleCamelCasedFacade, littleCamelCasedFallback)
+            MergedSource(littleCamelCasedFacade, littleCamelCasedFallback)
         }
     }
 
     override fun normalized(lowercased: Boolean, littleCamelCased: Boolean): Source {
         val normalizedFacade = facade.normalized(lowercased, littleCamelCased)
         val normalizedFallback = fallback.normalized(lowercased, littleCamelCased)
-        if (normalizedFacade === facade && normalizedFallback === fallback) {
-            return this
+        return if (normalizedFacade === facade && normalizedFallback === fallback) {
+            this
         } else {
-            return MergedSource(normalizedFacade, normalizedFallback)
+            MergedSource(normalizedFacade, normalizedFallback)
         }
     }
 

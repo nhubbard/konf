@@ -27,16 +27,17 @@ import com.fasterxml.jackson.module.kotlin.isKotlinClass
 open class ConfigSpec @JvmOverloads constructor(
     prefix: String? = null,
     items: Set<Item<*>> = mutableSetOf(),
-    innerSpecs: Set<Spec> = mutableSetOf()
+    innerSpecs: Set<Spec> = mutableSetOf(),
+    override val description: String = ""
 ) : Spec {
-    final override val prefix: String = prefix ?: {
-        if (javaClass == ConfigSpec::class.java || javaClass.isAnonymousClass) {
+    final override val prefix: String =
+        prefix ?: if (javaClass == ConfigSpec::class.java || javaClass.isAnonymousClass) {
             ""
         } else {
             javaClass.let { clazz ->
                 if (this::class.isCompanion) clazz.declaringClass else clazz
             }.simpleName.let { name ->
-                if (name == null || name.contains('$')) {
+                if (name.contains('$')) {
                     ""
                 } else {
                     name.toLittleCase()
@@ -49,7 +50,6 @@ open class ConfigSpec @JvmOverloads constructor(
                 }
             }
         }
-    }()
 
     init {
         checkPath(this.prefix)

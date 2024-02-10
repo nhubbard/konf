@@ -68,10 +68,9 @@ data class SizeInBytes(
                 )
 
             try {
-                val result: BigInteger
                 // if the string is purely digits, parse as an integer to avoid
                 // possible precision loss; otherwise as a double.
-                result = if (numberString.matches("[0-9]+".toRegex())) {
+                val result = if (numberString.matches("[0-9]+".toRegex())) {
                     units.bytes.multiply(BigInteger(numberString))
                 } else {
                     val resultDecimal = BigDecimal(units.bytes).multiply(BigDecimal(numberString))
