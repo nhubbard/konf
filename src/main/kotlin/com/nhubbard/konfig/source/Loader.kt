@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
 import java.io.Reader
+import java.net.URI
 import java.net.URL
 import java.nio.file.FileSystems
 import java.nio.file.StandardWatchEventKinds
@@ -126,7 +127,7 @@ class Loader(
                 }
                 onLoad?.invoke(newConfig, source)
                 val path = absoluteFile.toPath().parent
-                val isMac = "mac" in System.getProperty("os.name").toLowerCase()
+                val isMac = "mac" in System.getProperty("os.name").lowercase()
                 val watcher = FileSystems.getDefault().newWatchService()
                 path.register(
                     watcher,
@@ -316,7 +317,7 @@ class Loader(
         optional: Boolean = this.optional,
         onLoad: ((config: Config, source: Source) -> Unit)? = null
     ): Config =
-        watchUrl(URL(url), period, unit, context, optional, onLoad)
+        watchUrl(URI(url).toURL(), period, unit, context, optional, onLoad)
 
     /**
      * Returns a child config containing values from specified resource.

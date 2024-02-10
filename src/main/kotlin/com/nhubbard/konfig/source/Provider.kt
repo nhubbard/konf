@@ -22,12 +22,12 @@ import com.nhubbard.konfig.source.json.JsonProvider
 import com.nhubbard.konfig.source.properties.PropertiesProvider
 import org.reflections.ReflectionUtils
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
-import org.reflections.scanners.TypeAnnotationsScanner
+import org.reflections.scanners.Scanners
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.Reader
+import java.net.URI
 import java.net.URL
 import java.util.concurrent.ConcurrentHashMap
 
@@ -163,7 +163,7 @@ interface Provider {
      * @param optional whether this source is optional
      * @return a new source from specified url string
      */
-    fun url(url: String, optional: Boolean = false): Source = url(URL(url), optional)
+    fun url(url: String, optional: Boolean = false): Source = url(URI(url).toURL(), optional)
 
     /**
      * Returns a new source from specified resource.
@@ -254,8 +254,8 @@ interface Provider {
         init {
             val reflections = Reflections(
                 "com.nhubbard.konfig",
-                SubTypesScanner(),
-                TypeAnnotationsScanner()
+                Scanners.SubTypes,
+                Scanners.TypesAnnotated
             )
             val providers = reflections.getSubTypesOf(Provider::class.java)
                 .intersect(reflections.getTypesAnnotatedWith(RegisterExtension::class.java))

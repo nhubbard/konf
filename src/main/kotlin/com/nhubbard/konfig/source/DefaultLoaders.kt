@@ -27,6 +27,7 @@ import com.nhubbard.konfig.source.json.JsonProvider
 import com.nhubbard.konfig.source.properties.PropertiesProvider
 import kotlinx.coroutines.Dispatchers
 import java.io.File
+import java.net.URI
 import java.net.URL
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -293,7 +294,7 @@ class DefaultLoaders(
      * @return a child config containing values from specified url string
      * @throws UnsupportedExtensionException
      */
-    fun url(url: String, optional: Boolean = this.optional): Config = url(URL(url), optional)
+    fun url(url: String, optional: Boolean = this.optional): Config = url(URI(url).toURL(), optional)
 
     /**
      * Returns a child config containing values from specified url,
@@ -360,7 +361,7 @@ class DefaultLoaders(
         context: CoroutineContext = Dispatchers.Default,
         optional: Boolean = this.optional,
         onLoad: ((config: Config, source: Source) -> Unit)? = null
-    ): Config = watchUrl(URL(url), period, unit, context, optional, onLoad)
+    ): Config = watchUrl(URI(url).toURL(), period, unit, context, optional, onLoad)
 }
 
 /**

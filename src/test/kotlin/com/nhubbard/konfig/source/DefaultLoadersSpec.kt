@@ -35,8 +35,8 @@ import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
 import org.jetbrains.spek.subject.itBehavesLike
 import spark.Service
-import java.net.URL
-import java.util.UUID
+import java.net.URI
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object DefaultLoadersSpec : SubjectSpek<DefaultLoaders>({
@@ -93,7 +93,7 @@ object DefaultLoadersSpec : SubjectSpek<DefaultLoaders>({
             service.port(0)
             service.get("/source.properties") { _, _ -> propertiesContent }
             service.awaitInitialization()
-            val config = subject.url(URL("http://localhost:${service.port()}/source.properties"))
+            val config = subject.url(URI("http://localhost:${service.port()}/source.properties").toURL())
             it("should load as auto-detected URL format") {
                 assertThat(config[item], equalTo("properties"))
             }
@@ -213,7 +213,7 @@ object DefaultLoadersSpec : SubjectSpek<DefaultLoaders>({
             service.get("/source.properties") { _, _ -> content }
             service.awaitInitialization()
             val url = "http://localhost:${service.port()}/source.properties"
-            val config = subject.watchUrl(URL(url), period = 1, unit = TimeUnit.SECONDS, context = Dispatchers.Sequential)
+            val config = subject.watchUrl(URI(url).toURL(), period = 1, unit = TimeUnit.SECONDS, context = Dispatchers.Sequential)
             val originalValue = config[item]
             content = propertiesContent.replace("properties", "newValue")
             runBlocking(Dispatchers.Sequential) {
@@ -234,7 +234,7 @@ object DefaultLoadersSpec : SubjectSpek<DefaultLoaders>({
             service.get("/source.properties") { _, _ -> content }
             service.awaitInitialization()
             val url = "http://localhost:${service.port()}/source.properties"
-            val config = subject.watchUrl(URL(url), context = Dispatchers.Sequential)
+            val config = subject.watchUrl(URI(url).toURL(), context = Dispatchers.Sequential)
             val originalValue = config[item]
             content = propertiesContent.replace("properties", "newValue")
             runBlocking(Dispatchers.Sequential) {

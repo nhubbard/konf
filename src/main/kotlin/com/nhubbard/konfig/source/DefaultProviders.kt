@@ -24,6 +24,7 @@ import com.nhubbard.konfig.source.env.EnvProvider
 import com.nhubbard.konfig.source.json.JsonProvider
 import com.nhubbard.konfig.source.properties.PropertiesProvider
 import java.io.File
+import java.net.URI
 import java.net.URL
 
 /**
@@ -157,7 +158,7 @@ object DefaultProviders {
      * @return a source from specified url string
      * @throws UnsupportedExtensionException
      */
-    fun url(url: String, optional: Boolean = false): Source = url(URL(url), optional)
+    fun url(url: String, optional: Boolean = false): Source = url(URI(url).toURL(), optional)
 }
 
 /**

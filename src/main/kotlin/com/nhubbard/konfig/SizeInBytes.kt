@@ -123,12 +123,12 @@ data class SizeInBytes(
             ZEBIBYTES("zebi", Radix.KIBI, 7),
             YOBIBYTES("yobi", Radix.KIBI, 8);
 
-            internal val bytes: BigInteger = BigInteger.valueOf(radix.toInt().toLong()).pow(power)
+            val bytes: BigInteger = BigInteger.valueOf(radix.toInt().toLong()).pow(power)
 
             companion object {
 
                 private val unitsMap = mutableMapOf<String, MemoryUnit>().apply {
-                    for (unit in MemoryUnit.values()) {
+                    for (unit in MemoryUnit.entries) {
                         put(unit.prefix + "byte", unit)
                         put(unit.prefix + "bytes", unit)
                         if (unit.prefix.isEmpty()) {
@@ -137,7 +137,7 @@ data class SizeInBytes(
                             put("", unit) // no unit specified means bytes
                         } else {
                             val first = unit.prefix.substring(0, 1)
-                            val firstUpper = first.toUpperCase()
+                            val firstUpper = first.uppercase()
                             when (unit.radix) {
                                 Radix.KILO -> {
                                     if (unit.power == 1) {
