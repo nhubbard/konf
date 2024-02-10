@@ -61,7 +61,7 @@ fun DefaultLoaders.git(
  * Returns a child config containing values from a specified git repository,
  * and reloads values periodically.
  *
- * Format of the url is auto-detected from the url extension.
+ * The format of the url is auto-detected from the url extension.
  * Supported url formats and the corresponding extensions:
  * - HOCON: conf
  * - JSON: json

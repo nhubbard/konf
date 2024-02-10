@@ -24,7 +24,7 @@ fun main() {
     config[Server.tcpPort] = 1000
     // fork from parent config
     val childConfig = config.withLayer("child")
-    // child config inherit values from parent config
+    // The child config inherits values from parent config
     check(childConfig[Server.tcpPort] == 1000)
     // modifications in parent config affect values in child config
     config[Server.tcpPort] = 2000

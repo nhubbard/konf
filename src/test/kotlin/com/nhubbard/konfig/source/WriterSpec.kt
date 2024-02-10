@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.nhubbard.konfig.source
 
 import com.natpryce.hamkrest.assertion.assertThat

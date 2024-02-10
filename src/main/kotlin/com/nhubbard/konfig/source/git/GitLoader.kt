@@ -54,7 +54,7 @@ fun Loader.git(
  * @param dir local directory of the git repository
  * @param branch the initial branch
  * @param period reload period. The default value is 1.
- * @param unit time unit of reload period. The default value is [TimeUnit.MINUTES].
+ * @param unit time unit of the reload period. The default value is [TimeUnit.MINUTES].
  * @param context context of the coroutine. The default value is [Dispatchers.Default].
  * @param optional whether the source is optional
  * @param onLoad function invoked after the updated git file is loaded

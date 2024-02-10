@@ -25,7 +25,7 @@ import java.io.File
 /**
  * Returns a source from a specified git repository.
  *
- * Format of the url is auto-detected from the url extension.
+ * The format of the url is auto-detected from the url extension.
  * Supported url formats and the corresponding extensions:
  * - HOCON: conf
  * - JSON: json

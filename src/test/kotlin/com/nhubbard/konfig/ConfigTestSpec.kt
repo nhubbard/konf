@@ -206,7 +206,7 @@ fun SubjectProviderDsl<Config>.configTestSpec(prefix: String = "network.buffer")
             }
             on("add repeated name") {
                 val newSpec = ConfigSpec(prefix).apply {
-                    @Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
+                    @Suppress("NAME_SHADOWING")
                     val size by required<Int>()
                 }
                 it("should throw NameConflictException") {
@@ -215,7 +215,6 @@ fun SubjectProviderDsl<Config>.configTestSpec(prefix: String = "network.buffer")
             }
             on("add conflict name, which is prefix of existed name") {
                 val newSpec = ConfigSpec().apply {
-                    @Suppress("UNUSED_VARIABLE")
                     val buffer by required<Int>()
                 }
                 it("should throw NameConflictException") {
@@ -231,7 +230,6 @@ fun SubjectProviderDsl<Config>.configTestSpec(prefix: String = "network.buffer")
             }
             on("add conflict name, and an existed name is prefix of it") {
                 val newSpec = ConfigSpec(qualify(type.name)).apply {
-                    @Suppress("UNUSED_VARIABLE")
                     val subType by required<Int>()
                 }
                 it("should throw NameConflictException") {
@@ -458,14 +456,14 @@ fun SubjectProviderDsl<Config>.configTestSpec(prefix: String = "network.buffer")
             on("get with valid name") {
                 it("should return corresponding value") {
                     assertThat(subject(qualify("name")), equalTo("buffer"))
-                    assertThat(subject.getOrNull(qualify("name")), equalTo("buffer"))
+                    assertThat(subject.getOrNull<String>(qualify("name")), equalTo("buffer"))
                     assertTrue { qualify("name") in subject }
                 }
             }
             on("get with valid name which contains trailing whitespaces") {
                 it("should return corresponding value") {
                     assertThat(subject(qualify("name ")), equalTo("buffer"))
-                    assertThat(subject.getOrNull(qualify("name  ")), equalTo("buffer"))
+                    assertThat(subject.getOrNull<String>(qualify("name  ")), equalTo("buffer"))
                     assertTrue { qualify("name   ") in subject }
                 }
             }

@@ -19,7 +19,6 @@ package com.nhubbard.konfig.source.js
 
 import com.nhubbard.konfig.source.DefaultLoaders
 import com.nhubbard.konfig.source.Loader
-import com.nhubbard.konfig.source.js.JsProvider
 
 /**
  * Loader for JavaScript source.

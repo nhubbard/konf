@@ -35,7 +35,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Default loaders for config.
  *
- * If [transform] is provided, source will be applied the given [transform] function when loaded.
+ * If [transform] is provided, the source will be applied to the given [transform] function when loaded.
  *
  * @param config parent config for loader
  * @param transform the given transformation function
@@ -57,7 +57,7 @@ class DefaultLoaders(
     private fun Source.orMapped(): Source = transform?.invoke(this) ?: this
 
     /**
-     * Returns default loaders applied the given [transform] function.
+     * Return the default loaders applied to the given [transform] function.
      *
      * @param transform the given transformation function
      * @return the default loaders applied the given [transform] function
@@ -75,10 +75,10 @@ class DefaultLoaders(
     fun prefixed(prefix: String): DefaultLoaders = mapped { it.withPrefix(prefix) }
 
     /**
-     * Returns default loaders where sources are scoped in specified path.
+     * Returns default loaders where sources are scoped in the specified path.
      *
      * @param path path that is the scope of sources
-     * @return the default loaders where sources are scoped in specified path
+     * @return the default loaders where sources are scoped in the specified path
      */
     fun scoped(path: String): DefaultLoaders = mapped { it[path] }
 
@@ -93,13 +93,13 @@ class DefaultLoaders(
     val json = Loader(config, JsonProvider.orMapped())
 
     /**
-     * Loader for properties source.
+     * Loader for the properties source.
      */
     @JvmField
     val properties = Loader(config, PropertiesProvider.orMapped())
 
     /**
-     * Loader for map source.
+     * Loader for the map source.
      */
     @JvmField
     val map = MapLoader(config, transform)
@@ -132,11 +132,11 @@ class DefaultLoaders(
     fun systemProperties(): Config = config.withSource(PropertiesProvider.system().orMapped())
 
     /**
-     * Returns corresponding loader based on extension.
+     * Returns the corresponding loader based on the provided extension.
      *
      * @param extension the file extension
      * @param source the source description for error message
-     * @return the corresponding loader based on extension
+     * @return the corresponding loader based on the provided extension
      */
     fun dispatchExtension(extension: String, source: String = ""): Loader =
         Loader(
@@ -148,7 +148,7 @@ class DefaultLoaders(
     /**
      * Returns a child config containing values from specified file.
      *
-     * Format of the file is auto-detected from the file extension.
+     * The format of the file is auto-detected from the file extension.
      * Supported file formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -167,9 +167,9 @@ class DefaultLoaders(
     fun file(file: File, optional: Boolean = this.optional): Config = dispatchExtension(file.extension, file.name).file(file, optional)
 
     /**
-     * Returns a child config containing values from specified file path.
+     * Returns a child config containing values from the specified file path.
      *
-     * Format of the file is auto-detected from the file extension.
+     * The format of the file is auto-detected from the file extension.
      * Supported file formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -182,7 +182,7 @@ class DefaultLoaders(
      *
      * @param file specified file path
      * @param optional whether the source is optional
-     * @return a child config containing values from specified file path
+     * @return a child config containing values from the specified file path
      * @throws UnsupportedExtensionException
      */
     fun file(file: String, optional: Boolean = this.optional): Config = file(File(file), optional)
@@ -191,7 +191,7 @@ class DefaultLoaders(
      * Returns a child config containing values from specified file,
      * and reloads values when file content has been changed.
      *
-     * Format of the file is auto-detected from the file extension.
+     * The format of the file is auto-detected from the file extension.
      * Supported file formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -222,10 +222,10 @@ class DefaultLoaders(
         .watchFile(file, delayTime, unit, context, optional, onLoad)
 
     /**
-     * Returns a child config containing values from specified file path,
+     * Returns a child config containing values from the specified file path,
      * and reloads values when file content has been changed.
      *
-     * Format of the file is auto-detected from the file extension.
+     * The format of the file is auto-detected from the file extension.
      * Supported file formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -257,7 +257,7 @@ class DefaultLoaders(
     /**
      * Returns a child config containing values from specified url.
      *
-     * Format of the url is auto-detected from the url extension.
+     * The format of the url is auto-detected from the url extension.
      * Supported url formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -278,7 +278,7 @@ class DefaultLoaders(
     /**
      * Returns a child config containing values from specified url string.
      *
-     * Format of the url is auto-detected from the url extension.
+     * The format of the url is auto-detected from the url extension.
      * Supported url formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -300,7 +300,7 @@ class DefaultLoaders(
      * Returns a child config containing values from specified url,
      * and reloads values periodically.
      *
-     * Format of the url is auto-detected from the url extension.
+     * The format of the url is auto-detected from the url extension.
      * Supported url formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -334,7 +334,7 @@ class DefaultLoaders(
      * Returns a child config containing values from specified url string,
      * and reloads values periodically.
      *
-     * Format of the url is auto-detected from the url extension.
+     * The format of the url is auto-detected from the url extension.
      * Supported url formats and the corresponding extensions:
      * - HOCON: conf
      * - JSON: json
@@ -365,15 +365,15 @@ class DefaultLoaders(
 }
 
 /**
- * Loader to load source from map of variant formats.
+ * Loader to load source from the map of variant formats.
  *
- * If [transform] is provided, source will be applied the given [transform] function when loaded.
+ * If [transform] is provided, the source will be applied to the given [transform] function when loaded.
  *
  * @param config parent config
  */
 class MapLoader(
     /**
-     * Parent config for all child configs loading source in this loader.
+     * Parent config for all child configs loading the source in this loader.
      */
     val config: Config,
     /**
@@ -384,26 +384,26 @@ class MapLoader(
     private fun Source.orMapped(): Source = transform?.invoke(this) ?: this
 
     /**
-     * Returns a child config containing values from specified hierarchical map.
+     * Returns a child config containing values from the specified hierarchical map.
      *
      * @param map a hierarchical map
-     * @return a child config containing values from specified hierarchical map
+     * @return a child config containing values from the specified hierarchical map
      */
     fun hierarchical(map: Map<String, Any>): Config = config.withSource(MapSource(map).orMapped())
 
     /**
-     * Returns a child config containing values from specified map in key-value format.
+     * Returns a child config containing values from the specified map in key-value format.
      *
      * @param map a map in key-value format
-     * @return a child config containing values from specified map in key-value format
+     * @return a child config containing values from the specified map in key-value format
      */
     fun kv(map: Map<String, Any>): Config = config.withSource(KVSource(map).orMapped())
 
     /**
-     * Returns a child config containing values from specified map in flat format.
+     * Returns a child config containing values from the specified map in flat format.
      *
      * @param map a map in flat format
-     * @return a child config containing values from specified map in flat format
+     * @return a child config containing values from the specified map in flat format
      */
     fun flat(map: Map<String, String>): Config = config.withSource(FlatSource(map).orMapped())
 }

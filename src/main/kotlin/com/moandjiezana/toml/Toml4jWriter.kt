@@ -38,14 +38,16 @@ import java.util.regex.Pattern
  * are output to TOML tables, and {@link List}s and Array to TOML arrays.</p>
  *
  * <p>Example usage:</p>
- * <pre><code>
+ * <pre>
+ * <code>
  * class AClass {
  *   int anInt = 1;
  *   int[] anArray = { 2, 3 };
  * }
  *
  * String tomlString = new TomlWriter().write(new AClass());
- * </code></pre>
+ * </code>
+ * </pre>
  */
 class Toml4jWriter {
     /**
@@ -211,7 +213,7 @@ internal object NewMapValueWriter : ValueWriter {
             }
         }
 
-        // Render primitive types and arrays of primitive first so they are
+        // Render primitive types and arrays of primitive first, so they are
         // grouped under the same table (if there is one)
         for ((key, value1) in from) {
             if (value1 == null) continue

@@ -29,7 +29,6 @@ import org.yaml.snakeyaml.constructor.SafeConstructor
 import org.yaml.snakeyaml.nodes.Node
 import org.yaml.snakeyaml.nodes.ScalarNode
 import org.yaml.snakeyaml.nodes.Tag
-import java.io.Closeable
 import java.io.InputStream
 import java.io.Reader
 

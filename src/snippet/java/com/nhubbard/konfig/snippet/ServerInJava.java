@@ -19,9 +19,10 @@ package com.nhubbard.konfig.snippet;
 
 import com.nhubbard.konfig.Config;
 
+@SuppressWarnings("unused")
 public class ServerInJava {
-    private String host;
-    private Integer tcpPort;
+    private final String host;
+    private final Integer tcpPort;
 
     public ServerInJava(String host, Integer tcpPort) {
         this.host = host;

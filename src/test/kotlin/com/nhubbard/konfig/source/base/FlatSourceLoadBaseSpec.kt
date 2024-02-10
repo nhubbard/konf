@@ -26,7 +26,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
 import org.jetbrains.spek.subject.itBehavesLike
-import java.util.*
 import kotlin.test.assertTrue
 
 object FlatSourceLoadBaseSpec : SubjectSpek<Config>({

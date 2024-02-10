@@ -1,3 +1,5 @@
+// noinspection BadExpressionStatementJS
+
 /*
  * Copyright (c) 2017-2024 Uchuhimo
  * Copyright (c) 2024-present Nicholas Hubbard

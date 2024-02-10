@@ -113,6 +113,7 @@ data class NetworkBufferForCast(
     val offset: Int?
 ) {
 
+    @Suppress("unused")
     enum class Type {
         ON_HEAP, OFF_HEAP
     }

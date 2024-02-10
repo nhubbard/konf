@@ -21,7 +21,7 @@ import com.nhubbard.konfig.Config
 
 fun main() {
     val config = Config { addSpec(Server) }
-    // values in source is loaded into new layer in child config
+    // The values in the source are loaded into new layer in child config
     val childConfig = config.from.env()
     check(childConfig.parent === config)
 }

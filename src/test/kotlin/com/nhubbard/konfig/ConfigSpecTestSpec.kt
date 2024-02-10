@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.nhubbard.konfig
 
 import com.fasterxml.jackson.databind.type.TypeFactory
@@ -69,16 +71,15 @@ object ConfigSpecTestSpec : Spek({
         }
         testItem(specForRequired, specForRequired.item, "a required item")
         group("for a required item") {
-            val spec = specForRequired
             on("add to a configSpec") {
                 it("should still be a required item") {
-                    assertFalse(spec.item.nullable)
-                    assertTrue(spec.item.isRequired)
-                    assertFalse(spec.item.isOptional)
-                    assertFalse(spec.item.isLazy)
-                    assertThat(spec.item.asRequiredItem, sameInstance(spec.item))
-                    assertThat({ spec.item.asOptionalItem }, throws<ClassCastException>())
-                    assertThat({ spec.item.asLazyItem }, throws<ClassCastException>())
+                    assertFalse(specForRequired.item.nullable)
+                    assertTrue(specForRequired.item.isRequired)
+                    assertFalse(specForRequired.item.isOptional)
+                    assertFalse(specForRequired.item.isLazy)
+                    assertThat(specForRequired.item.asRequiredItem, sameInstance(specForRequired.item))
+                    assertThat({ specForRequired.item.asOptionalItem }, throws<ClassCastException>())
+                    assertThat({ specForRequired.item.asLazyItem }, throws<ClassCastException>())
                 }
             }
         }
@@ -87,19 +88,18 @@ object ConfigSpecTestSpec : Spek({
         }
         testItem(specForOptional, specForOptional.item, "an optional item")
         group("for an optional item") {
-            val spec = specForOptional
             on("add to a configSpec") {
                 it("should still be an optional item") {
-                    assertFalse(spec.item.nullable)
-                    assertFalse(spec.item.isRequired)
-                    assertTrue(spec.item.isOptional)
-                    assertFalse(spec.item.isLazy)
-                    assertThat({ spec.item.asRequiredItem }, throws<ClassCastException>())
-                    assertThat(spec.item.asOptionalItem, sameInstance(spec.item))
-                    assertThat({ spec.item.asLazyItem }, throws<ClassCastException>())
+                    assertFalse(specForOptional.item.nullable)
+                    assertFalse(specForOptional.item.isRequired)
+                    assertTrue(specForOptional.item.isOptional)
+                    assertFalse(specForOptional.item.isLazy)
+                    assertThat({ specForOptional.item.asRequiredItem }, throws<ClassCastException>())
+                    assertThat(specForOptional.item.asOptionalItem, sameInstance(specForOptional.item))
+                    assertThat({ specForOptional.item.asLazyItem }, throws<ClassCastException>())
                 }
                 it("should contain the specified default value") {
-                    assertThat(spec.item.default, equalTo(1))
+                    assertThat(specForOptional.item.default, equalTo(1))
                 }
             }
         }
@@ -109,16 +109,15 @@ object ConfigSpecTestSpec : Spek({
         val config = Config { addSpec(specForLazy) }
         testItem(specForLazy, specForLazy.item, "a lazy item")
         group("for a lazy item") {
-            val spec = specForLazy
             on("add to a configSpec") {
                 it("should still be a lazy item") {
-                    assertTrue(spec.item.nullable)
-                    assertFalse(spec.item.isRequired)
-                    assertFalse(spec.item.isOptional)
-                    assertTrue(spec.item.isLazy)
-                    assertThat({ spec.item.asRequiredItem }, throws<ClassCastException>())
-                    assertThat({ spec.item.asOptionalItem }, throws<ClassCastException>())
-                    assertThat(spec.item.asLazyItem, sameInstance(spec.item))
+                    assertTrue(specForLazy.item.nullable)
+                    assertFalse(specForLazy.item.isRequired)
+                    assertFalse(specForLazy.item.isOptional)
+                    assertTrue(specForLazy.item.isLazy)
+                    assertThat({ specForLazy.item.asRequiredItem }, throws<ClassCastException>())
+                    assertThat({ specForLazy.item.asOptionalItem }, throws<ClassCastException>())
+                    assertThat(specForLazy.item.asLazyItem, sameInstance(specForLazy.item))
                 }
                 it("should contain the specified thunk") {
                     assertThat(specForLazy.item.thunk(config), equalTo(2))
@@ -154,7 +153,7 @@ object ConfigSpecTestSpec : Spek({
         group("get operation") {
             on("get an empty path") {
                 it("should return itself") {
-                    assertThat(spec[""], equalTo<Spec>(spec))
+                    assertThat(spec[""], equalTo(spec))
                 }
             }
             on("get a valid path") {
@@ -194,7 +193,7 @@ object ConfigSpecTestSpec : Spek({
         group("prefix operation") {
             on("prefix with an empty path") {
                 it("should return itself") {
-                    assertThat(Prefix("") + spec, equalTo<Spec>(spec))
+                    assertThat(Prefix("") + spec, equalTo(spec))
                 }
             }
             on("prefix with a non-empty path") {

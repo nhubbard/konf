@@ -406,13 +406,13 @@ open class BaseConfig(
             if (value == null) {
                 if (item.nullable) {
                     item.notifySet(null)
-                    item.notifyBeforeSet(this, value)
-                    notifyBeforeSet(item, value)
+                    item.notifyBeforeSet(this, null)
+                    notifyBeforeSet(item, null)
                     lock.write {
                         setState(item, ValueState.Null)
                     }
-                    notifyAfterSet(item, value)
-                    item.notifyAfterSet(this, value)
+                    notifyAfterSet(item, null)
+                    item.notifyAfterSet(this, null)
                 } else {
                     throw ClassCastException(
                         "fail to cast null to ${item.type.rawClass}" +

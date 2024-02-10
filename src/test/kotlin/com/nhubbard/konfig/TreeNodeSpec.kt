@@ -65,12 +65,12 @@ object TreeNodeSpec : SubjectSpek<TreeNode>({
         }
         on("minus itself") {
             it("should return an empty node") {
-                assertThat(subject - subject, equalTo<TreeNode>(EmptyNode))
+                assertThat(subject - subject, equalTo(EmptyNode))
             }
         }
         on("minus a leaf node") {
             it("should return an empty node") {
-                assertThat(subject - EmptyNode, equalTo<TreeNode>(EmptyNode))
+                assertThat(subject - EmptyNode, equalTo(EmptyNode))
             }
         }
         on("merge two trees") {

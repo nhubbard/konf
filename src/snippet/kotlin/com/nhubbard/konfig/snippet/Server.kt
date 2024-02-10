@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package com.nhubbard.konfig.snippet
 
 import com.nhubbard.konfig.Config

@@ -184,8 +184,8 @@ object LoadKeysAsLittleCamelCaseSpec : Spek({
             it("should load keys as usual") {
                 val someKey by config.required<String>()
                 assertThrows<UnsetValueException> { someKey.isNotEmpty() }
-                val some_key by config.required<String>()
-                assertThat(some_key, equalTo("value"))
+                val someKey2 by config.required<String>()
+                assertThat(someKey2, equalTo("value"))
             }
         }
         on("the feature is disabled on source") {
@@ -194,8 +194,8 @@ object LoadKeysAsLittleCamelCaseSpec : Spek({
             it("should load keys as usual") {
                 val someKey by config.required<String>()
                 assertThrows<UnsetValueException> { someKey.isNotEmpty() }
-                val some_key by config.required<String>()
-                assertThat(some_key, equalTo("value"))
+                val someKey1 by config.required<String>()
+                assertThat(someKey1, equalTo("value"))
             }
         }
     }

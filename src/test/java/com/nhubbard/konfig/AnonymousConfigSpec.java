@@ -18,5 +18,5 @@
 package com.nhubbard.konfig;
 
 public class AnonymousConfigSpec {
-    public static Spec spec = new ConfigSpec() {};
+    public static final Spec spec = new ConfigSpec() {};
 }

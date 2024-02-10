@@ -22,6 +22,6 @@ package com.nhubbard.konfig.source.xml
 import com.nhubbard.konfig.source.DefaultProviders
 
 /**
- * Provider for XML source.
+ * Provider for the XML source.
  */
 val DefaultProviders.xml get() = XmlProvider

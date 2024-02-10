@@ -22,6 +22,6 @@ package com.nhubbard.konfig.source.toml
 import com.nhubbard.konfig.source.DefaultProviders
 
 /**
- * Provider for TOML source.
+ * Provider for the TOML source.
  */
 val DefaultProviders.toml get() = TomlProvider

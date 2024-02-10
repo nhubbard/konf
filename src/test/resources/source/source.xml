@@ -16,6 +16,7 @@
   ~ limitations under the License.
   -->
 
+<!--suppress CheckTagEmptyBody -->
 <configuration>
     <property>
         <name>level1.level2.empty</name>

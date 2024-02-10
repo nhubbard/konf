@@ -36,7 +36,7 @@ internal fun getUnits(s: String): String {
 /**
  * Returns default value if string is empty, original string otherwise.
  */
-fun String.notEmptyOr(default: String): String = if (isEmpty()) default else this
+fun String.notEmptyOr(default: String): String = ifEmpty { default }
 
 fun String.toLittleCase(): String {
     return if (this.all { it.isUpperCase() }) {

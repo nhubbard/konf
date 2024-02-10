@@ -27,19 +27,8 @@ import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.time.Duration
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.OffsetTime
-import java.time.Year
-import java.time.YearMonth
-import java.time.ZonedDateTime
-import java.util.Arrays
-import java.util.Date
-import java.util.SortedSet
+import java.time.*
+import java.util.*
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -119,87 +108,54 @@ object SourceLoadBaseSpec : SubjectSpek<Config>({
 
                 // array items
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.booleanArray],
-                        booleanArrayOf(true, false)
-                    )
+                    subject[ConfigForLoad.booleanArray].contentEquals(booleanArrayOf(true, false))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.byteArray],
-                        byteArrayOf(1, 2, 3)
-                    )
+                    subject[ConfigForLoad.byteArray].contentEquals(byteArrayOf(1, 2, 3))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.shortArray],
-                        shortArrayOf(1, 2, 3)
-                    )
+                    subject[ConfigForLoad.shortArray].contentEquals(shortArrayOf(1, 2, 3))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.intArray],
-                        intArrayOf(1, 2, 3)
-                    )
+                    subject[ConfigForLoad.intArray].contentEquals(intArrayOf(1, 2, 3))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.longArray],
-                        longArrayOf(4, 5, 6)
-                    )
+                    subject[ConfigForLoad.longArray].contentEquals(longArrayOf(4, 5, 6))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.floatArray],
-                        floatArrayOf(-1.0F, 0.0F, 1.0F)
-                    )
+                    subject[ConfigForLoad.floatArray].contentEquals(floatArrayOf(-1.0F, 0.0F, 1.0F))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.doubleArray],
-                        doubleArrayOf(-1.0, 0.0, 1.0)
-                    )
+                    subject[ConfigForLoad.doubleArray].contentEquals(doubleArrayOf(-1.0, 0.0, 1.0))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.charArray],
-                        charArrayOf('a', 'b', 'c')
-                    )
+                    subject[ConfigForLoad.charArray].contentEquals(charArrayOf('a', 'b', 'c'))
                 )
 
                 // object array items
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.booleanObjectArray],
-                        arrayOf(true, false)
-                    )
+                    subject[ConfigForLoad.booleanObjectArray].contentEquals(arrayOf(true, false))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.intObjectArray],
-                        arrayOf(1, 2, 3)
-                    )
+                    subject[ConfigForLoad.intObjectArray].contentEquals(arrayOf(1, 2, 3))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.stringArray],
-                        arrayOf("one", "two", "three")
-                    )
+                    subject[ConfigForLoad.stringArray].contentEquals(arrayOf("one", "two", "three"))
                 )
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.enumArray],
-                        arrayOf(EnumForLoad.LABEL1, EnumForLoad.LABEL2, EnumForLoad.LABEL3)
+                    subject[ConfigForLoad.enumArray].contentEquals(
+                        arrayOf(
+                            EnumForLoad.LABEL1,
+                            EnumForLoad.LABEL2,
+                            EnumForLoad.LABEL3
+                        )
                     )
                 )
 
                 assertThat(subject[ConfigForLoad.list], equalTo(listOf(1, 2, 3)))
 
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.mutableList].toTypedArray(),
-                        arrayOf(1, 2, 3)
-                    )
+                    subject[ConfigForLoad.mutableList].toTypedArray().contentEquals(arrayOf(1, 2, 3))
                 )
 
                 assertThat(
@@ -211,7 +167,7 @@ object SourceLoadBaseSpec : SubjectSpek<Config>({
 
                 assertThat(
                     subject[ConfigForLoad.sortedSet],
-                    equalTo<SortedSet<Int>>(sortedSetOf(1, 2, 3))
+                    equalTo(sortedSetOf(1, 2, 3))
                 )
 
                 assertThat(
@@ -234,10 +190,7 @@ object SourceLoadBaseSpec : SubjectSpek<Config>({
                 )
 
                 assertTrue(
-                    Arrays.equals(
-                        subject[ConfigForLoad.nested],
-                        arrayOf(listOf(setOf(mapOf("a" to 1))))
-                    )
+                    subject[ConfigForLoad.nested].contentEquals(arrayOf(listOf(setOf(mapOf("a" to 1)))))
                 )
 
                 assertThat(subject[ConfigForLoad.pair], equalTo(1 to 2))
@@ -302,8 +255,8 @@ object SourceLoadBaseSpec : SubjectSpek<Config>({
                 assertThat(subject[ConfigForLoad.clazz].simpleDuration, equalTo(classForLoad.simpleDuration))
                 assertThat(subject[ConfigForLoad.clazz].size, equalTo(classForLoad.size))
                 assertThat(subject[ConfigForLoad.clazz].enum, equalTo(classForLoad.enum))
-                assertTrue(Arrays.equals(subject[ConfigForLoad.clazz].booleanArray, classForLoad.booleanArray))
-                assertTrue(Arrays.equals(subject[ConfigForLoad.clazz].nested, classForLoad.nested))
+                assertTrue(subject[ConfigForLoad.clazz].booleanArray.contentEquals(classForLoad.booleanArray))
+                assertTrue(subject[ConfigForLoad.clazz].nested.contentEquals(classForLoad.nested))
             }
         }
     }

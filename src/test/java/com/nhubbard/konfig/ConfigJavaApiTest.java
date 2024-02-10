@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.HashMap;
 
+import com.nhubbard.konfig.source.DefaultProviders;
 import com.nhubbard.konfig.source.Source;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +74,8 @@ class ConfigJavaApiTest {
     void loadFromSource() {
         final HashMap<String, Integer> map = new HashMap<>();
         map.put(config.nameOf(NetworkBufferInJava.size), 1024);
-        final Config newConfig = config.withSource(Source.from().map.kv(map));
+        Source.from();
+        final Config newConfig = config.withSource(DefaultProviders.map.kv(map));
         assertThat(newConfig.get(NetworkBufferInJava.size), equalTo(1024));
     }
 

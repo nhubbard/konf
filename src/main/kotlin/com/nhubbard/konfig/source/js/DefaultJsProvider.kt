@@ -20,7 +20,6 @@
 package com.nhubbard.konfig.source.js
 
 import com.nhubbard.konfig.source.DefaultProviders
-import com.nhubbard.konfig.source.js.JsProvider
 
 /**
  * Provider for JavaScript source.

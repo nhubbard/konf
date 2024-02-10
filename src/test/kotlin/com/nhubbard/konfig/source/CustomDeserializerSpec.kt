@@ -65,8 +65,8 @@ object CustomDeserializerSpec : SubjectSpek<Config>({
             it("should contain every value specified in the source") {
                 val variantA = VariantA(1)
                 val variantB = VariantB(2.0)
-                assertThat(subject[CustomDeserializerConfig.variantA], equalTo<SealedClass>(variantA))
-                assertThat(subject[CustomDeserializerConfig.variantB], equalTo<SealedClass>(variantB))
+                assertThat(subject[CustomDeserializerConfig.variantA], equalTo(variantA))
+                assertThat(subject[CustomDeserializerConfig.variantB], equalTo(variantB))
             }
         }
     }
