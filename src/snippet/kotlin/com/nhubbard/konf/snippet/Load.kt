@@ -15,23 +15,13 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+package com.nhubbard.konf.snippet
 
-rootProject.name = "konf"
+import com.nhubbard.konf.Config
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
-
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-    }
+fun main() {
+    val config = Config { addSpec(Server) }
+    // The values in the source are loaded into new layer in child config
+    val childConfig = config.from.env()
+    check(childConfig.parent === config)
 }

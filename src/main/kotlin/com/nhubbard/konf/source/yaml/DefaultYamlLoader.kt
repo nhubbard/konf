@@ -15,23 +15,12 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+package com.nhubbard.konf.source.yaml
 
-rootProject.name = "konf"
+import com.nhubbard.konf.source.DefaultLoaders
+import com.nhubbard.konf.source.Loader
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
-
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-    }
-}
+/**
+ * Loader for YAML source.
+ */
+val DefaultLoaders.yaml get() = Loader(config, YamlProvider.orMapped())

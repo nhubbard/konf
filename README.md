@@ -1,13 +1,9 @@
-# Konfig
-
-**TODO: Much of the content in this README is out of date and needs to be fixed.**
+# Konf
 
 [![Java 17+](https://img.shields.io/badge/Java-17+-4c7e9f.svg)](http://java.oracle.com)
-[![Maven metadata URL](https://img.shields.io/maven-central/v/com.nhubbard/konfig)](https://search.maven.org/artifact/com.nhubbard/konfig)
-[![JitPack](https://img.shields.io/jitpack/v/github/nhubbard/konfig)](https://jitpack.io/#nhubbard/konfig)
-[![Build Status](https://travis-ci.org/nhubbard/konfig.svg?branch=master)](https://travis-ci.org/nhubbard/konfig)
-[![codecov](https://codecov.io/gh/nhubbard/konfig/branch/master/graph/badge.svg)](https://codecov.io/gh/nhubbard/konfig)
-[![codebeat badge](https://codebeat.co/badges/f69a1574-9d4c-4da5-be73-56fa7b180d2d)](https://codebeat.co/projects/github-com-nhubbard-konfig-master)
+[![Maven metadata URL](https://img.shields.io/maven-central/v/com.nhubbard/konf)](https://search.maven.org/artifact/com.nhubbard/konf)
+[![JitPack](https://img.shields.io/jitpack/v/github/nhubbard/konf)](https://jitpack.io/#nhubbard/konf)
+[![codebeat badge](https://codebeat.co/badges/f69a1574-9d4c-4da5-be73-56fa7b180d2d)](https://codebeat.co/projects/github-com-nhubbard-konf-master)
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
 A type-safe cascading configuration library for Kotlin/Java/Android, supporting most configuration formats.
@@ -23,7 +19,7 @@ A type-safe cascading configuration library for Kotlin/Java/Android, supporting 
 
 ## Contents
 
-- [konfig](#konfig)
+- [konf](#konf)
     - [Features](#features)
     - [Contents](#contents)
     - [Prerequisites](#prerequisites)
@@ -36,18 +32,18 @@ A type-safe cascading configuration library for Kotlin/Java/Android, supporting 
         - [Gradle Kotlin DSL (master snapshot)](#gradle-kotlin-dsl-master-snapshot)
     - [Quick start](#quick-start)
     - [Define items](#define-items)
-    - [Use config](#use-config)
+    - [Using your configuration](#using-your-configuration)
         - [Create config](#create-config)
         - [Add config spec](#add-config-spec)
         - [Retrieve value from config](#retrieve-value-from-config)
         - [Cast config to value](#cast-config-to-value)
         - [Check whether an item exists in config or not](#check-whether-an-item-exists-in-config-or-not)
         - [Modify value in config](#modify-value-in-config)
-        - [Subscribe to update events](#subscribe-the-update-event)
+        - [Subscribing to update events](#subscribing-to-update-events)
         - [Export value in config as property](#export-value-in-config-as-property)
         - [Fork from another config](#fork-from-another-config)
     - [Load values from source](#load-values-from-source)
-        - [Subscribe the update event for load operation](#subscribe-the-update-event-for-load-operation)
+        - [Subscribe the update event for load operation](#subscribe-to-update-events-for-load-operations)
         - [Strict parsing when loading](#strict-parsing-when-loading)
         - [Path substitution](#path-substitution)
     - [Prefix/Merge operations for source/config/config spec](#prefixmerge-operations-for-sourceconfigconfig-spec)
@@ -65,18 +61,18 @@ A type-safe cascading configuration library for Kotlin/Java/Android, supporting 
 ## Prerequisites
 
 - JDK 17 or higher
-- tested on Android SDK 23 or higher
+- Tested on Android SDK 34 or higher
 
 ## Use in your projects
 
-This library has been published to [Maven Central](https://search.maven.org/artifact/com.nhubbard/konfig) and [JitPack](https://jitpack.io/#nhubbard/konfig).
+This library has been published to [Maven Central](https://search.maven.org/artifact/com.nhubbard/konf) and [JitPack](https://jitpack.io/#nhubbard/konf).
 
 ### Maven
 
 ```xml
 <dependency>
   <groupId>com.nhubbard</groupId>
-  <artifactId>konfig</artifactId>
+  <artifactId>konf</artifactId>
   <version>1.1.2</version>
 </dependency>
 ```
@@ -84,13 +80,13 @@ This library has been published to [Maven Central](https://search.maven.org/arti
 ### Gradle
 
 ```groovy
-compile 'com.nhubbard:konfig:1.1.2'
+implementation 'com.nhubbard:konf:1.1.2'
 ```
 
 ### Gradle Kotlin DSL
 
 ```kotlin
-compile(group = "com.nhubbard", name = "konfig", version = "1.1.2")
+implementation("com.nhubbard:konf:1.1.2")
 ```
 
 ### Maven (master snapshot)
@@ -109,14 +105,14 @@ Add dependencies:
 ```xml
 <dependency>
     <groupId>com.github.nhubbard</groupId>
-    <artifactId>konfig</artifactId>
+    <artifactId>konf</artifactId>
     <version>master-SNAPSHOT</version>
 </dependency>
 ```
 
 ### Gradle (master snapshot)
 
-Add JitPack repository:
+Add the JitPack repository:
 
 ```groovy
 repositories {
@@ -127,12 +123,12 @@ repositories {
 Add dependencies:
 
 ```groovy
-compile 'com.github.nhubbard.konfig:konfig:master-SNAPSHOT'
+compile 'com.github.nhubbard.konf:konf:master-SNAPSHOT'
 ```
 
 ### Gradle Kotlin DSL (master snapshot)
 
-Add JitPack repository:
+Add the JitPack repository:
 
 ```kotlin
 repositories {
@@ -143,12 +139,12 @@ repositories {
 Add dependencies:
 
 ```kotlin
-compile(group = "com.github.nhubbard.konfig", name = "konfig", version = "master-SNAPSHOT")
+compile(group = "com.github.nhubbard.konf", name = "konf", version = "master-SNAPSHOT")
 ```
 
 ## Quick start
 
-1. Define items in config spec:
+1. Define your options in a `ConfigSpec`:
 
     ```kotlin
     object ServerSpec : ConfigSpec() {
@@ -157,7 +153,7 @@ compile(group = "com.github.nhubbard.konfig", name = "konfig", version = "master
     }
     ```
 
-2. Construct config with items in config spec and values from multiple sources:
+2. Create an instance of `Config` with your `ConfigSpec` and your preferred sources:
 
     ```kotlin
     val config = Config { addSpec(ServerSpec) }
@@ -178,7 +174,11 @@ compile(group = "com.github.nhubbard.konfig", name = "konfig", version = "master
     )
     ```
 
-   This config contains all items defined in `ServerSpec`, and load values from 4 different sources. Values in resource file `server.json` will override those in file `server.yml`, values from system environment will override those in `server.json`, and values from system properties will override those from system environment.
+   The `config` variable now contains all items defined in `ServerSpec`,
+   and will load values from the four defined sources.
+
+   The values in resource file `server.json` will override those in `server.yml`,
+   the system environment variables, `server.json`, and system properties.
 
    If you want to watch file `server.yml` and reload values when file content is changed, you can use `watchFile` instead of `file`:
 
@@ -190,7 +190,7 @@ compile(group = "com.github.nhubbard.konfig", name = "konfig", version = "master
             .from.systemProperties()
     ```
 
-3. Define values in your source. You can define in any of these sources:
+3. Define your configuration values in your source. For example:
     - in `server.yml`:
         ```yaml
         server:
@@ -211,12 +211,12 @@ compile(group = "com.github.nhubbard.konfig", name = "konfig", version = "master
         SERVER_HOST=0.0.0.0
         SERVER_TCPPORT=8080
         ```
-    - in command line for system properties:
+    - on the command line for system properties:
         ```bash
         -Dserver.host=0.0.0.0 -Dserver.tcp_port=8080
         ```
 
-4. Retrieve values from config with type-safe APIs:
+4. Now, you can retrieve values from `config` with type-safe APIs:
     ```kotlin
     data class Server(val host: String, val tcpPort: Int) {
         fun start() {}
@@ -226,7 +226,7 @@ compile(group = "com.github.nhubbard.konfig", name = "konfig", version = "master
     server.start()
     ```
 
-5. Retrieve values from multiple sources without using config spec:
+5. You can also retrieve values from multiple sources without using the config spec:
 
     ```kotlin
     val server = Config()
@@ -241,13 +241,15 @@ compile(group = "com.github.nhubbard.konfig", name = "konfig", version = "master
 
 ## Define items
 
-Config items are declared in config spec, added to config by `Config#addSpec`. All items in same config spec have the same prefix. Define a config spec with prefix `local.server`:
+Configuration items are declared in the config spec and added to the config by `Config#addSpec`.
+
+All items in each `ConfigSpec` have the same prefix. For example, to define a config spec with prefix `server`:
 
 ```kotlin
 object ServerSpec : ConfigSpec("server")
 ```
 
-If the config spec is binding with single class, you can declare config spec as companion object of the class:
+If the `ConfigSpec` is binding with a single class, you can declare the `ConfigSpec` as a companion object of the class:
 
 ```kotlin
 class Server {
@@ -258,10 +260,10 @@ class Server {
 }
 ```
 
-The config spec prefix can be automatically inferred from the class name, leading to further simplification like:
+The `ConfigSpec` prefix can also automatically be inferred from the class name. For example:
 
 ```kotlin
-object ServerSpec : ConfigSpec() 
+object ServerSpec : ConfigSpec()
 ```
 
 or
@@ -272,9 +274,16 @@ class Server {
 }
 ```
 
-Here are some examples showing the inference convention: `Uppercase` to `uppercase`, `lowercase` to `lowercase`, `SuffixSpec` to `suffix`, `TCPService` to `tcpService`.
+Here are some examples showing the inference convention:
 
-The config spec can also be nested. For example, the path of `Service.Backend.Login.user` in the following example will be inferred as "service.backend.login.user":
+* `Uppercase` to `uppercase`
+* `lowercase` to `lowercase`
+* `SuffixSpec` to `suffix`
+* `TCPService` to `tcpService`
+
+The `ConfigSpec` can also be nested.
+
+For example, the path `Service.Backend.Login.user` in the following example will be inferred as "service.backend.login.user":
 
 ```kotlin
 object Service : ConfigSpec() {
@@ -286,27 +295,29 @@ object Service : ConfigSpec() {
 }
 ```
 
-There are three kinds of item:
+There are three kinds of `Item`:
 
-- Required item. Required item doesn't have default value, thus must be set with value before retrieved in config. Define a required item with description:
+- **Required items:** These don't have default values. If a value isn't provided at runtime, an exception is raised.
     ```kotlin
+    // You can provide a description for each configuration entry.
     val tcpPort by required<Int>(description = "port of server")
+    // You can also omit the description:
+    val name by required<String>()
     ```
-  Or omit the description:
+
+- **Optional items.** These items have default values, and thus can be safely retrieved at any time.
     ```kotlin
-    val tcpPort by required<Int>()
-    ```
-- Optional item. Optional item has default value, thus can be safely retrieved before setting. Define an optional item:
-    ```kotlin
+    // Similarly to required items, you can omit the description.
+    // However, you have to provide a default value for optional items.
     val host by optional("0.0.0.0", description = "host IP of server")
     ```
-  Description can be omitted.
-- Lazy item. Lazy item also has default value, however, the default value is not a constant, it is evaluated from thunk every time when retrieved. Define a lazy item:
+
+- **Lazy items.** These also have default values, but the default value is not a constant; instead, it is evaluated from a lambda every time it is retrieved.
     ```kotlin
     val nextPort by lazy { config -> config[tcpPort] + 1 }
     ```
 
-You can also define config spec in Java, with a more verbose API (compared to Kotlin version in "quick start"):
+You can also define a `ConfigSpec` in Java, with a more verbose API (compared to the Kotlin version in "quick start"):
 
 ```java
 public class ServerSpec {
@@ -319,19 +330,19 @@ public class ServerSpec {
 }
 ```
 
-Notice that the `{}` part in item declaration is necessary to avoid type erasure of item's type information.
+The `{}` after every item declaration is necessary to avoid erasing the type of the item.
 
-## Use config
+## Using your configuration
 
 ### Create config
 
-Create an empty new config:
+To create a new empty config, use the default constructor:
 
 ```kotlin
 val config = Config()
 ```
 
-Or an new config with some initial actions:
+To create a new config with your `ConfigSpec`s, add them using the `addSpec` function in a lambda passed to `Config`:
 
 ```kotlin
 val config = Config { addSpec(Server) }
@@ -339,7 +350,8 @@ val config = Config { addSpec(Server) }
 
 ### Add config spec
 
-Add multiple config specs into config:
+If you need to add more config specs after calling the constructor, you can use the `addSpec` function on your instance
+of `Config`:
 
 ```kotlin
 config.addSpec(Server)
@@ -348,27 +360,30 @@ config.addSpec(Client)
 
 ### Retrieve value from config
 
-Retrieve associated value with item (type-safe API):
+To retrieve the value associated with your config item, you can use the type-safe API:
 
 ```kotlin
 val host = config[Server.host]
 ```
 
-Retrieve associated value with item name (unsafe API):
+Alternatively, you can use the "unsafe" API with a fully qualified string path to your spec:
 
 ```kotlin
 val host = config.get<String>("server.host")
 ```
 
-or:
+You can also omit the `.get`:
 
 ```kotlin
 val host = config<String>("server.host")
 ```
 
+The unsafe API is the suggested method to use in Java.
+It is possible to use the type-safe API from Java, but it is significantly more clumsy than using the unsafe API.
+
 ### Cast config to value
 
-Cast config to a value with the target type:
+You can cast a config instance to a value given a target type:
 
 ```kotlin
 val server = config.toValue<Server>()
@@ -376,7 +391,7 @@ val server = config.toValue<Server>()
 
 ### Check whether an item exists in config or not
 
-Check whether an item exists in config or not:
+To check whether an item exists in the config, use the `contains` function or the `in` overload:
 
 ```kotlin
 config.contains(Server.host)
@@ -384,7 +399,8 @@ config.contains(Server.host)
 Server.host in config
 ```
 
-Check whether an item name exists in config or not:
+To check whether an item exists in the config by name, you can do the same,
+but pass the fully qualified value path instead:
 
 ```kotlin
 config.contains("server.host")
@@ -392,13 +408,13 @@ config.contains("server.host")
 "server.host" in config
 ```
 
-Check whether all values of required items exist in config or not:
+To check whether all required configuration items exist in the config, use `containsRequired`:
 
 ```kotlin
 config.containsRequired()
 ```
 
-Throw exception if some required items in config don't have values:
+To throw an exception if any required config items don't have values, use `validateRequired`:
 
 ```kotlin
 config.validateRequired()
@@ -406,75 +422,75 @@ config.validateRequired()
 
 ### Modify value in config
 
-Associate item with value (type-safe API):
+To associate a new value with an item, you can use the type-safe API:
 
 ```kotlin
 config[Server.tcpPort] = 80
 ```
 
-Find item with specified name, and associate it with value (unsafe API):
+Alternatively, use the unsafe fully qualified item path API:
 
 ```kotlin
 config["server.tcpPort"] = 80
 ```
 
-Discard associated value of item:
+To discard the associated value of the item, with the type-safe API, use `unset`:
 
 ```kotlin
 config.unset(Server.tcpPort)
 ```
 
-Discard associated value of item with specified name:
+Similarly, to discard the associated value of the item by name, use the unsafe `unset` API:
 
 ```kotlin
 config.unset("server.tcpPort")
 ```
 
-Associate item with lazy thunk (type-safe API):
+To associate an item with a lazy lambda using the type-safe API, use `lazySet`:
 
 ```kotlin
 config.lazySet(Server.tcpPort) { it[basePort] + 1 }
 ```
 
-Find item with specified name, and associate it with lazy thunk (unsafe API):
+Similarly, to associate an item with a lazy lambda using the unsafe API, use `lazySet`:
 
 ```kotlin
 config.lazySet("server.tcpPort") { it[basePort] + 1 }
 ```
 
-### Subscribe the update event
+### Subscribing to update events
 
-Subscribe the update event of an item:
+If you want your program to react when a configuration item is updated, use `onSet` on an item:
 
 ```kotlin
 val handler = Server.host.onSet { value -> println("the host has changed to $value") }
 ```
 
-Subscribe the update event before every set operation:
+If you want your program to react before a configuration item is updated, use `beforeSet`:
 
 ```kotlin
 val handler = Server.host.beforeSet { config, value -> println("the host will change to $value") }
 ```
 
-or
+You can also use the same API on an instance of `Config` to react on all config updates:
 
 ```kotlin
 val handler = config.beforeSet { item, value -> println("${item.name} will change to $value") }
 ```
 
-Subscribe the update event after every set operation:
+If you want your program to react after a configuration item is updated, use `afterSet` on an item:
 
 ```kotlin
 val handler = Server.host.afterSet { config, value -> println("the host has changed to $value") }
 ```
 
-or
+or on a `Config` instance:
 
 ```kotlin
 val handler = config.afterSet { item, value -> println("${item.name} has changed to $value") }
 ```
 
-Cancel the subscription:
+Finally, to cancel the subscription, use `cancel` on the handler returned by `beforeSet`, `onSet`, or `afterSet`:
 
 ```kotlin
 handler.cancel()
@@ -482,7 +498,7 @@ handler.cancel()
 
 ### Export value in config as property
 
-Export a read-write property from value in config:
+To export a read-write property value from the configuration, use the `property` delegate with a `var` statement:
 
 ```kotlin
 var port by config.property(Server.tcpPort)
@@ -490,7 +506,7 @@ port = 9090
 check(port == 9090)
 ```
 
-Export a read-only property from value in config:
+To export a read-only property value from the configuration, use the `property` delegate with a `val` statement:
 
 ```kotlin
 val port by config.property(Server.tcpPort)
@@ -499,18 +515,24 @@ check(port == 9090)
 
 ### Fork from another config
 
+It is possible to "fork" a configuration to make a separate instance of a `Config`
+
+When the parent instance is modified, the changes *will* propagate to the child instance.
+
+If the child instance is modified, the changes will *not* propagate to the parent instance.
+
 ```kotlin
 val config = Config { addSpec(Server) }
 config[Server.tcpPort] = 1000
-// fork from parent config
+// Fork from the parent config.
 val childConfig = config.withLayer("child")
-// child config inherit values from parent config
+// Create a child config that inherits its values from the parent config.
 check(childConfig[Server.tcpPort] == 1000)
-// modifications in parent config affect values in child config
+// Modifications of the parent config will affect the values of the child config.
 config[Server.tcpPort] = 2000
 check(config[Server.tcpPort] == 2000)
 check(childConfig[Server.tcpPort] == 2000)
-// modifications in child config don't affect values in parent config
+// Modifications to the child config will not affect the values of the parent config.
 childConfig[Server.tcpPort] = 3000
 check(config[Server.tcpPort] == 2000)
 check(childConfig[Server.tcpPort] == 3000)
@@ -518,7 +540,9 @@ check(childConfig[Server.tcpPort] == 3000)
 
 ## Load values from source
 
-Use `from` to load values from source doesn't affect values in config, it will return a new child config by loading all values into new layer in child config:
+Use the `from` receiver to load values from a source that won't affect existing values in the config.
+
+It will return a new child config by loading all values into new layer in child config:
 
 ```kotlin
 val config = Config { addSpec(Server) }
@@ -527,94 +551,111 @@ val childConfig = config.from.env()
 check(childConfig.parent === config)
 ```
 
-All out-of-box supported sources are declared in [`DefaultLoaders`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/main/kotlin/com/nhubbard/konfig/source/DefaultLoaders.kt), shown below (the corresponding config spec for these samples is [`ConfigForLoad`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/test/kotlin/com/nhubbard/konfig/source/ConfigForLoad.kt)):
+The included sources are declared in [`DefaultLoaders`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/DefaultLoaders.kt).
 
-| Type                                                                | Usage                            | Provider                                                                                                                                                       | Sample                                                                                                                                                   |
-|---------------------------------------------------------------------|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [HOCON](https://github.com/typesafehub/config/blob/master/HOCON.md) | `config.from.hocon`              | [`HoconProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-hocon/src/main/kotlin/com/nhubbard/konfig/source/hocon/HoconProvider.kt)               | [`source.conf`](https://github.com/nhubbard/konfig/blob/master/konfig-hocon/src/test/resources/source/source.conf)                                       |
-| JSON                                                                | `config.from.json`               | [`JsonProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/main/kotlin/com/nhubbard/konfig/source/json/JsonProvider.kt)                   | [`source.json`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/test/resources/source/source.json)                                        |
-| properties                                                          | `config.from.properties`         | [`PropertiesProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/main/kotlin/com/nhubbard/konfig/source/properties/PropertiesProvider.kt) | [`source.properties`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/test/resources/source/source.properties)                            |
-| [TOML](https://github.com/toml-lang/toml)                           | `config.from.toml`               | [`TomlProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-toml/src/main/kotlin/com/nhubbard/konfig/source/toml/TomlProvider.kt)                   | [`source.toml`](https://github.com/nhubbard/konfig/blob/master/konfig-toml/src/test/resources/source/source.toml)                                        |
-| XML                                                                 | `config.from.xml`                | [`XmlProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-xml/src/main/kotlin/com/nhubbard/konfig/source/xml/XmlProvider.kt)                       | [`source.xml`](https://github.com/nhubbard/konfig/blob/master/konfig-xml/src/test/resources/source/source.xml)                                           |
-| YAML                                                                | `config.from.yaml`               | [`YamlProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-yaml/src/main/kotlin/com/nhubbard/konfig/source/yaml/YamlProvider.kt)                   | [`source.yaml`](https://github.com/nhubbard/konfig/blob/master/konfig-yaml/src/test/resources/source/source.yaml)                                        |
-| JavaScript                                                          | `config.from.js`                 | [`JsProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-js/src/main/kotlin/com/nhubbard/konfig/source/js/JsProvider.kt)                           | [`source.js`](https://github.com/nhubbard/konfig/blob/master/konfig-js/src/test/resources/source/source.js)                                              |
-| hierarchical map                                                    | `config.from.map.hierarchical`   | -                                                                                                                                                              | [`MapSourceLoadSpec`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/test/kotlin/com/nhubbard/konfig/source/base/MapSourceLoadSpec.kt)   |
-| map in key-value format                                             | `config.from.map.kv`             | -                                                                                                                                                              | [`KVSourceSpec`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/test/kotlin/com/nhubbard/konfig/source/base/KVSourceSpec.kt)             |
-| map in flat format                                                  | `config.from.map.flat`           | -                                                                                                                                                              | [`FlatSourceLoadSpec`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/test/kotlin/com/nhubbard/konfig/source/base/FlatSourceLoadSpec.kt) |
-| system environment                                                  | `config.from.env()`              | [`EnvProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/main/kotlin/com/nhubbard/konfig/source/env/EnvProvider.kt)                      | -                                                                                                                                                        |
-| system properties                                                   | `config.from.systemProperties()` | [`PropertiesProvider`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/main/kotlin/com/nhubbard/konfig/source/properties/PropertiesProvider.kt) | -                                                                                                                                                        |
+Each source is shown below.
 
-These sources can also be manually created using their provider, and then loaded into config by `config.withSource(source)`.
+The corresponding config spec for these samples is [`ConfigForLoad`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/ConfigForLoad.kt).
 
-All `from` APIs also have their standalone version that return sources without loading them into the config, shown below:
+| **Type**                                                            | **Usage**                        | **Provider**                                                                                                                                             | **Sample**                                                                                                                               |
+|---------------------------------------------------------------------|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| [HOCON](https://github.com/typesafehub/config/blob/master/HOCON.md) | `config.from.hocon`              | [`HoconProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/hocon/HoconProvider.kt)                          | [`source.conf`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.conf)                                      |
+| JSON                                                                | `config.from.json`               | [`JsonProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/json/JsonProvider.kt)                             | [`source.json`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.json)                                      |
+| properties                                                          | `config.from.properties`         | [`PropertiesProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/properties/PropertiesProvider.kt)           | [`source.properties`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.properties)                          |
+| [TOML](https://github.com/toml-lang/toml)                           | `config.from.toml`               | [`TomlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/toml/TomlProvider.kt)                             | [`source.toml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.toml)                                      |
+| XML                                                                 | `config.from.xml`                | [`XmlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/xml/XmlProvider.kt)                                | [`source.xml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.xml)                                        |
+| YAML                                                                | `config.from.yaml`               | [`YamlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/yaml/YamlProvider.kt)                             | [`source.yaml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.yaml)                                      |
+| JavaScript                                                          | `config.from.js`                 | [`JsProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/js/JsProvider.kt)                                   | [`source.js`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.js)                                          |
+| Hierarchical map                                                    | `config.from.map.hierarchical`   | Built-in                                                                                                                                                 | [`MapSourceLoadSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/MapSourceLoadSpec.kt)   |
+| Map in key-value format                                             | `config.from.map.kv`             | Built-in                                                                                                                                                 | [`KVSourceSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/KVSourceSpec.kt)             |
+| Map in flat format                                                  | `config.from.map.flat`           | Built-in                                                                                                                                                 | [`FlatSourceLoadSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/FlatSourceLoadSpec.kt) |
+| System environment variables                                        | `config.from.env()`              | [`EnvProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/env/EnvProvider.kt)                                | -                                                                                                                                        |
+| System properties                                                   | `config.from.systemProperties()` | [`PropertiesProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/properties/PropertiesProvider.kt)           | -                                                                                                                                        |
 
-| Type                                                                | Usage                            |
+These sources can also be manually created using their provider, and then loaded into an instance of `Config` using
+`config.withSource(source)`.
+
+All `from` APIs have a standalone version that returns sources without loading them into the config, as shown below:
+
+| **Type**                                                            | **Usage**                        |
 |---------------------------------------------------------------------|----------------------------------|
 | [HOCON](https://github.com/typesafehub/config/blob/master/HOCON.md) | `Source.from.hocon`              |
 | JSON                                                                | `Source.from.json`               |
-| properties                                                          | `Source.from.properties`         |
+| Properties                                                          | `Source.from.properties`         |
 | [TOML](https://github.com/toml-lang/toml)                           | `Source.from.toml`               |
 | XML                                                                 | `Source.from.xml`                |
 | YAML                                                                | `Source.from.yaml`               |
 | JavaScript                                                          | `Source.from.js`                 |
-| hierarchical map                                                    | `Source.from.map.hierarchical`   |
-| map in key-value format                                             | `Source.from.map.kv`             |
-| map in flat format                                                  | `Source.from.map.flat`           |
-| system environment                                                  | `Source.from.env()`              |
-| system properties                                                   | `Source.from.systemProperties()` |
+| Hierarchical map                                                    | `Source.from.map.hierarchical`   |
+| Map in key-value format                                             | `Source.from.map.kv`             |
+| Map in flat format                                                  | `Source.from.map.flat`           |
+| System environment variables                                        | `Source.from.env()`              |
+| System properties                                                   | `Source.from.systemProperties()` |
 
-Format of system properties source is same with that of properties source. System environment source follows the same mapping convention with properties source, but with the following name convention:
+The format of the system properties source is same as the properties source.
 
-- All letters in name are in uppercase
-- `.` in name is replaced with `_`
+The system environment source follows the same mapping convention as the properties file source, but all letters in the
+name are in uppercase, and `.` in the name is replaced with `_`.
 
-HOCON/JSON/properties/TOML/XML/YAML/JavaScript source can be loaded from a variety of input format. Use properties source as example:
+For example, an item with the fully qualified path `server.port` would be loaded from environment variables as
+`SERVER_PORT`.
 
-- From file: `config.from.properties.file("/path/to/file")`
-- From watched file: `config.from.properties.watchFile("/path/to/file", 100, TimeUnit.MILLISECONDS)`
-    - You can re-trigger the setup process every time the updated file is loaded by `watchFile("/path/to/file") { config, source -> setup(config) }`
-- From string: `config.from.properties.string("server.port = 8080")`
-- From URL: `config.from.properties.url("http://localhost:8080/source.properties")`
-- From watched URL: `config.from.properties.watchUrl("http://localhost:8080/source.properties", 1, TimeUnit.MINUTES)`
-    - You can re-trigger the setup process every time the URL is loaded by `watchUrl("http://localhost:8080/source.properties") { config, source -> setup(config) }`
-- From Git repository: `config.from.properties.git("https://github.com/nhubbard/konfig.git", "/path/to/source.properties", branch = "dev")`
-- From watched Git repository: `config.from.properties.watchGit("https://github.com/nhubbard/konfig.git", "/path/to/source.properties", period = 1, unit = TimeUnit.MINUTES)`
-    - You can re-trigger the setup process every time the Git file is loaded by `watchGit("https://github.com/nhubbard/konfig.git", "/path/to/source.properties") { config, source -> setup(config) }`
-- From resource: `config.from.properties.resource("source.properties")`
-- From reader: `config.from.properties.reader(reader)`
-- From input stream: `config.from.properties.inputStream(inputStream)`
-- From byte array: `config.from.properties.bytes(bytes)`
-- From portion of byte array: `config.from.properties.bytes(bytes, 1, 12)`
+HOCON/JSON/properties/TOML/XML/YAML/JavaScript sources can be loaded from a variety of input formats.
+Using the properties source as an example:
 
-If source is from file, file extension can be auto detected. Thus, you can use `config.from.file("/path/to/source.json")` instead of `config.from.json.file("/path/to/source.json")`, or use `config.from.watchFile("/path/to/source.json")` instead of `config.from.json.watchFile("/path/to/source.json")`. Source from URL also support auto-detected extension (use `config.from.url` or `config.from.watchUrl`). The following file extensions can be supported:
+- From a file: `config.from.properties.file("/path/to/file")`
+- From a watched file: `config.from.properties.watchFile("/path/to/file", 100, TimeUnit.MILLISECONDS)`
+    - You can re-trigger the setup process every time the updated file is loaded using `watchFile("/path/to/file") { config, source -> setup(config) }`.
+- From a string: `config.from.properties.string("server.port = 8080")`
+- From a URL: `config.from.properties.url("http://localhost:8080/source.properties")`
+- From a watched URL: `config.from.properties.watchUrl("http://localhost:8080/source.properties", 1, TimeUnit.MINUTES)`
+    - You can re-trigger the setup process every time the URL is loaded using `watchUrl("http://localhost:8080/source.properties") { config, source -> setup(config) }`.
+- From a Git repository: `config.from.properties.git("https://github.com/nhubbard/konf.git", "/path/to/source.properties", branch = "dev")`
+- From a watched Git repository: `config.from.properties.watchGit("https://github.com/nhubbard/konf.git", "/path/to/source.properties", period = 1, unit = TimeUnit.MINUTES)`
+    - You can re-trigger the setup process every time the Git file is loaded using `watchGit("https://github.com/nhubbard/konf.git", "/path/to/source.properties") { config, source -> setup(config) }`.
+- From a resource: `config.from.properties.resource("source.properties")`
+- From a `Reader`: `config.from.properties.reader(reader)`
+- From an `InputStream`: `config.from.properties.inputStream(inputStream)`
+- From a `ByteArray`: `config.from.properties.bytes(bytes)`
+- From a portion of a `ByteArray`: `config.from.properties.bytes(bytes, 1, 12)`
 
-| Type       | Extension  |
-|------------|------------|
-| HOCON      | conf       |
-| JSON       | json       |
-| Properties | properties |
-| TOML       | toml       |
-| XML        | xml        |
-| YAML       | yml, yaml  |
-| JavaScript | js         |
+If the source is a file, the file extension can be auto-detected.
 
-You can also implement [`Source`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/main/kotlin/com/nhubbard/konfig/source/Source.kt) to customize your new source, which can be loaded into config by `config.withSource(source)`.
+You can use `config.from.file("/path/to/source.json")` instead of `config.from.json.file("/path/to/source.json")`,
+or use `config.from.watchFile("/path/to/source.json")` instead of `config.from.json.watchFile("/path/to/source.json")`.
 
-### Subscribe the update event for load operation
+URLs also support auto-detecting the extension (use `config.from.url` or `config.from.watchUrl`).
 
-Subscribe the update event before every load operation:
+The following file extensions support auto-detection:
+
+| **Type**   | **Extension(s)** |
+|------------|------------------|
+| HOCON      | `conf`           |
+| JSON       | `json`           |
+| Properties | `properties`     |
+| TOML       | `toml`           |
+| XML        | `xml`            |
+| YAML       | `yml`, `yaml`    |
+| JavaScript | `js`             |
+
+You can also implement your own [`Source`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/Source.kt)
+to customize your new source, which can be loaded into config using `config.withSource(source)`.
+
+### Subscribe to update events for load operations
+
+To subscribe to update events before every load operation, use `beforeLoad`:
 
 ```kotlin
 val handler = config.beforeLoad { source -> println("$source will be loaded") }
 ```
 
-You can re-trigger the setup process by subscribing the update event after every load operation:
+You can re-trigger the setup process by subscribing to the update event after every load operation using `afterLoad`:
 
 ```kotlin
 val handler = config.afterLoad { source -> setup(config) }
 ```
 
-Cancel the subscription:
+And to cancel the subscription, use `cancel`:
 
 ```kotlin
 handler.cancel()
@@ -622,7 +663,8 @@ handler.cancel()
 
 ### Strict parsing when loading
 
-By default, Konfig extracts desired paths from sources and ignores other unknown paths in sources. If you want Konfig to throws exception when unknown paths are found, you can enable `FAIL_ON_UNKNOWN_PATH` feature:
+By default, Konf extracts the desired paths from sources and ignores other unknown paths in sources.
+If you want Konf to throw an exception when unknown paths are found, you can enable the `FAIL_ON_UNKNOWN_PATH` feature:
 
 ```kotlin
 config.enable(Feature.FAIL_ON_UNKNOWN_PATH)
@@ -630,7 +672,8 @@ config.enable(Feature.FAIL_ON_UNKNOWN_PATH)
     .from.json.resource("server.json")
 ```
 
-Then `config` will validate paths from both the properties file and the JSON resource. Furthermore, If you want to validate the properties file only, you can use:
+`config` will validate paths from both the properties file and the JSON resource.
+Furthermore, if you want to validate only one source file, you can use `enable` like so:
 
 ```kotlin
 config.from.enable(Feature.FAIL_ON_UNKNOWN_PATH).properties.file("/path/to/file")
@@ -639,42 +682,47 @@ config.from.enable(Feature.FAIL_ON_UNKNOWN_PATH).properties.file("/path/to/file"
 
 ### Path substitution
 
-Path substitution is a feature that path references in source will be substituted by their values.
+Path substitution is a feature substitutes path references in a source with their values.
 
-Path substitution rules are shown below:
+The following rules apply to path substitution:
 
-- Only quoted string value will be substituted. It means that Konfig's path substitutions will not conflict with HOCON's substitutions.
-- The definition of a path variable is `${path}`, e.g., `${java.version}`.
+- Only quoted string value will be substituted. This is to ensure path substitutions made by Konf will not conflict with HOCON substitutions.
+- The definition of a path variable uses Kotlin string interpolation syntax; e.g., `${java.version}`.
 - The path variable is resolved in the context of the current source.
-- If the string value only contains the path variable, it will be replaced by the whole sub-tree in the path; otherwise, it will be replaced by the string value in the path.
-- Use `${path:-default}` to provide a default value when the path is unresolved, e.g., `${java.version:-8}`.
+- If the string value only contains the path variable, it will be replaced by the whole subtree in the path; otherwise, it will be replaced by the string value in the path.
+- Use `${path:-default}` to provide a default value when the path is unresolved; e.g., `${java.version:-8}`.
 - Use `$${path}` to escape the path variable, e.g., `$${java.version}` will be resolved to `${java.version}` instead of the value in `java.version`.
 - Path substitution works in a recursive way, so nested path variables like `${jre-${java.specification.version}}` are allowed.
-- Konfig also supports all key prefix of [StringSubstitutor](https://commons.apache.org/proper/commons-text/apidocs/org/apache/commons/text/StringSubstitutor.html)'s default interpolator.
+- Konf also supports all key prefixes of the Apache Commons Text [StringSubstitutor](https://commons.apache.org/proper/commons-text/apidocs/org/apache/commons/text/StringSubstitutor.html).
 
-By default, Konfig will perform path substitution for every source (except system environment source) when loading them into the config.
-You can disable this behaviour by using `config.disable(Feature.SUBSTITUTE_SOURCE_BEFORE_LOADED)` for the config
+Konf will perform path substitution for every source by default, except for the system environment source, upon loading
+the config.
+
+You can disable this behavior by using `config.disable(Feature.SUBSTITUTE_SOURCE_BEFORE_LOADED)` for the config
 or `source.disabled(Feature.SUBSTITUTE_SOURCE_BEFORE_LOADED)` for a single source.
 
-By default, Konfig will throw exception when some path variables are unresolved. You can use `source.substituted(false)` manually to ignore these unresolved variables.
+By default, Konf will throw exception if any path variables are unresolved.
+You can use `source.substituted(false)` manually to ignore these unresolved variables.
 
-To resolve path variables refer to other sources, you can merge these sources before loading them into the config.
-For example, if we have two sources `source1.json` and `source2.properties`,
-`source1.json` is:
+To resolve path variables that refer to other sources, you can merge these sources before loading them into the config.
+For example, if we have two sources `source1.json` and `source2.properties`, where `source1.json` is:
 
 ```json
 { 
-  "base" : { "user" : "konfig" , "password" : "passwd" }
+  "base": {
+    "user": "konf",
+    "password": "passwd"
+  }
 }
 ```
 
-`source2.properties` is:
+and `source2.properties` is:
 
 ```properties
 connection.jdbc=mysql://${base.user}:${base.password}@server:port
 ```
 
-use:
+then use:
 
 ```kotlin
 config.withSource(
@@ -683,13 +731,15 @@ config.withSource(
 )
 ```
 
-We can resolve `mysql://${base.user}:${base.password}@server:port` as `mysql://konfig:passwd@server:port`.
+to merge these sources correctly.
+
+We can then resolve `mysql://${base.user}:${base.password}@server:port` as `mysql://konf:passwd@server:port`.
 
 ## Prefix/Merge operations for source/config/config spec
 
-All of source/config/config spec support add prefix operation, remove prefix operation and merge operation as shown below:
+All of the `Source`/`Config`/`ConfigSpec` support the add, remove, and merge prefix operations as shown below:
 
-| Type     | Add Prefix                                                                                            | Remove Prefix                                               | Merge                                                  |
+| **Type** | **Add Prefix**                                                                                        | **Remove Prefix**                                           | **Merge**                                              |
 |----------|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|--------------------------------------------------------|
 | `Source` | `source.withPrefix(prefix)` or `Prefix(prefix) + source` or `config.from.prefixed(prefix).file(file)` | `source[prefix]` or `config.from.scoped(prefix).file(file)` | `fallback + facade` or `facade.withFallback(fallback)` |
 | `Config` | `config.withPrefix(prefix)` or `Prefix(prefix) + config`                                              | `config.at(prefix)`                                         | `fallback + facade` or `facade.withFallback(fallback)` |
@@ -697,38 +747,38 @@ All of source/config/config spec support add prefix operation, remove prefix ope
 
 ## Export/Reload values in config
 
-Export all values in config as a tree:
+To export all values in the config as a tree, use `config.toTree()`:
 
 ```kotlin
 val tree = config.toTree()
 ```
 
-Export all values in config to map in key-value format:
+To export all values in the config to a map in key-value format, use `config.toMap()`:
 
 ```kotlin
 val map = config.toMap()
 ```
 
-Export all values in config to hierarchical map:
+To export all values in the config to a hierarchical map, use `config.toHierarchicalMap()`:
 
 ```kotlin
 val map = config.toHierarchicalMap()
 ```
 
-Export all values in config to map in flat format:
+To export all values in the config to a map in a flat format, use `config.toFlatMap()`:
 
 ```kotlin
 val map = config.toFlatMap()
 ```
 
-Export all values in config to JSON:
+To export all values in the config to JSON, use `config.toJson.toFile(file)`:
 
 ```kotlin
 val file = createTempFile(suffix = ".json")
 config.toJson.toFile(file)
 ```
 
-Reload values from JSON:
+To reload the values from JSON, recreate the config:
 
 ```kotlin
 val newConfig = Config {
@@ -737,15 +787,16 @@ val newConfig = Config {
 check(config == newConfig)
 ```
 
-Config can be saved to a variety of output format in HOCON/JSON/properties/TOML/XML/YAML/JavaScript. Use JSON as example:
+The config can be saved to a variety of output formats. Using JSON as an example:
 
-- To file: `config.toJson.toFile("/path/to/file")`
-- To string: `config.toJson.toText()`
-- To writer: `config.toJson.toWriter(writer)`
-- To output stream: `config.toJson.toOutputStream(outputStream)`
-- To byte array: `config.toJson.toBytes()`
+- Export to file: `config.toJson.toFile("/path/to/file")`
+- Export to string: `config.toJson.toText()`
+- Export to `Writer`: `config.toJson.toWriter(writer)`
+- Export to `OutputStream`: `config.toJson.toOutputStream(outputStream)`
+- Export to `ByteArray`: `config.toJson.toBytes()`
 
-You can also implement [`Writer`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/main/kotlin/com/nhubbard/konfig/source/Writer.kt) to customize your new writer (see [`JsonWriter`](https://github.com/nhubbard/konfig/blob/master/konfig-core/src/main/kotlin/com/nhubbard/konfig/source/json/JsonWriter.kt) for how to integrate your writer with config).
+You can also implement the [`Writer`](https://github.com/nhubbard/konf/blob/master/konf-core/src/main/kotlin/com/nhubbard/konf/source/Writer.kt) interface
+to customize your new writer (see [`JsonWriter`](https://github.com/nhubbard/konf/blob/master/konf-core/src/main/kotlin/com/nhubbard/konf/source/json/JsonWriter.kt) for how to integrate your writer with config).
 
 ## Supported item types
 
@@ -786,11 +837,14 @@ Supported item types include:
 - Data classes
 - POJOs supported by Jackson core modules
 
-Konfig supports size in bytes format described in [HOCON document](https://github.com/typesafehub/config/blob/master/HOCON.md#size-in-bytes-format) with class `SizeInBytes`.
+Konf supports the size in bytes format as described in the [HOCON specification](https://github.com/typesafehub/config/blob/master/HOCON.md#size-in-bytes-format) with the class `SizeInBytes`.
 
-Konfig supports both [ISO-8601 duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) and [HOCON duration format](https://github.com/typesafehub/config/blob/master/HOCON.md#duration-format) for `Duration`.
+Konf supports both the [ISO-8601 duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) and [HOCON duration format](https://github.com/typesafehub/config/blob/master/HOCON.md#duration-format) for `Duration`.
 
-Konfig uses [Jackson](https://github.com/FasterXML/jackson) to support Kotlin Built-in classes, Data classes and POJOs. You can use `config.mapper` to access `ObjectMapper` instance used by config, and configure it to support more types from third-party Jackson modules. Default modules registered by Konfig include:
+Konf uses [Jackson](https://github.com/FasterXML/jackson) to support Kotlin built-in classes, data classes, and POJOs.
+You can use `config.mapper` to access the `ObjectMapper` instance used by config,
+and configure it to support more types from third-party Jackson modules.
+The default modules registered by Konf include:
 
 - Jackson core modules
 - `JavaTimeModule` in [jackson-modules-java8](https://github.com/FasterXML/jackson-modules-java8)
@@ -798,7 +852,9 @@ Konfig uses [Jackson](https://github.com/FasterXML/jackson) to support Kotlin Bu
 
 ## Optional features
 
-There are some optional features that you can enable/disable in the config scope or the source scope by `Config#enable(Feature)`/`Config#disable(Feature)` or `Source#enabled(Feature)`/`Source#disable(Feature)`. You can use `Config#isEnabled()` or `Source#isEnabled()` to check whether a feature is enabled.
+There are some optional features that you can enable/disable in the config scope or the source scope using
+`Config#enable(Feature)`/`Config#disable(Feature)` or `Source#enabled(Feature)`/`Source#disable(Feature)`.
+You can use `Config#isEnabled()` or `Source#isEnabled()` to check whether a feature is enabled.
 
 These features include:
 
@@ -807,16 +863,17 @@ These features include:
 - `LOAD_KEYS_AS_LITTLE_CAMEL_CASE`: feature that determines whether loading keys from sources as little camel case. This feature is enabled by default.
 - `OPTIONAL_SOURCE_BY_DEFAULT`: feature that determines whether sources are optional by default. This feature is disabled by default.
 - `SUBSTITUTE_SOURCE_BEFORE_LOADED`: feature that determines whether sources should be substituted before loaded into config. This feature is enabled by default.
+- `WRITE_DESCRIPTIONS_AS_COMMENTS`: feature that exports item descriptions as comments in supported formats. This feature is disabled by default and currently in development.
 
 ## Build from source
 
-Build library with Gradle using the following command:
+To build the library with Gradle, use the following command:
 
 ```
 ./gradlew clean assemble
 ```
 
-Test library with Gradle using the following command:
+To test the library with Gradle, use the following command:
 
 ```
 ./gradlew clean test
@@ -824,7 +881,7 @@ Test library with Gradle using the following command:
 
 Since Gradle has excellent incremental build support, you can usually omit executing the `clean` task.
 
-Install library in a local Maven repository for consumption in other projects via the following command:
+To install the library in a local Maven repository for consumption in other projects, use the following command:
 
 ```
 ./gradlew clean install
@@ -834,31 +891,41 @@ Install library in a local Maven repository for consumption in other projects vi
 
 ### v2.0.0
 
-* The entire codebase has been (at least temporarily) de-modularized due to the previous modular structure not working correctly after migrating to Gradle 8.0 to support newer versions of Kotlin.
-* All "default" providers have had their extension points moved into a subpackage to make the codebase easier to maintain.
-* The base package is now `com.nhubbard.konfig` instead of `com.uchuhimo.konf` to ensure a clean separation from the unmaintained original Konf framework.
+* The entire codebase has been (at least temporarily) de-modularized due to the previous modular structure not working 
+  correctly after migrating to Gradle 8.0 to support newer versions of Kotlin.
+* All "default" providers have had their extension points moved into a subpackage to make the codebase easier to 
+  maintain.
+* The base package is now `com.nhubbard.konf` instead of `com.uchuhimo.konf` to ensure a clean separation from the
+  unmaintained original Konf framework.
 
 ### v0.19.0
 
-Since all sources are substituted before loaded into config by default, all path variables will be substituted now. You can use `config.disable(Feature.SUBSTITUTE_SOURCE_BEFORE_LOADED)` to disable this change.
+Since all sources are substituted before loaded into config by default, all path variables will be substituted now.
+You can use `config.disable(Feature.SUBSTITUTE_SOURCE_BEFORE_LOADED)` to disable this change.
 
 ### v0.17.0
 
-After migrated to tree-based source APIs, many deprecated APIs are removed, including:
+After the migration to tree-based source APIs, many deprecated APIs have been removed, including:
 
 - `Source`: all `isXXX` and `toXXX` APIs
 - `Config`: `layer`, `addSource` and `withSourceFrom`
 
 ### v0.15
 
-After modularized Konfig, `hocon`/`toml`/`xml`/`yaml`/`git`/`watchGit` in `DefaultLoaders` become extension properties/functions and should be imported explicitly.
-For example, you should import `com.nhubbard.konfig.source.hocon` before using `config.from.hocon`; in Java, `config.from().hocon` is unavailable, please use `config.from().source(HoconProvider.INSTANCE)` instead.
+After modularizing Konf, the `hocon`/`toml`/`xml`/`yaml`/`git`/`watchGit` functions in `DefaultLoaders` have become
+extension properties/functions and should be imported explicitly.
 
-If you use JitPack, you should use `com.github.nhubbard.konfig:konfig:<version>` instead of `com.github.nhubbard:konfig:<version>` now.
+For example, you should import `com.nhubbard.konf.source.hocon` before using `config.from.hocon`;
+in Java, `config.from().hocon` is unavailable, please use `config.from().source(HoconProvider.INSTANCE)` instead.
+
+If you use JitPack,
+you should use `com.github.nhubbard.konf:konf:<version>` instead of `com.github.nhubbard:konf:<version>` now.
 
 ### v0.10
 
-APIs in `ConfigSpec` have been updated to support item name's auto-detection, please migrate to new APIs. Here are some examples:
+APIs in `ConfigSpec` have been updated to support item name's auto-detection.
+
+Here are some examples:
 
 - `val host = optional("host", "0.0.0.0")` to `val host by optional("0.0.0.0")`
 - `val port = required<Int>("port")` to `val port by required<Int>()`

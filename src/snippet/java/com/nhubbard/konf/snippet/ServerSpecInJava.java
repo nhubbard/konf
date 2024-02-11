@@ -15,23 +15,19 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+package com.nhubbard.konf.snippet;
 
-rootProject.name = "konf"
+import com.nhubbard.konf.ConfigSpec;
+import com.nhubbard.konf.OptionalItem;
+import com.nhubbard.konf.RequiredItem;
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
+public class ServerSpecInJava {
+    public static final ConfigSpec spec = new ConfigSpec("server");
 
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-    }
+    public static final OptionalItem<String> host =
+            new OptionalItem<>(spec, "host", "0.0.0.0") {
+            };
+
+    public static final RequiredItem<Integer> tcpPort = new RequiredItem<>(spec, "tcpPort") {
+    };
 }

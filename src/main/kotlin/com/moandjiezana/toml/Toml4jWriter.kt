@@ -21,9 +21,9 @@ import com.moandjiezana.toml.BooleanValueReaderWriter.BOOLEAN_VALUE_READER_WRITE
 import com.moandjiezana.toml.DateValueReaderWriter.DATE_VALUE_READER_WRITER
 import com.moandjiezana.toml.NumberValueReaderWriter.NUMBER_VALUE_READER_WRITER
 import com.moandjiezana.toml.StringValueReaderWriter.STRING_VALUE_READER_WRITER
-import com.nhubbard.konfig.ListNode
-import com.nhubbard.konfig.TreeNode
-import com.nhubbard.konfig.ValueNode
+import com.nhubbard.konf.ListNode
+import com.nhubbard.konf.TreeNode
+import com.nhubbard.konf.ValueNode
 import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer

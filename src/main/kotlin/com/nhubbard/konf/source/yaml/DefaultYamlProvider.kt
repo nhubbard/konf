@@ -15,23 +15,13 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+@file:Suppress("UnusedReceiverParameter")
 
-rootProject.name = "konf"
+package com.nhubbard.konf.source.yaml
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
+import com.nhubbard.konf.source.DefaultProviders
 
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-    }
-}
+/**
+ * Provider for YAML source.
+ */
+val DefaultProviders.yaml get() = YamlProvider

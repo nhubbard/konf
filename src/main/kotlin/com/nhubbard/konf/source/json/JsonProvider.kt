@@ -15,23 +15,26 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+package com.nhubbard.konf.source.json
 
-rootProject.name = "konf"
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.nhubbard.konf.annotation.JavaApi
+import com.nhubbard.konf.source.Provider
+import com.nhubbard.konf.source.Source
+import java.io.InputStream
+import java.io.Reader
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
+/**
+ * Provider for JSON source.
+ */
+object JsonProvider : Provider {
+    override fun reader(reader: Reader): Source =
+        JsonSource(ObjectMapper().readTree(reader))
 
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-    }
+    override fun inputStream(inputStream: InputStream): Source =
+        JsonSource(ObjectMapper().readTree(inputStream))
+
+    @JavaApi
+    @JvmStatic
+    fun get() = this
 }

@@ -15,23 +15,21 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+@file:Suppress("unused")
 
-rootProject.name = "konf"
+package com.nhubbard.konf.snippet
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
+import com.nhubbard.konf.Config
+import com.nhubbard.konf.ConfigSpec
 
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
+data class Server(val host: String, val tcpPort: Int) {
+    constructor(config: Config) : this(config[Server.host], config[Server.tcpPort])
+
+    fun start() {}
+
+    companion object : ConfigSpec("server") {
+        val host by optional("0.0.0.0", description = "host IP of server")
+        val tcpPort by required<Int>(description = "port of server")
+        val nextPort by lazy { config -> config[tcpPort] + 1 }
     }
 }

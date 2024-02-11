@@ -15,23 +15,15 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+package com.nhubbard.konf.source.deserializer
 
-rootProject.name = "konf"
+import java.time.ZonedDateTime
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
+/**
+ * Deserializer for [ZonedDateTime].
+ */
+object ZoneDateTimeDeserializer : JSR310Deserializer<ZonedDateTime>(ZonedDateTime::class.java) {
+    private fun readResolve(): Any = ZoneDateTimeDeserializer
 
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-    }
+    override fun parse(string: String): ZonedDateTime = ZonedDateTime.parse(string)
 }

@@ -15,23 +15,25 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
+package com.nhubbard.konf.source.base
+
+import com.nhubbard.konf.TreeNode
+import com.nhubbard.konf.notEmptyOr
+import com.nhubbard.konf.source.Source
+import com.nhubbard.konf.source.SourceInfo
+import com.nhubbard.konf.source.asTree
+
+/**
+ * Source from a single value.
+ */
+open class ValueSource(
+    val value: Any,
+    type: String = "",
+    final override val info: SourceInfo = SourceInfo()
+) : Source {
+    init {
+        info["type"] = type.notEmptyOr("value")
     }
-}
 
-rootProject.name = "konf"
-
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
-
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-    }
+    override val tree: TreeNode = value.asTree()
 }

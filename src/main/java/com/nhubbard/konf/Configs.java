@@ -15,23 +15,32 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
+package com.nhubbard.konf;
+
+import java.util.function.Consumer;
+
+/** Helper class for {@link com.nhubbard.konf.Config Config}. */
+public final class Configs {
+    private Configs() {}
+
+    /**
+     * Create a new root config.
+     *
+     * @return a new root config
+     */
+    public static Config create() {
+        return Config.Companion.invoke();
     }
-}
 
-rootProject.name = "konf"
-
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
-
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
+    /**
+     * Create a new root config and initiate it.
+     *
+     * @param init initial action
+     * @return a new root config
+     */
+    public static Config create(Consumer<Config> init) {
+        final Config config = create();
+        init.accept(config);
+        return config;
     }
 }

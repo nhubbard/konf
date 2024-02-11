@@ -15,23 +15,14 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+package com.nhubbard.konf.source.deserializer
 
-rootProject.name = "konf"
+import java.time.OffsetDateTime
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
-    id("com.gradle.enterprise") version "3.0"
-}
-
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-    }
+/**
+ * Deserializer for [OffsetDateTime].
+ */
+object OffsetDateTimeDeserializer : JSR310Deserializer<OffsetDateTime>(OffsetDateTime::class.java) {
+    private fun readResolve(): Any = OffsetDateTimeDeserializer
+    override fun parse(string: String): OffsetDateTime = OffsetDateTime.parse(string)
 }
