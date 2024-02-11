@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 
-import java.net.URI
 import java.util.*
 
 // Helper function to protect private properties from being published
-fun Project.getPrivateProperty(key: String): String = file("private.properties").let {
+fun getPrivateProperty(key: String): String = file("private.properties").let {
     if (it.exists()) {
         val properties = Properties()
         properties.load(it.inputStream())
         properties.getProperty(key)
-    } else ""
+    } else error("Property is empty")
 }
 
 val ossUserToken by extra { getPrivateProperty("ossUserToken") }
@@ -43,10 +42,7 @@ plugins {
 group = "io.github.nhubbard"
 version = "2.0.0"
 
-val description = "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"
-val projectGroup = project.group as String
-val projectName = "konf"
-val projectVersion = project.version as String
+val projectDescription = "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"
 val projectUrl = "https://github.com/nhubbard/konf"
 
 repositories {
@@ -141,7 +137,7 @@ tasks.compileJava {
 }
 
 tasks.check {
-    dependsOn(koverReport)
+    dependsOn(tasks.koverHtmlReport)
 }
 
 tasks.dokkaHtml {
@@ -152,7 +148,7 @@ tasks.dokkaHtml {
             reportUndocumented.set(false)
             sourceLink {
                 localDirectory.set(file("./"))
-                remoteUrl.set(URI("https://github.com/nhubbard/konf/blob/v${project.version}/").toURL())
+                remoteUrl.set(uri("https://github.com/nhubbard/konf/blob/v${project.version}/").toURL())
                 remoteLineSuffix.set("#L")
             }
         }
@@ -176,17 +172,14 @@ publishing {
             artifact(sourcesJar.get())
             artifact(javadocJar.get())
 
-            groupId = projectGroup
-            artifactId = projectName
-            version = projectVersion
-
-            suppressPomMetadataWarningsFor("textFixturesApiElements")
-            suppressPomMetadataWarningsFor("testFixturesRuntimeElements")
+            groupId = project.group as String
+            artifactId = "konf"
+            version = project.version as String
 
             pom {
-                name.set(rootProject.name)
-                description.set(description)
-                url.set(projectUrl)
+                name = "konf"
+                description = projectDescription
+                url = projectUrl
 
                 licenses {
                     license {
@@ -206,8 +199,6 @@ publishing {
 
                 scm {
                     url.set(projectUrl)
-                    connection.set("scm:git:git://github.com/nhubbard/konf.git")
-                    developerConnection.set("scm:git:ssh://github.com:nhubbard/konf.git")
                 }
             }
         }
@@ -215,15 +206,7 @@ publishing {
 
     repositories {
         maven {
-            uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
-            credentials {
-                username = ossUserToken
-                password = ossUserPassword
-            }
-        }
-
-        maven {
-            uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
                 username = ossUserToken
                 password = ossUserPassword
@@ -236,21 +219,4 @@ signing {
     isRequired = true
     useGpgCmd()
     sign(publishing.publications["maven"])
-}
-
-tasks {
-    val install by registering
-
-    afterEvaluate {
-        val publishToMavenLocal by existing
-        val publish by existing
-
-        install.configure {
-            dependsOn(publishToMavenLocal)
-        }
-
-        publish {
-            dependsOn(check, install)
-        }
-    }
 }
