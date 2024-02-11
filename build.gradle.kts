@@ -15,19 +15,39 @@
  * limitations under the License.
  */
 
+import java.net.URI
+import java.util.*
+
+// Helper function to protect private properties from being published
+fun Project.getPrivateProperty(key: String): String = file("private.properties").let {
+    if (it.exists()) {
+        val properties = Properties()
+        properties.load(it.inputStream())
+        properties.getProperty(key)
+    } else ""
+}
+
+val ossUserToken by extra { getPrivateProperty("ossUserToken") }
+val ossUserPassword by extra { getPrivateProperty("ossUserPassword") }
+val signPublications by extra { getPrivateProperty("signPublications") }
+
 plugins {
     java
-    jacoco
     `maven-publish`
     signing
     kotlin("jvm") version "1.9.22"
-    kotlin("plugin.allopen") version "1.9.22"
-    id("com.diffplug.spotless") version "6.25.0"
     id("org.jetbrains.dokka") version "1.9.10"
+    id("org.jetbrains.kotlinx.kover") version "0.7.5"
 }
 
-group = "com.nhubbard"
-version = "2.0-SNAPSHOT"
+group = "io.github.nhubbard"
+version = "2.0.0"
+
+val description = "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"
+val projectGroup = project.group as String
+val projectName = "konf"
+val projectVersion = project.version as String
+val projectUrl = "https://github.com/nhubbard/konf"
 
 repositories {
     mavenCentral()
@@ -85,6 +105,7 @@ dependencies {
     testImplementation("com.natpryce:hamkrest:1.8.0.1")
     testImplementation("org.hamcrest:hamcrest:2.2")
 
+    // Snippet implementation
     snippetImplementation(sourceSets.main.get().output)
     val snippet by sourceSets
     testImplementation(snippet.output)
@@ -106,8 +127,130 @@ tasks.test {
     maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
     environment("SOURCE_TEST_TYPE", "env")
     environment("SOURCE_CAMELCASE", "true")
+
+    finalizedBy(tasks.koverHtmlReport)
+    finalizedBy(tasks.koverXmlReport)
 }
 
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.compileJava {
+    options.encoding = "UTF-8"
+}
+
+tasks.check {
+    dependsOn(koverReport)
+}
+
+tasks.dokkaHtml {
+    outputDirectory.set(tasks.javadoc.get().destinationDir)
+    dokkaSourceSets {
+        configureEach {
+            jdkVersion.set(17)
+            reportUndocumented.set(false)
+            sourceLink {
+                localDirectory.set(file("./"))
+                remoteUrl.set(URI("https://github.com/nhubbard/konf/blob/v${project.version}/").toURL())
+                remoteLineSuffix.set("#L")
+            }
+        }
+    }
+}
+
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(tasks.dokkaHtml)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            artifact(sourcesJar.get())
+            artifact(javadocJar.get())
+
+            groupId = projectGroup
+            artifactId = projectName
+            version = projectVersion
+
+            suppressPomMetadataWarningsFor("textFixturesApiElements")
+            suppressPomMetadataWarningsFor("testFixturesRuntimeElements")
+
+            pom {
+                name.set(rootProject.name)
+                description.set(description)
+                url.set(projectUrl)
+
+                licenses {
+                    license {
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("nhubbard")
+                        name.set("nhubbard")
+                        email.set("nhubbard@users.noreply.github.com")
+                        url.set("https://github.com/nhubbard")
+                    }
+                }
+
+                scm {
+                    url.set(projectUrl)
+                    connection.set("scm:git:git://github.com/nhubbard/konf.git")
+                    developerConnection.set("scm:git:ssh://github.com:nhubbard/konf.git")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+            credentials {
+                username = ossUserToken
+                password = ossUserPassword
+            }
+        }
+
+        maven {
+            uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
+            credentials {
+                username = ossUserToken
+                password = ossUserPassword
+            }
+        }
+    }
+}
+
+signing {
+    isRequired = true
+    useGpgCmd()
+    sign(publishing.publications["maven"])
+}
+
+tasks {
+    val install by registering
+
+    afterEvaluate {
+        val publishToMavenLocal by existing
+        val publish by existing
+
+        install.configure {
+            dependsOn(publishToMavenLocal)
+        }
+
+        publish {
+            dependsOn(check, install)
+        }
+    }
 }

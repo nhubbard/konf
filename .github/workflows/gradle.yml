@@ -15,7 +15,5 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java_version }}
-      - name: Build with Gradle
+      - name: Build and Test with Gradle
         run: ./gradlew build
-      - name: Test with Gradle
-        run: ./gradlew test

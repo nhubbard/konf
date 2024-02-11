@@ -15,7 +15,7 @@ A type-safe cascading configuration library for Kotlin/Java/Android, supporting 
 - **Batteries included**. Support sources from JSON, XML, YAML, [HOCON](https://github.com/typesafehub/config/blob/master/HOCON.md), [TOML](https://github.com/toml-lang/toml), properties, map, command line and system environment out of box.
 - **Cascading**. Config can fork from another config by adding a new layer on it. Each layer of config can be updated independently. This feature is powerful enough to support complicated situations such as configs with different values share common fallback config, which is automatically updated when configuration file changes.
 - **Self-documenting**. Document config item with type, default value and description when declaring.
-- **Extensible**. Easy to customize new sources for config or expose items in config.
+- **Extensible**. Konf makes it easy to customize new sources for config or expose items in config.
 
 ## Contents
 
@@ -71,22 +71,22 @@ This library has been published to [Maven Central](https://search.maven.org/arti
 
 ```xml
 <dependency>
-  <groupId>com.nhubbard</groupId>
+  <groupId>io.github.nhubbard</groupId>
   <artifactId>konf</artifactId>
-  <version>1.1.2</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'com.nhubbard:konf:1.1.2'
+implementation 'io.github.nhubbard:konf:2.0.0'
 ```
 
 ### Gradle Kotlin DSL
 
 ```kotlin
-implementation("com.nhubbard:konf:1.1.2")
+implementation("io.github.nhubbard:konf:2.0.0")
 ```
 
 ### Maven (master snapshot)
@@ -123,7 +123,7 @@ repositories {
 Add dependencies:
 
 ```groovy
-compile 'com.github.nhubbard.konf:konf:master-SNAPSHOT'
+compile 'com.github.nhubbard:konf:master-SNAPSHOT'
 ```
 
 ### Gradle Kotlin DSL (master snapshot)
@@ -139,7 +139,7 @@ repositories {
 Add dependencies:
 
 ```kotlin
-compile(group = "com.github.nhubbard.konf", name = "konf", version = "master-SNAPSHOT")
+compile(group = "com.github.nhubbard", name = "konf", version = "master-SNAPSHOT")
 ```
 
 ## Quick start
@@ -546,31 +546,31 @@ It will return a new child config by loading all values into new layer in child 
 
 ```kotlin
 val config = Config { addSpec(Server) }
-// values in source is loaded into new layer in child config
+// The values in the source are loaded into the new layer in the child config
 val childConfig = config.from.env()
 check(childConfig.parent === config)
 ```
 
-The included sources are declared in [`DefaultLoaders`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/DefaultLoaders.kt).
+The included sources are declared in [`DefaultLoaders`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/DefaultLoaders.kt).
 
 Each source is shown below.
 
 The corresponding config spec for these samples is [`ConfigForLoad`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/ConfigForLoad.kt).
 
-| **Type**                                                            | **Usage**                        | **Provider**                                                                                                                                             | **Sample**                                                                                                                               |
-|---------------------------------------------------------------------|----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| [HOCON](https://github.com/typesafehub/config/blob/master/HOCON.md) | `config.from.hocon`              | [`HoconProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/hocon/HoconProvider.kt)                          | [`source.conf`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.conf)                                      |
-| JSON                                                                | `config.from.json`               | [`JsonProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/json/JsonProvider.kt)                             | [`source.json`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.json)                                      |
-| properties                                                          | `config.from.properties`         | [`PropertiesProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/properties/PropertiesProvider.kt)           | [`source.properties`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.properties)                          |
-| [TOML](https://github.com/toml-lang/toml)                           | `config.from.toml`               | [`TomlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/toml/TomlProvider.kt)                             | [`source.toml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.toml)                                      |
-| XML                                                                 | `config.from.xml`                | [`XmlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/xml/XmlProvider.kt)                                | [`source.xml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.xml)                                        |
-| YAML                                                                | `config.from.yaml`               | [`YamlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/yaml/YamlProvider.kt)                             | [`source.yaml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.yaml)                                      |
-| JavaScript                                                          | `config.from.js`                 | [`JsProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/js/JsProvider.kt)                                   | [`source.js`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.js)                                          |
-| Hierarchical map                                                    | `config.from.map.hierarchical`   | Built-in                                                                                                                                                 | [`MapSourceLoadSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/MapSourceLoadSpec.kt)   |
-| Map in key-value format                                             | `config.from.map.kv`             | Built-in                                                                                                                                                 | [`KVSourceSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/KVSourceSpec.kt)             |
-| Map in flat format                                                  | `config.from.map.flat`           | Built-in                                                                                                                                                 | [`FlatSourceLoadSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/FlatSourceLoadSpec.kt) |
-| System environment variables                                        | `config.from.env()`              | [`EnvProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/env/EnvProvider.kt)                                | -                                                                                                                                        |
-| System properties                                                   | `config.from.systemProperties()` | [`PropertiesProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/properties/PropertiesProvider.kt)           | -                                                                                                                                        |
+| **Type**                                                            | **Usage**                        | **Provider**                                                                                                                                         | **Sample**                                                                                                                               |
+|---------------------------------------------------------------------|----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| [HOCON](https://github.com/typesafehub/config/blob/master/HOCON.md) | `config.from.hocon`              | [`HoconProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/hocon/HoconProvider.kt)                | [`source.conf`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.conf)                                      |
+| JSON                                                                | `config.from.json`               | [`JsonProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/json/JsonProvider.kt)                   | [`source.json`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.json)                                      |
+| properties                                                          | `config.from.properties`         | [`PropertiesProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/properties/PropertiesProvider.kt) | [`source.properties`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.properties)                          |
+| [TOML](https://github.com/toml-lang/toml)                           | `config.from.toml`               | [`TomlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/toml/TomlProvider.kt)                   | [`source.toml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.toml)                                      |
+| XML                                                                 | `config.from.xml`                | [`XmlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/xml/XmlProvider.kt)                      | [`source.xml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.xml)                                        |
+| YAML                                                                | `config.from.yaml`               | [`YamlProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/yaml/YamlProvider.kt)                   | [`source.yaml`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.yaml)                                      |
+| JavaScript                                                          | `config.from.js`                 | [`JsProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/js/JsProvider.kt)                         | [`source.js`](https://github.com/nhubbard/konf/blob/master/src/test/resources/source/source.js)                                          |
+| Hierarchical map                                                    | `config.from.map.hierarchical`   | Built-in                                                                                                                                             | [`MapSourceLoadSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/MapSourceLoadSpec.kt)   |
+| Map in key-value format                                             | `config.from.map.kv`             | Built-in                                                                                                                                             | [`KVSourceSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/KVSourceSpec.kt)             |
+| Map in flat format                                                  | `config.from.map.flat`           | Built-in                                                                                                                                             | [`FlatSourceLoadSpec`](https://github.com/nhubbard/konf/blob/master/src/test/kotlin/com/nhubbard/konf/source/base/FlatSourceLoadSpec.kt) |
+| System environment variables                                        | `config.from.env()`              | [`EnvProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/env/EnvProvider.kt)                      | -                                                                                                                                        |
+| System properties                                                   | `config.from.systemProperties()` | [`PropertiesProvider`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/properties/PropertiesProvider.kt) | -                                                                                                                                        |
 
 These sources can also be manually created using their provider, and then loaded into an instance of `Config` using
 `config.withSource(source)`.
@@ -592,7 +592,7 @@ All `from` APIs have a standalone version that returns sources without loading t
 | System environment variables                                        | `Source.from.env()`              |
 | System properties                                                   | `Source.from.systemProperties()` |
 
-The format of the system properties source is same as the properties source.
+The format of the system properties source is the same as the properties source.
 
 The system environment source follows the same mapping convention as the properties file source, but all letters in the
 name are in uppercase, and `.` in the name is replaced with `_`.
@@ -638,7 +638,7 @@ The following file extensions support auto-detection:
 | YAML       | `yml`, `yaml`    |
 | JavaScript | `js`             |
 
-You can also implement your own [`Source`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/com/nhubbard/konf/source/Source.kt)
+You can also implement your own [`Source`](https://github.com/nhubbard/konf/blob/master/src/main/kotlin/io/github/nhubbard/konf/source/Source.kt)
 to customize your new source, which can be loaded into config using `config.withSource(source)`.
 
 ### Subscribe to update events for load operations
@@ -795,8 +795,10 @@ The config can be saved to a variety of output formats. Using JSON as an example
 - Export to `OutputStream`: `config.toJson.toOutputStream(outputStream)`
 - Export to `ByteArray`: `config.toJson.toBytes()`
 
-You can also implement the [`Writer`](https://github.com/nhubbard/konf/blob/master/konf-core/src/main/kotlin/com/nhubbard/konf/source/Writer.kt) interface
-to customize your new writer (see [`JsonWriter`](https://github.com/nhubbard/konf/blob/master/konf-core/src/main/kotlin/com/nhubbard/konf/source/json/JsonWriter.kt) for how to integrate your writer with config).
+You can also implement the [`Writer`](https://github.com/nhubbard/konf/blob/master/konf-core/src/main/kotlin/io/github/nhubbard/konf/source/Writer.kt) interface
+to customize your new writer
+(see
+[`JsonWriter`](https://github.com/nhubbard/konf/blob/master/konf-core/src/main/kotlin/io/github/nhubbard/konf/source/json/JsonWriter.kt) for how to integrate your writer with config).
 
 ## Supported item types
 
@@ -859,7 +861,7 @@ You can use `Config#isEnabled()` or `Source#isEnabled()` to check whether a feat
 These features include:
 
 - `FAIL_ON_UNKNOWN_PATH`: feature that determines what happens when unknown paths appear in the source. If enabled, an exception is thrown when loading from the source to indicate it contains unknown paths. This feature is disabled by default.
-- `LOAD_KEYS_CASE_INSENSITIVELY`: feature that determines whether loading keys from sources case-insensitively. This feature is disabled by default except for system environment.
+- `LOAD_KEYS_CASE_INSENSITIVELY`: feature that determines whether keys are loaded from the sources case-insensitively. This feature is disabled by default except for system environment.
 - `LOAD_KEYS_AS_LITTLE_CAMEL_CASE`: feature that determines whether loading keys from sources as little camel case. This feature is enabled by default.
 - `OPTIONAL_SOURCE_BY_DEFAULT`: feature that determines whether sources are optional by default. This feature is disabled by default.
 - `SUBSTITUTE_SOURCE_BEFORE_LOADED`: feature that determines whether sources should be substituted before loaded into config. This feature is enabled by default.
