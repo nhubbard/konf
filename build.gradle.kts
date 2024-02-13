@@ -18,17 +18,21 @@
 import java.util.*
 
 // Helper function to protect private properties from being published
-fun getPrivateProperty(key: String): String = file("private.properties").let {
-    if (it.exists()) {
+fun getPrivateProperty(key: String, env: String): String {
+    val file = file("private.properties")
+    return if (file.exists()) {
         val properties = Properties()
-        properties.load(it.inputStream())
+        properties.load(file.inputStream())
         properties.getProperty(key)
-    } else error("Property is empty")
+    } else {
+        // Fallback if private.properties is not available
+        System.getenv(env).takeIf { !it.isNullOrEmpty() } ?:
+            error("Key $key in private.properties not found, and $env is null or empty!")
+    }
 }
 
-val ossUserToken by extra { getPrivateProperty("ossUserToken") }
-val ossUserPassword by extra { getPrivateProperty("ossUserPassword") }
-val signPublications by extra { getPrivateProperty("signPublications") }
+val ossUserToken by extra { getPrivateProperty("ossUserToken", "OSS_USER_TOKEN") }
+val ossUserPassword by extra { getPrivateProperty("ossUserPassword", "OSS_USER_PASSWORD") }
 
 plugins {
     java

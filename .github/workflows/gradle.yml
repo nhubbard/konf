@@ -16,4 +16,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java_version }}
       - name: Build and Test with Gradle
+        env:
+          OSS_USER_TOKEN: ${{ secrets.OSS_USER_TOKEN }}
+          OSS_USER_PASSWORD: ${{ secrets.OSS_USER_PASSWORD }}
         run: ./gradlew build
