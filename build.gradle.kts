@@ -33,19 +33,16 @@ fun getPrivateProperty(key: String, env: String): String {
 
 val ossUserToken by extra { getPrivateProperty("ossUserToken", "OSS_USER_TOKEN") }
 val ossUserPassword by extra { getPrivateProperty("ossUserPassword", "OSS_USER_PASSWORD") }
-val useThirdPartyPublishingPlugin = false
 
 plugins {
     java
-    `maven-publish`
     signing
     kotlin("jvm") version "1.9.22"
     id("org.jetbrains.dokka") version "1.9.10"
     id("org.jetbrains.kotlinx.kover") version "0.7.5"
     // This is the new publishing plugin that Sonatype recommended as a temporary fix, until their official plugin
-    // is available. Unfortunately, the plugin is currently broken with Gradle 8.5:
-    // https://gitlab.com/thebugmc/sonatype-central-portal-publisher/-/issues/4
-    // id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.1.1"
+    // is available.
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.1.1"
 }
 
 group = "io.github.nhubbard"
@@ -139,10 +136,6 @@ tasks.test {
     finalizedBy(tasks.koverXmlReport)
 }
 
-kotlin {
-    jvmToolchain(21)
-}
-
 tasks.compileJava {
     options.encoding = "UTF-8"
 }
@@ -166,62 +159,45 @@ tasks.dokkaHtml {
     }
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
+tasks.sourcesJar {
     from(sourceSets.main.get().allSource)
 }
 
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
+tasks.javadocJar {
     from(tasks.dokkaHtml)
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            artifact(sourcesJar.get())
-            artifact(javadocJar.get())
+kotlin {
+    jvmToolchain(21)
+}
 
-            groupId = project.group as String
-            artifactId = "konf"
-            version = project.version as String
+centralPortal {
+    username = ossUserToken
+    password = ossUserPassword
 
-            pom {
-                name = "konf"
-                description = projectDescription
-                url = projectUrl
+    pom {
+        name = "konf"
+        description = projectDescription
+        url = projectUrl
 
-                licenses {
-                    license {
-                        name.set("The Apache Software License, Version 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("nhubbard")
-                        name.set("nhubbard")
-                        email.set("nhubbard@users.noreply.github.com")
-                        url.set("https://github.com/nhubbard")
-                    }
-                }
-
-                scm {
-                    url.set(projectUrl)
-                }
+        licenses {
+            license {
+                name.set("The Apache Software License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
-    }
 
-    repositories {
-        maven {
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = ossUserToken
-                password = ossUserPassword
+        developers {
+            developer {
+                id.set("nhubbard")
+                name.set("nhubbard")
+                email.set("nhubbard@users.noreply.github.com")
+                url.set("https://github.com/nhubbard")
             }
+        }
+
+        scm {
+            url.set(projectUrl)
         }
     }
 }
@@ -229,5 +205,4 @@ publishing {
 signing {
     isRequired = true
     useGpgCmd()
-    sign(publishing.publications["maven"])
 }
