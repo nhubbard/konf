@@ -6,7 +6,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        java_version: [ 17, 21 ]
+        # Only covers Java 21 because the publishing plugin doesn't work on lesser versions
+        java_version: [ 21 ]
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
     steps:
       - uses: actions/checkout@v4

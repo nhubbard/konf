@@ -18,17 +18,11 @@
 package io.github.nhubbard.konf.snippet
 
 import io.github.nhubbard.konf.Config
-import io.github.nhubbard.konf.ConfigSpec
 import io.github.nhubbard.konf.source.Source
 import io.github.nhubbard.konf.source.toValue
 import io.github.nhubbard.konf.source.yaml.yaml
 import io.github.nhubbard.konf.toValue
 import java.io.File
-
-object ServerSpec : ConfigSpec() {
-    val host by optional("0.0.0.0")
-    val tcpPort by required<Int>()
-}
 
 fun main() {
     val file = File("server.yml")

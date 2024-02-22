@@ -18,7 +18,7 @@
 import java.util.*
 
 // Helper function to protect private properties from being published
-fun getPrivateProperty(key: String, env: String): String {
+fun getPrivateProperty(key: String, env: String, default: String = ""): String {
     val file = file("private.properties")
     return if (file.exists()) {
         val properties = Properties()
@@ -27,7 +27,7 @@ fun getPrivateProperty(key: String, env: String): String {
     } else {
         // Fallback if private.properties is not available
         System.getenv(env).takeIf { !it.isNullOrEmpty() }
-            ?: error("Key $key in private.properties not found, and $env is null or empty!")
+            ?: default
     }
 }
 
@@ -38,15 +38,15 @@ plugins {
     java
     signing
     kotlin("jvm") version "1.9.22"
+    kotlin("plugin.allopen") version "1.9.22"
     id("org.jetbrains.dokka") version "1.9.10"
     id("org.jetbrains.kotlinx.kover") version "0.7.5"
-    // This is the new publishing plugin that Sonatype recommended as a temporary fix, until their official plugin
-    // is available.
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.1.1"
 }
 
 group = "io.github.nhubbard"
-version = "2.0.0"
+version = "2.0.1"
 
 val projectDescription =
     "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"
@@ -59,10 +59,14 @@ repositories {
 
 sourceSets {
     register("snippet")
+    register("benchmark")
 }
 
 val snippetImplementation by configurations
 snippetImplementation.extendsFrom(configurations.implementation.get())
+
+val benchmarkImplementation by configurations
+benchmarkImplementation.extendsFrom(configurations.implementation.get())
 
 dependencies {
     // Core implementation dependencies
@@ -113,6 +117,10 @@ dependencies {
     snippetImplementation(sourceSets.main.get().output)
     val snippet by sourceSets
     testImplementation(snippet.output)
+
+    // Benchmark implementation
+    benchmarkImplementation(sourceSets.main.get().output)
+    benchmarkImplementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.10")
 }
 
 tasks.test {
@@ -169,6 +177,23 @@ tasks.javadocJar {
 
 kotlin {
     jvmToolchain(21)
+
+    sourceSets.all {
+        languageSettings {
+            languageVersion = "2.0"
+        }
+    }
+}
+
+allOpen {
+    annotation("org.openjdk.jmh.annotations.BenchmarkMode")
+    annotation("org.openjdk.jmh.annotations.State")
+}
+
+benchmark {
+    targets {
+        register("benchmark")
+    }
 }
 
 centralPortal {
