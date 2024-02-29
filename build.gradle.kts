@@ -33,6 +33,7 @@ fun getPrivateProperty(key: String, env: String, default: String = ""): String {
 
 val ossUserToken by extra { getPrivateProperty("ossUserToken", "OSS_USER_TOKEN") }
 val ossUserPassword by extra { getPrivateProperty("ossUserPassword", "OSS_USER_PASSWORD") }
+val signPublication by extra { !System.getenv("JITPACK").toBoolean() }
 
 plugins {
     java
@@ -237,6 +238,6 @@ centralPortal {
 }
 
 signing {
-    isRequired = System.getenv("JITPACK") != "true"
-    useGpgCmd()
+    isRequired = signPublication
+    if (signPublication) useGpgCmd()
 }
