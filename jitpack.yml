@@ -1,0 +1,6 @@
+jdk:
+  - openjdk21
+install:
+  - echo "Building JitPack release"
+  - ./gradlew clean install -xtest
+
