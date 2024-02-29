@@ -237,6 +237,6 @@ centralPortal {
 }
 
 signing {
-    isRequired = true
+    isRequired = System.getenv("JITPACK") != "true"
     useGpgCmd()
 }
