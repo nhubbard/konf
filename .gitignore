@@ -185,3 +185,6 @@ private.properties
 .java-version
 act
 *.log
+
+# Gradle extras
+property*/

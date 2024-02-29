@@ -46,7 +46,7 @@ plugins {
 }
 
 group = "io.github.nhubbard"
-version = "2.0.1"
+version = "2.0.2"
 
 val projectDescription =
     "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"
@@ -153,7 +153,6 @@ tasks.check {
 }
 
 tasks.dokkaHtml {
-    outputDirectory.set(tasks.javadoc.get().destinationDir)
     dokkaSourceSets {
         configureEach {
             jdkVersion.set(17)
@@ -171,8 +170,18 @@ tasks.sourcesJar {
     from(sourceSets.main.get().allSource)
 }
 
-tasks.javadocJar {
-    from(tasks.dokkaHtml)
+tasks.withType<Javadoc>().all { enabled = false }
+
+tasks.javadocJar.configure {
+    dependsOn(tasks.dokkaHtml)
+    from(tasks.dokkaHtml.get().outputDirectory)
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.named<Jar>("javadocJar") {
+    dependsOn(tasks.dokkaHtml)
+    from(tasks.dokkaHtml.get().outputDirectory)
+    excludes.addAll(tasks.javadoc.get().destinationDir?.listFiles()?.map { it.toString() } ?: listOf())
 }
 
 kotlin {
