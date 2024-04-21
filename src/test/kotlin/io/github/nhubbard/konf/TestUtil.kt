@@ -18,7 +18,9 @@
 package io.github.nhubbard.konf
 
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.params.provider.Arguments
 import java.io.File
+import java.util.stream.Stream
 
 fun tempFileOf(content: String, prefix: String = "tmp", suffix: String = ".tmp"): File {
     return tempFile(prefix, suffix).apply {
@@ -33,3 +35,12 @@ inline fun <reified T : Throwable?> assertCheckedThrows(block: () -> Unit): T {
     if (e == null || e !is T) fail<Nothing> { "The requested exception ${T::class.java.simpleName} was not thrown!" }
     return e as T
 }
+
+fun argumentsOf(vararg arguments: Arguments): Stream<Arguments> =
+    Stream.of(*arguments)
+
+fun <A, B> twoArgsOf(left: A, right: B): Arguments =
+    Arguments.of(left, right)
+
+fun configSpecOf(prefix: String = "network.buffer", provider: () -> Config) =
+    twoArgsOf(prefix, provider)

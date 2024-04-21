@@ -104,6 +104,7 @@ dependencies {
 
     // Core test dependencies
     testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
     testImplementation("com.sparkjava:spark-core:2.9.4")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testRuntimeOnly("org.slf4j:slf4j-simple:2.0.12")
