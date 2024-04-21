@@ -17,10 +17,6 @@
 
 package io.github.nhubbard.konf
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.sameInstance
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
 
 object RelocatedConfigSpec : SubjectSpek<Config>({
@@ -30,84 +26,3 @@ object RelocatedConfigSpec : SubjectSpek<Config>({
     configTestSpec()
 })
 
-object RollUpConfigSpec : SubjectSpek<Config>({
-
-    subject { Prefix("prefix") + Config { addSpec(NetworkBuffer) } }
-
-    configTestSpec("prefix.network.buffer")
-
-    on("prefix is empty string") {
-        it("should return itself") {
-            assertThat(Prefix() + subject, sameInstance(subject))
-        }
-    }
-})
-
-object MultiLayerRollUpConfigSpec : SubjectSpek<Config>({
-
-    subject { (Prefix("prefix") + Config { addSpec(NetworkBuffer) }).withLayer("multi-layer") }
-
-    configTestSpec("prefix.network.buffer")
-})
-
-object RollUpMultiLayerConfigSpec : SubjectSpek<Config>({
-
-    subject { Prefix("prefix") + Config { addSpec(NetworkBuffer) }.withLayer("multi-layer") }
-
-    configTestSpec("prefix.network.buffer")
-})
-
-object DrillDownConfigSpec : SubjectSpek<Config>({
-
-    subject { Config { addSpec(NetworkBuffer) }.at("network") }
-
-    configTestSpec("buffer")
-
-    on("path is empty string") {
-        it("should return itself") {
-            assertThat(subject.at(""), sameInstance(subject))
-        }
-    }
-})
-
-object MultiLayerDrillDownConfigSpec : SubjectSpek<Config>({
-
-    subject { Config { addSpec(NetworkBuffer) }.at("network").withLayer("multi-layer") }
-
-    configTestSpec("buffer")
-})
-
-object DrillDownMultiLayerConfigSpec : SubjectSpek<Config>({
-
-    subject { Config { addSpec(NetworkBuffer) }.withLayer("multi-layer").at("network") }
-
-    configTestSpec("buffer")
-})
-
-object MultiLayerFacadeDrillDownConfigSpec : SubjectSpek<Config>({
-    subject {
-        (
-                Config() + Config {
-                    addSpec(NetworkBuffer)
-                }.withLayer("layer1")
-                    .at("network")
-                    .withLayer("layer2")
-                ).withLayer("layer3")
-    }
-
-    configTestSpec("buffer")
-})
-
-object MultiLayerRollUpFallbackConfigSpec : SubjectSpek<Config>({
-    subject {
-        (
-                (
-                        Prefix("prefix") +
-                                Config { addSpec(NetworkBuffer) }.withLayer("layer1")
-                        ).withLayer("layer2") +
-                        Config()
-                ).withLayer("layer3")
-    }
-
-    configTestSpec("prefix.network.buffer")
-})

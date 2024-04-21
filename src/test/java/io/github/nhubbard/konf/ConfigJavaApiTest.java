@@ -17,17 +17,16 @@
 
 package io.github.nhubbard.konf;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
-import java.util.HashMap;
-
-import io.github.nhubbard.konf.NetworkBuffer;
 import io.github.nhubbard.konf.source.DefaultProviders;
 import io.github.nhubbard.konf.source.Source;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @DisplayName("test Java API of Config")
 class ConfigJavaApiTest {

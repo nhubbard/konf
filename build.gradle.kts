@@ -38,16 +38,16 @@ val signPublication by extra { !System.getenv("JITPACK").toBoolean() }
 plugins {
     java
     signing
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.allopen") version "1.9.22"
-    id("org.jetbrains.dokka") version "1.9.10"
-    id("org.jetbrains.kotlinx.kover") version "0.7.5"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.allopen") version "1.9.23"
+    id("org.jetbrains.dokka") version "1.9.20"
+    id("org.jetbrains.kotlinx.kover") version "0.7.6"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
-    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.1.1"
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
 }
 
 group = "io.github.nhubbard"
-version = "2.0.2"
+version = "2.0.3"
 
 val projectDescription =
     "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"
@@ -72,7 +72,7 @@ benchmarkImplementation.extendsFrom(configurations.implementation.get())
 dependencies {
     // Core implementation dependencies
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation(kotlin("reflect"))
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.apache.commons:commons-text:1.11.0")
@@ -126,7 +126,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform {
-        includeEngines("spek")
+        includeEngines("spek", "junit-jupiter")
     }
     testLogging.apply {
         showStandardStreams = true

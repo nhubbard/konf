@@ -17,10 +17,19 @@
 
 package io.github.nhubbard.konf
 
+import org.junit.jupiter.api.Assertions.fail
 import java.io.File
 
 fun tempFileOf(content: String, prefix: String = "tmp", suffix: String = ".tmp"): File {
     return tempFile(prefix, suffix).apply {
         writeText(content)
     }
+}
+
+inline fun <reified T : Throwable?> assertCheckedThrows(block: () -> Unit): T {
+    val result = runCatching { block() }
+    if (result.isSuccess) fail<Nothing> { "No exception was thrown!" }
+    val e = result.exceptionOrNull()
+    if (e == null || e !is T) fail<Nothing> { "The requested exception ${T::class.java.simpleName} was not thrown!" }
+    return e as T
 }
