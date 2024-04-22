@@ -190,4 +190,4 @@ act
 property*/
 
 # Original Kover report for comparing pre-JUnit and post-JUnit coverage
-original-kover/
+original-kover
