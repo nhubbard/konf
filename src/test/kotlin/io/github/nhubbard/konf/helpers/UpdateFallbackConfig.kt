@@ -1,4 +1,9 @@
-package io.github.nhubbard.konf
+package io.github.nhubbard.konf.helpers
+
+import io.github.nhubbard.konf.Item
+import io.github.nhubbard.konf.LazyItem
+import io.github.nhubbard.konf.MergedConfig
+import io.github.nhubbard.konf.Spec
 
 class UpdateFallbackConfig(val config: MergedConfig) : MergedConfig(config.facade, config.fallback) {
 

@@ -17,6 +17,7 @@
 
 package io.github.nhubbard.konf;
 
+import io.github.nhubbard.konf.helpers.NetworkBuffer;
 import io.github.nhubbard.konf.source.DefaultProviders;
 import io.github.nhubbard.konf.source.Source;
 import org.junit.jupiter.api.BeforeEach;

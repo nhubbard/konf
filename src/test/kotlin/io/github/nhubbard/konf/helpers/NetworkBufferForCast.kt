@@ -1,4 +1,4 @@
-package io.github.nhubbard.konf
+package io.github.nhubbard.konf.helpers
 
 data class NetworkBufferForCast(
     val size: Int,

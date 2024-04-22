@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-package io.github.nhubbard.konf
+package io.github.nhubbard.konf.helpers
+
+import io.github.nhubbard.konf.ConfigSpec
 
 class NetworkBuffer {
     companion object : ConfigSpec("network.buffer") {

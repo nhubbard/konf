@@ -21,6 +21,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.throws
+import io.github.nhubbard.konf.helpers.Valid
 import io.github.nhubbard.konf.source.UnknownPathsException
 import io.github.nhubbard.konf.source.asSource
 import org.jetbrains.spek.api.Spek
@@ -225,6 +226,3 @@ object OptionalSourceByDefaultSpec : Spek({
     }
 })
 
-private object Valid : ConfigSpec("level1.level2") {
-    val valid by required<String>()
-}

@@ -2,6 +2,7 @@
 
 package io.github.nhubbard.konf
 
+import io.github.nhubbard.konf.helpers.NetworkBuffer
 import io.github.nhubbard.konf.source.base.asKVSource
 import io.github.nhubbard.konf.source.base.toHierarchicalMap
 import org.junit.jupiter.api.Assertions.*

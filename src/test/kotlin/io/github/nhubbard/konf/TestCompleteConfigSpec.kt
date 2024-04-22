@@ -1,5 +1,8 @@
 package io.github.nhubbard.konf
 
+import com.fasterxml.jackson.databind.module.SimpleModule
+import io.github.nhubbard.konf.helpers.*
+import io.github.nhubbard.konf.source.LoadException
 import io.github.nhubbard.konf.source.Source
 import io.github.nhubbard.konf.source.base.asKVSource
 import io.github.nhubbard.konf.source.base.toHierarchicalMap
@@ -966,14 +969,14 @@ class TestCompleteConfigSpec {
     // Extra test from DrillDownConfigSpec
     @Test
     fun testDrillDownConfig_pathIsEmptyString_shouldReturnItself() {
-        val subject = Config { addSpec(NetworkBuffer) }.at("network")
+        val subject = drillDownSource()
         assertTrue(subject.at("") === subject)
     }
 
     // Extra test from BothConfigSpec
     @Test
     fun testBothConfig_givenAMergedConfig_whenSetItemInTheFallbackConfig_shouldHaveHigherPriorityThanTheDefaultValue() {
-        val subject = Config { addSpec(NetworkBuffer) } + Config { addSpec(NetworkBuffer) }
+        val subject = bothConfigSource()
         (subject as MergedConfig).fallback[NetworkBuffer.type] = NetworkBuffer.Type.ON_HEAP
         assertEquals(subject[NetworkBuffer.type], NetworkBuffer.Type.ON_HEAP)
     }
@@ -981,16 +984,125 @@ class TestCompleteConfigSpec {
     // Extra test from RollUpConfigSpec
     @Test
     fun testRollUp_givenPrefixIsEmptyString_shouldReturnItself() {
-        val subject = Prefix("prefix") + Config { addSpec(NetworkBuffer) }
+        val subject = rollUpSource()
         assertTrue(Prefix() + subject === subject)
     }
 
-    // TODO: MultiLayerConfigSpec?
+    // Extra tests from MultiLayerConfigSpec
+    @Test
+    fun testMultiLayer_shouldHaveSpecifiedName() {
+        val subject = multiLayerSource()
+        assertEquals(subject.name, "multi-layer")
+    }
+
+    @Test
+    fun testMultiLayer_shouldContainSameItemsWithParentConfig() {
+        val subject = multiLayerSource()
+        assertEquals(subject[NetworkBuffer.name], subject.parent!![NetworkBuffer.name])
+        assertEquals(subject[NetworkBuffer.type], subject.parent!![NetworkBuffer.type])
+        assertEquals(subject[NetworkBuffer.offset], subject.parent!![NetworkBuffer.offset])
+    }
+
+    @Test
+    fun testMultiLayer_onSetWithItem_itShouldKeepOtherLevelsUnchanged() {
+        val subject = multiLayerSource()
+        subject[NetworkBuffer.name] = "newName"
+        assertEquals(subject[NetworkBuffer.name], "newName")
+        assertEquals(subject.parent!![NetworkBuffer.name], "buffer")
+    }
+
+    @Test
+    fun testMultiLayer_onSetWithName_itShouldKeepOtherLevelsUnchanged() {
+        val subject = multiLayerSource()
+        subject[subject.nameOf(NetworkBuffer.name)] = "newName"
+        assertEquals(subject[NetworkBuffer.name], "newName")
+        assertEquals(subject.parent!![NetworkBuffer.name], "buffer")
+    }
+
+    @Test
+    fun testMultiLayer_onSetParentValue_itShouldPropagate() {
+        val subject = multiLayerSource()
+        subject.parent!![NetworkBuffer.name] = "newName"
+        assertEquals(subject[NetworkBuffer.name], "newName")
+        assertEquals(subject.parent!![NetworkBuffer.name], "newName")
+    }
+
+    @Test
+    fun testMultiLayer_onAddSpec_itShouldAddAndNotChangeExisting() {
+        val subject = multiLayerSource()
+        val spec = object : ConfigSpec(NetworkBuffer.prefix) {
+            val minSize by optional(1)
+        }
+        subject.addSpec(spec)
+        assertTrue(spec.minSize in subject)
+        assertTrue(subject.nameOf(spec.minSize) in subject)
+        assertTrue(spec.minSize !in subject.parent!!)
+        assertTrue(subject.nameOf(spec.minSize) !in subject.parent!!)
+    }
+
+    @Test
+    fun testMultiLayer_onAddSpecToParent_itShouldThrowLayerFrozenException() {
+        val subject = multiLayerSource()
+        val spec = object : ConfigSpec(NetworkBuffer.prefix) {
+            @Suppress("unused")
+            val minSize by optional(1)
+        }
+        assertThrows<LayerFrozenException> { subject.parent!!.addSpec(spec) }
+    }
+
+    @Test
+    fun testMultiLayer_onAddItemToParent_itShouldThrowLayerFrozenException() {
+        val subject = multiLayerSource()
+        val minSize by Spec.dummy.optional(1)
+        assertThrows<LayerFrozenException> { subject.parent!!.addItem(minSize) }
+    }
+
+    @Test
+    fun testMultiLayer_onIterateItemsInConfigAfterAddingSpec_itShouldCoverAllItemsInConfig() {
+        val subject = multiLayerSource()
+        val spec = object : ConfigSpec(NetworkBuffer.prefix) {
+            @Suppress("unused")
+            val minSize by optional(1)
+        }
+        subject.addSpec(spec)
+        assertEquals(
+            subject.iterator().asSequence().toSet(),
+            (NetworkBuffer.items + spec.items).toSet()
+        )
+    }
+
+    @Test
+    fun testMultiLayer_onAddCustomDeserializerToMapperInParent_itShouldThrowLoadExceptionBeforeAddingDeserializer() {
+        val spec = object : ConfigSpec() {
+            @Suppress("unused")
+            val item by required<StringWrapper>()
+        }
+        val parent = Config { addSpec(spec) }
+        val child = parent.withLayer("child")
+        assertTrue(parent.mapper === child.mapper)
+        assertThrows<LoadException> { child.from.map.kv(mapOf("item" to "string")) }
+    }
+
+    @Test
+    fun testMultiLayer_onAddCustomDeserializerToMapperInParent_itShouldBeAbleToUseTheSpecifiedDeserializerAfterAdding() {
+        val spec = object : ConfigSpec() {
+            val item by required<StringWrapper>()
+        }
+        val parent = Config { addSpec(spec) }
+        val child = parent.withLayer("child")
+
+        assertTrue(parent.mapper === child.mapper)
+        parent.mapper.registerModule(
+            SimpleModule().apply {
+                addDeserializer(StringWrapper::class.java, StringWrapperDeserializer())
+            }
+        )
+        val afterLoad = child.from.map.kv(mapOf("item" to "string"))
+        assertTrue(child.mapper === afterLoad.mapper)
+        assertEquals(afterLoad[spec.item], StringWrapper("string"))
+    }
 
     companion object {
-        /**
-         * The method source for each suite of tests.
-         */
         @JvmStatic
         fun configTestSpecSource(): Stream<Arguments> = argumentsOf(
             // ConfigTestSpec
@@ -1094,7 +1206,23 @@ class TestCompleteConfigSpec {
             // RollUpMultiLayerConfigSpec
             configSpecOf("prefix.network.buffer") {
                 Prefix("prefix") + Config { addSpec(NetworkBuffer) }.withLayer("multi-layer")
+            },
+            // MultiLayerConfigSpec
+            configSpecOf {
+                Config { addSpec(NetworkBuffer) }.withLayer("multi-layer")
             }
         )
+
+        @JvmStatic
+        val drillDownSource: () -> Config = { Config { addSpec(NetworkBuffer) }.at("network") }
+
+        @JvmStatic
+        val bothConfigSource: () -> Config = { Config { addSpec(NetworkBuffer) } + Config { addSpec(NetworkBuffer) } }
+
+        @JvmStatic
+        val rollUpSource: () -> Config = { Prefix("prefix") + Config { addSpec(NetworkBuffer) } }
+
+        @JvmStatic
+        val multiLayerSource: () -> Config = { Config { addSpec(NetworkBuffer) }.withLayer("multi-layer") }
     }
 }

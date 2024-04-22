@@ -26,7 +26,7 @@ import com.natpryce.hamkrest.throws
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.ConfigSpec
 import io.github.nhubbard.konf.Feature
-import io.github.nhubbard.konf.NetworkBuffer
+import io.github.nhubbard.konf.helpers.NetworkBuffer
 import io.github.nhubbard.konf.Prefix
 import io.github.nhubbard.konf.SizeInBytes
 import io.github.nhubbard.konf.ValueNode

@@ -1,4 +1,4 @@
-package io.github.nhubbard.konf
+package io.github.nhubbard.konf.helpers
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext

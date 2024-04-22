@@ -1,5 +1,7 @@
 package io.github.nhubbard.konf
 
+import io.github.nhubbard.konf.helpers.AdHocNetworkBuffer
+import io.github.nhubbard.konf.helpers.NetworkBufferForCast
 import io.github.nhubbard.konf.source.Source
 import io.github.nhubbard.konf.source.toValue
 import org.junit.jupiter.api.Assertions.assertNull

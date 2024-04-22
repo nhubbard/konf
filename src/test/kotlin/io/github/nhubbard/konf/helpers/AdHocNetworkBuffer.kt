@@ -15,7 +15,12 @@
  * limitations under the License.
  */
 
-package io.github.nhubbard.konf
+package io.github.nhubbard.konf.helpers
+
+import io.github.nhubbard.konf.Config
+import io.github.nhubbard.konf.lazy
+import io.github.nhubbard.konf.optional
+import io.github.nhubbard.konf.required
 
 class AdHocNetworkBuffer(config: Config) {
     private val root = config.at("network.buffer")

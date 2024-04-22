@@ -17,6 +17,8 @@
 
 package io.github.nhubbard.konf;
 
+import io.github.nhubbard.konf.helpers.NetworkBuffer;
+
 public class NetworkBufferInJava {
     public static final ConfigSpec spec = new ConfigSpec("network.buffer");
 
