@@ -22,6 +22,7 @@ package io.github.nhubbard.konf
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assertThat
+import io.github.nhubbard.konf.helpers.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -328,38 +329,3 @@ object ConfigSpecTestSpec : Spek({
         }
     }
 })
-
-object Nested : ConfigSpec("a.bb") {
-    val item by required<Int>("int", "description")
-
-    object Inner : ConfigSpec() {
-        val item by required<Int>()
-    }
-
-    object Inner2 : ConfigSpec("inner2.level2") {
-        val item by required<Int>()
-    }
-
-    object Inner3a : ConfigSpec("inner3.a") {
-        val item by required<Int>()
-    }
-
-    object Inner3b : ConfigSpec("inner3.b") {
-        val item by required<Int>()
-    }
-}
-
-object Uppercase : ConfigSpec()
-
-object OK : ConfigSpec()
-
-object TCPService : ConfigSpec()
-
-@Suppress("ClassName")
-object lowercase : ConfigSpec()
-
-object SuffixSpec : ConfigSpec()
-
-class OriginalSpec {
-    companion object : ConfigSpec()
-}

@@ -9,40 +9,32 @@ import kotlin.test.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestSizeInBytes {
     @Test
-    fun testValidStringParsesAsValidSizeInBytes() {
+    fun testValidString_parsesAsValidSizeInBytes() {
         assertEquals(SizeInBytes.parse("1k").bytes, 1024L)
     }
 
     @Test
-    fun testInitWithNegativeNumberShouldThrowIllegalArgumentException() {
-        assertThrows<IllegalArgumentException> {
-            SizeInBytes(-1L)
-        }
+    fun testInitWithNegativeNumber_shouldThrowIllegalArgumentException() {
+        assertThrows<IllegalArgumentException> { SizeInBytes(-1L) }
     }
 
     @Test
-    fun testFloatNumberStringParsesAndConvertsFromDoubleToLong() {
+    fun testFloatNumberString_parsesAndConvertsFromDoubleToLong() {
         assertEquals(SizeInBytes.parse("1.5kB").bytes, 1500L)
     }
 
     @Test
-    fun testParsingInvalidUnitThrowsParseException() {
-        assertThrows<ParseException> {
-            SizeInBytes.parse("1kb")
-        }
+    fun testParsingInvalidUnit_shouldThrowParseException() {
+        assertThrows<ParseException> { SizeInBytes.parse("1kb") }
     }
 
     @Test
-    fun testParsingInvalidNumberThrowsParseException() {
-        assertThrows<ParseException> {
-            SizeInBytes.parse("*1k")
-        }
+    fun testParsingInvalidNumber_shouldThrowParseException() {
+        assertThrows<ParseException> { SizeInBytes.parse("*1k") }
     }
 
     @Test
-    fun testParsingOutOfRangeNumberThrowsParseException() {
-        assertThrows<ParseException> {
-            SizeInBytes.parse("1z")
-        }
+    fun testParsingOutOfRangeNumber_shouldThrowParseException() {
+        assertThrows<ParseException> { SizeInBytes.parse("1z") }
     }
 }

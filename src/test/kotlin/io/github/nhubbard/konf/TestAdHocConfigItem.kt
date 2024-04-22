@@ -22,7 +22,7 @@ class TestAdHocConfigItem {
     )
 
     @Test
-    fun testAdHocConfigItemShouldLoadCorrectValues() {
+    fun testAdHocConfigItem_shouldLoadCorrectValues() {
         val config = Config().from.map.kv(
             mapOf(
                 "network.buffer.size" to 1,
@@ -39,7 +39,7 @@ class TestAdHocConfigItem {
     }
 
     @Test
-    fun testCastConfigWithComputedPropertyShouldLoadCorrectValues() {
+    fun testCastConfigWithComputedProperty_shouldLoadCorrectValues() {
         val networkBufferForCast: NetworkBufferForCast by Config().withSource(source).cast()
         assertEquals(networkBufferForCast.size, 1)
         assertEquals(networkBufferForCast.maxSize, 2)
@@ -49,7 +49,7 @@ class TestAdHocConfigItem {
     }
 
     @Test
-    fun testCastConfigToClassShouldLoadCorrectValues() {
+    fun testCastConfigToClass_shouldLoadCorrectValues() {
         val networkBufferForCast = Config().withSource(source).toValue<NetworkBufferForCast>()
         assertEquals(networkBufferForCast.size, 1)
         assertEquals(networkBufferForCast.maxSize, 2)
@@ -59,7 +59,7 @@ class TestAdHocConfigItem {
     }
 
     @Test
-    fun testCastMultiLayerConfigToClassShouldLoadCorrectValues() {
+    fun testCastMultiLayerConfigToClass_shouldLoadCorrectValues() {
         val networkBufferForCast = Config().withSource(source).from.json.string("").toValue<NetworkBufferForCast>()
         assertEquals(networkBufferForCast.size, 1)
         assertEquals(networkBufferForCast.maxSize, 2)
@@ -69,7 +69,7 @@ class TestAdHocConfigItem {
     }
 
     @Test
-    fun testCastConfigWithMergedSourceToConfigClassShouldLoadCorrectValues() {
+    fun testCastConfigWithMergedSourceToConfigClass_shouldLoadCorrectValues() {
         val networkBufferForCast = Config().withSource(source + Source.from.json.string("")).toValue<NetworkBufferForCast>()
         assertEquals(networkBufferForCast.size, 1)
         assertEquals(networkBufferForCast.maxSize, 2)
@@ -79,7 +79,7 @@ class TestAdHocConfigItem {
     }
 
     @Test
-    fun testCastSourceToConfigClassShouldLoadCorrectValues() {
+    fun testCastSourceToConfigClass_shouldLoadCorrectValues() {
         val networkBufferForCast = source.toValue<NetworkBufferForCast>()
         assertEquals(networkBufferForCast.size, 1)
         assertEquals(networkBufferForCast.maxSize, 2)

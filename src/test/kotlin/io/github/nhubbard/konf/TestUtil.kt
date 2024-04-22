@@ -22,12 +22,28 @@ import org.junit.jupiter.params.provider.Arguments
 import java.io.File
 import java.util.stream.Stream
 
+/**
+ * Creates a temporary file with the given content.
+ *
+ * @param content The content to be written to the temporary file.
+ * @param prefix The prefix to be used in the name of the temporary file. The default value is "tmp".
+ * @param suffix The suffix to be used in the name of the temporary file. The default value is ".tmp".
+ * @return A [File] object representing the created temporary file.
+ */
 fun tempFileOf(content: String, prefix: String = "tmp", suffix: String = ".tmp"): File {
     return tempFile(prefix, suffix).apply {
         writeText(content)
     }
 }
 
+/**
+ * Asserts that a specific checked exception of type [T] is thrown when executing the provided [block].
+ *
+ * @param T The type of the checked exception that is expected to be thrown.
+ * @param block The block of code to be executed.
+ * @return Returns the thrown exception of type [T].
+ * @throws AssertionError If no exception is thrown or if the thrown exception is not of type [T].
+ */
 inline fun <reified T : Throwable?> assertCheckedThrows(block: () -> Unit): T {
     val result = runCatching { block() }
     if (result.isSuccess) fail<Nothing> { "No exception was thrown!" }
@@ -36,11 +52,32 @@ inline fun <reified T : Throwable?> assertCheckedThrows(block: () -> Unit): T {
     return e as T
 }
 
+/**
+ * Returns a stream of Arguments from the given array of Arguments.
+ *
+ * @param arguments the array of Arguments to be converted into a Stream
+ * @return a stream of Arguments
+ */
 fun argumentsOf(vararg arguments: Arguments): Stream<Arguments> =
     Stream.of(*arguments)
 
+/**
+ * Creates an instance of [Arguments] by combining two input arguments.
+ *
+ * @param left The left input argument.
+ * @param right The right input argument.
+ * @return An instance of [Arguments] that contains the combined input arguments.
+ */
 fun <A, B> twoArgsOf(left: A, right: B): Arguments =
     Arguments.of(left, right)
 
+/**
+ * Creates a configuration specification for the given prefix and provider. Used by [TestCompleteConfigSpec].
+ *
+ * @param prefix The prefix used in the configuration specification. The default value is "network.buffer".
+ * @param provider The provider function that returns the configuration.
+ *
+ * @return A configuration specification for the given prefix and provider.
+ */
 fun configSpecOf(prefix: String = "network.buffer", provider: () -> Config) =
     twoArgsOf(prefix, provider)
