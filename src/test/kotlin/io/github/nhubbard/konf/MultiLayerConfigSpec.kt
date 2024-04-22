@@ -32,7 +32,7 @@ object MultiLayerConfigSpec : SubjectSpek<Config>({
 
     subject { Config { addSpec(NetworkBuffer) }.withLayer("multi-layer") }
 
-    itBehavesLike(ConfigTestSpec)
+    // itBehavesLike(ConfigTestSpec)
 
     group("multi-layer config") {
         it("should have specified name") {

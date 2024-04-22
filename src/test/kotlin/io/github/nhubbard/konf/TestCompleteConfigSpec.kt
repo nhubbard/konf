@@ -4,6 +4,7 @@ import io.github.nhubbard.konf.source.Source
 import io.github.nhubbard.konf.source.base.asKVSource
 import io.github.nhubbard.konf.source.base.toHierarchicalMap
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -584,9 +585,406 @@ class TestCompleteConfigSpec {
         assertThrows<InvalidLazySetException> { subject[lazyItem] }
     }
 
-    // TODO: Resume from "set operation" in ConfigTestSpec.kt
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWithValidItemWhenCorrespondingValueIsUnset_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject[size] = 1024
+        assertEquals(subject[size], 1024)
+    }
 
-    // TODO: Extra tests from DrillDownConfigSpec, BothConfigSpec, RollUpConfigSpec
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWithValidItemWhenCorrespondingValueExists_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject[name] = "newName"
+        assertEquals(subject[name], "newName")
+        subject[offset] = 0
+        assertEquals(subject[offset], 0)
+        subject[offset] = null
+        assertNull(subject[offset])
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_rawSetWithValidItem_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject.rawSet(size, 2048)
+        assertEquals(subject[size], 2048)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWithValidItemWhenCorrespondingValueIsLazy_fromLazyToNormal(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject[size] = 1024
+        assertEquals(subject[maxSize], subject[size] * 2)
+        subject[maxSize] = 0
+        assertEquals(subject[maxSize], 0)
+        subject[size] = 2048
+        assertNotEquals(subject[maxSize], subject[size] * 2)
+        assertEquals(subject[maxSize], 0)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWithInvalidItem_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItem] = 1024 }
+        assertEquals(e.name, invalidItem.asName)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWithValidName_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject[prefix.qualify("size")] = 1024
+        assertEquals(subject[size], 1024)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWithValidNameWhichContainsTrailingWhitespaces_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject[prefix.qualify("size  ")] = 1024
+        assertEquals(subject[size], 1024)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWithInvalidName_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItemName] = 1024 }
+        assertEquals(e.name, invalidItemName)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWithIncorrectTypeOfValue_shouldThrowClassCastException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        assertThrows<ClassCastException> { subject[prefix.qualify(size.name)] = "1024" }
+        assertThrows<ClassCastException> { subject[prefix.qualify(size.name)] = null }
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWhenBeforeSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val childConfig = subject.withLayer()
+        subject[size] = 1
+        var counter = 0
+        val handler1 = childConfig.beforeSet { item, value ->
+            counter += 1
+            assertEquals(item, size)
+            assertEquals(value, 2)
+            assertEquals(childConfig[size], 1)
+        }
+        val handler2 = childConfig.beforeSet { item, value ->
+            counter += 1
+            assertEquals(item, size)
+            assertEquals(value, 2)
+            assertEquals(childConfig[size], 1)
+        }
+        val handler3 = size.beforeSet { _, value ->
+            counter += 1
+            assertEquals(value, 2)
+            assertEquals(childConfig[size], 1)
+        }
+        val handler4 = size.beforeSet { _, value ->
+            counter += 1
+            assertEquals(value, 2)
+            assertEquals(childConfig[size], 1)
+        }
+        subject[size] = 2
+        handler1.close()
+        handler2.close()
+        handler3.close()
+        handler4.close()
+        assertEquals(counter, 4)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWhenAfterSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val childConfig = subject.withLayer()
+        subject[size] = 1
+        var counter = 0
+        val handler1 = childConfig.afterSet { item, value ->
+            counter += 1
+            assertEquals(item, size)
+            assertEquals(value, 2)
+            assertEquals(childConfig[size], 2)
+        }
+        val handler2 = childConfig.afterSet { item, value ->
+            counter += 1
+            assertEquals(item, size)
+            assertEquals(value, 2)
+            assertEquals(childConfig[size], 2)
+        }
+        val handler3 = size.afterSet { _, value ->
+            counter += 1
+            assertEquals(value, 2)
+            assertEquals(childConfig[size], 2)
+        }
+        val handler4 = size.afterSet { _, value ->
+            counter += 1
+            assertEquals(value, 2)
+            assertEquals(childConfig[size], 2)
+        }
+        subject[size] = 2
+        handler1.close()
+        handler2.close()
+        handler3.close()
+        handler4.close()
+        assertEquals(counter, 4)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWhenOnSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        var counter = 0
+        size.onSet { counter += 1 }.use {
+            subject[size] = 1
+            subject[size] = 16
+            subject[size] = 256
+            subject[size] = 1024
+            assertEquals(counter, 4)
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWhenMultipleOnSetSubscribersAreDefined(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        var counter = 0
+        size.onSet { counter += 1 }.use {
+            size.onSet { counter += 2 }.use {
+                subject[size] = 1
+                subject[size] = 16
+                subject[size] = 256
+                subject[size] = 1024
+                assertEquals(counter, 12)
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_lazySetWithValidItem_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject.lazySet(maxSize) { it[size] * 4 }
+        subject[size] = 1024
+        assertEquals(subject[maxSize], subject[size] * 4)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_lazySetWithInvalidItem_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val e = assertCheckedThrows<NoSuchItemException> { subject.lazySet(invalidItem) { 1024 } }
+        assertEquals(e.name, invalidItem.asName)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_lazySetWithValidName_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject.lazySet(prefix.qualify(maxSize.name)) { it[size] * 4 }
+        subject[size] = 1024
+        assertEquals(subject[maxSize], subject[size] * 4)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_lazySetWithValidNameThatContainsTrailingWhitespaces(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject.lazySet(prefix.qualify(maxSize.name + "  ")) { it[size] * 4 }
+        subject[size] = 1024
+        assertEquals(subject[maxSize], subject[size] * 4)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_lazySetWithValidNameAndInvalidValueWithIncompatibleType_shouldThrowInvalidLazySetExceptionWhenGetting(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject.lazySet(prefix.qualify(maxSize.name)) { "string" }
+        assertThrows<InvalidLazySetException> {
+            subject[prefix.qualify(maxSize.name)]
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_lazySetWithInvalidName_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val e = assertCheckedThrows<NoSuchItemException> { subject.lazySet(invalidItemName) { 1024 } }
+        assertEquals(e.name, invalidItemName)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_unsetWithValidItem_shouldContainNullWhenUsingGetOrNull(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject.unset(type)
+        assertNull(subject.getOrNull(type))
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_unsetWithInvalidItem_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val e = assertCheckedThrows<NoSuchItemException> { subject.unset(invalidItem) }
+        assertEquals(e.name, invalidItem.asName)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_unsetWithValidName_shouldContainNullWhenUsingGetOrNull(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject.unset(prefix.qualify(type.name))
+        assertNull(subject.getOrNull(type))
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_unsetWithInvalidName_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val e = assertCheckedThrows<NoSuchItemException> { subject.unset(invalidItemName) }
+        assertEquals(e.name, invalidItemName)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testClearOperation_shouldContainNoValues(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject[size] = 1
+        subject[maxSize] = 4
+        assertEquals(subject[size], 1)
+        assertEquals(subject[maxSize], 4)
+        subject.clear()
+        assertNull(subject.getOrNull(size))
+        assertNull(subject.getOrNull(maxSize))
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testClearAllOperation_shouldContainNoValue(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        assertTrue(name in subject && type in subject)
+        subject.clearAll()
+        assertTrue(name !in subject && type !in subject)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testCheckWhetherAllRequiredItemsHaveValuesOrNot_shouldReturnFalseWhenSomeRequiredItemsDoNotHaveValues(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        assertFalse(subject.containsRequired())
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testCheckWhetherAllRequiredItemsHaveValuesOrNot_shouldReturnTrueWhenAllRequiredItemsHaveValues(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject[size] = 1
+        assertTrue(subject.containsRequired())
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testValidateWhetherAllRequiredItemsHaveValuesOrNot_shouldThrowUnsetValueExceptionWhenSomeRequiredItemsDoNotHaveValues(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        assertThrows<UnsetValueException> { subject.validateRequired() }
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testValidateWhetherAllRequiredItemsHaveValuesOrNot_shouldReturnItselfWhenAllRequiredItemsHaveValues(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        subject[size] = 1
+        assertTrue(subject === subject.validateRequired())
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testItemProperty_declareAPropertyByItem_shouldBehaveTheSameAsGet(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val nameProperty by subject.property(name)
+        assertEquals(nameProperty, subject[name])
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testItemProperty_declareAPropertyByItem_shouldSupportSetOperation(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        var nameProperty by subject.property(name)
+        nameProperty = "newName"
+        assertEquals(nameProperty, "newName")
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testItemProperty_declareAPropertyByInvalidItem_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val e = assertCheckedThrows<NoSuchItemException> {
+            @Suppress("UNUSED_VARIABLE")
+            var nameProperty by subject.property(invalidItem)
+        }
+        assertEquals(e.name, invalidItem.asName)
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testItemProperty_declareAPropertyByName_shouldBehaveSameAsGet(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val nameProperty by subject.property<String>(prefix.qualify(name.name))
+        assertEquals(nameProperty, subject[name])
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testItemProperty_declareAPropertyByName_shouldSupportSetOperation(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        var nameProperty by subject.property<String>(prefix.qualify(name.name))
+        nameProperty = "newName"
+        assertEquals(nameProperty, "newName")
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testItemProperty_declareAPropertyByInvalidName_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
+        val subject = provider()
+        val e = assertCheckedThrows<NoSuchItemException> {
+            @Suppress("UNUSED_VARIABLE")
+            var nameProperty by subject.property<Int>(invalidItemName)
+        }
+        assertEquals(e.name, invalidItemName)
+    }
+
+    // Extra test from DrillDownConfigSpec
+    @Test
+    fun testDrillDownConfig_pathIsEmptyString_shouldReturnItself() {
+        val subject = Config { addSpec(NetworkBuffer) }.at("network")
+        assertTrue(subject.at("") === subject)
+    }
+
+    // Extra test from BothConfigSpec
+    @Test
+    fun testBothConfig_givenAMergedConfig_whenSetItemInTheFallbackConfig_shouldHaveHigherPriorityThanTheDefaultValue() {
+        val subject = Config { addSpec(NetworkBuffer) } + Config { addSpec(NetworkBuffer) }
+        (subject as MergedConfig).fallback[NetworkBuffer.type] = NetworkBuffer.Type.ON_HEAP
+        assertEquals(subject[NetworkBuffer.type], NetworkBuffer.Type.ON_HEAP)
+    }
+
+    // Extra test from RollUpConfigSpec
+    @Test
+    fun testRollUp_givenPrefixIsEmptyString_shouldReturnItself() {
+        val subject = Prefix("prefix") + Config { addSpec(NetworkBuffer) }
+        assertTrue(Prefix() + subject === subject)
+    }
+
     // TODO: MultiLayerConfigSpec?
 
     companion object {
@@ -666,6 +1064,10 @@ class TestCompleteConfigSpec {
             // UpdateFallbackConfigSpec
             configSpecOf {
                 UpdateFallbackConfig((Config { addSpec(NetworkBuffer) } + Config { addSpec(NetworkBuffer) }) as MergedConfig)
+            },
+            // MultiLayerDrillDownConfigSpec
+            configSpecOf("buffer") {
+                Config { addSpec(NetworkBuffer) }.at("network").withLayer("multi-layer")
             },
             // MultiLayerFacadeDrillDownConfigSpec
             configSpecOf("buffer") {
