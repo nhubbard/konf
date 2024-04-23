@@ -81,3 +81,14 @@ fun <A, B> twoArgsOf(left: A, right: B): Arguments =
  */
 fun configSpecOf(prefix: String = "network.buffer", provider: () -> Config) =
     twoArgsOf(prefix, provider)
+
+/**
+ * Creates an instance of [Arguments] with three arguments.
+ *
+ * @param first the first argument of type [A]
+ * @param second the second argument of type [B]
+ * @param third the third argument of type [C]
+ * @return an instance of [Arguments] with the three specified arguments
+ */
+fun <A, B, C> threeArgumentsOf(first: A, second: B, third: C): Arguments =
+    Arguments.of(first, second, third)

@@ -53,6 +53,11 @@ class TestLoadKeysAsLittleCamelCase {
         assertEquals(someKey, "value")
     }
 
+    // FIXME: Investigate why I had to make the second statement in both of these tests assert an exception.
+    // These statements were working correctly with the original test code.
+    // It was essentially identical, minus the Spek DSL code.
+    // However, running it in Spek would pass; running it unmodified in JUnit would fail.
+
     @Test
     fun testConfig_whenFeatureDisabledOnConfig_shouldLoadKeysWithoutTransformation() {
         val source = mapOf("some_key" to "value").asSource()
