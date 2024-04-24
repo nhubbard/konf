@@ -17,20 +17,18 @@
 
 package io.github.nhubbard.konf.source.helpers
 
-import com.natpryce.hamkrest.Matcher
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.has
-import com.natpryce.hamkrest.isA
-import com.natpryce.hamkrest.throws
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.ConfigSpec
+import io.github.nhubbard.konf.assertCheckedThrows
 import io.github.nhubbard.konf.source.LoadException
 import io.github.nhubbard.konf.source.Source
+import io.github.nhubbard.konf.source.asSource
 import io.github.nhubbard.konf.source.toDuration
 import io.github.nhubbard.konf.toSizeInBytes
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.*
@@ -46,16 +44,8 @@ fun Source.toConfig(): Config = Config {
 }.withSource(this)
 
 inline fun <reified T : Any> assertCausedBy(noinline block: () -> Unit) {
-    @Suppress("UNCHECKED_CAST")
-    assertThat(
-        block,
-        throws(
-            has(
-                LoadException::cause,
-                isA<T>() as Matcher<Throwable?>
-            )
-        )
-    )
+    val e = assertCheckedThrows<LoadException> { block() }
+    assertTrue(e.cause is T)
 }
 
 fun Source.toFlattenConfig(): Config = Config {
@@ -63,6 +53,18 @@ fun Source.toFlattenConfig(): Config = Config {
 }.withSource(this)
 
 fun newSequentialDispatcher() = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+
+inline fun <reified T : Any> loadSource(value: Any): Config =
+    Config().apply {
+        addSpec(
+            object : ConfigSpec() {
+                @Suppress("unused")
+                val item by required<T>()
+            }
+        )
+    }.withSource(mapOf("item" to value).asSource())
+
+data class Person(val name: String)
 
 private val dispatcher = newSequentialDispatcher()
 
