@@ -26,6 +26,6 @@ object FlatConfigForLoad : ConfigSpec("level1.level2") {
     val emptyObjectArray by required<Array<Int>>()
     val singleElementList by required<List<Int>>()
     val multipleElementsList by required<List<Int>>()
-    val flatClass by required<ClassForLoad>()
+    val flatClass by required<BaseClassForLoad>()
 }
 

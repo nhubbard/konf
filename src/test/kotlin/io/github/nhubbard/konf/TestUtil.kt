@@ -62,13 +62,22 @@ fun argumentsOf(vararg arguments: Arguments): Stream<Arguments> =
     Stream.of(*arguments)
 
 /**
+ * Creates a stream of arguments, each containing a single argument.
+ *
+ * @param arguments the arguments to be included in the stream
+ * @return a stream of arguments, each containing a single argument
+ */
+fun <A> singleArgumentsOf(vararg arguments: A): Stream<Arguments> =
+    Stream.of(*arguments.map { Arguments.of(it) }.toTypedArray())
+
+/**
  * Creates an instance of [Arguments] by combining two input arguments.
  *
  * @param left The left input argument.
  * @param right The right input argument.
  * @return An instance of [Arguments] that contains the combined input arguments.
  */
-fun <A, B> twoArgsOf(left: A, right: B): Arguments =
+fun <A, B> twoArgumentsOf(left: A, right: B): Arguments =
     Arguments.of(left, right)
 
 /**
@@ -80,7 +89,7 @@ fun <A, B> twoArgsOf(left: A, right: B): Arguments =
  * @return A configuration specification for the given prefix and provider.
  */
 fun configSpecOf(prefix: String = "network.buffer", provider: () -> Config) =
-    twoArgsOf(prefix, provider)
+    twoArgumentsOf(prefix, provider)
 
 /**
  * Creates an instance of [Arguments] with three arguments.

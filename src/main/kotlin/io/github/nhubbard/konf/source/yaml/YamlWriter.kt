@@ -163,7 +163,7 @@ private class YamlTreeNodeWriter(
 
     private fun quoteString(s: String) = "\"${s.replace("\"", "\\\"")}\""
 
-    private fun hasQuoteChar(s: String) = '\"' in s || '\'' in s
+    private fun hasQuoteChar(s: String) = '\"' in s || '\'' in s || ':' in s
 
     private fun hasTrailingWhitespace(s: String) = s.isNotEmpty() && (s.first() == ' ' || s.last() == ' ')
 

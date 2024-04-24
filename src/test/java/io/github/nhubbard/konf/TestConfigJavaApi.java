@@ -29,7 +29,6 @@ import java.util.HashMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-@DisplayName("test Java API of Config")
 class TestConfigJavaApi {
     private Config config;
 

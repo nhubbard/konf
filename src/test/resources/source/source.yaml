@@ -103,16 +103,16 @@ level1:
       char: "a"
 
       string: string
-      offsetTime: 10:15:30+01:00
+      offsetTime: "10:15:30+01:00"
       offsetDateTime: "2007-12-03T10:15:30+01:00"
-      zonedDateTime: 2007-12-03T10:15:30+01:00[Europe/Paris]
-      localDate: 2007-12-03
+      zonedDateTime: "2007-12-03T10:15:30+01:00[Europe/Paris]"
+      localDate: "2007-12-03"
       localTime: "10:15:30"
-      localDateTime: 2007-12-03T10:15:30
-      date: 2007-12-03T10:15:30Z
+      localDateTime: "2007-12-03T10:15:30"
+      date: "2007-12-03T10:15:30Z"
       year: "2007"
       yearMonth: 2007-12
-      instant: 2007-12-03T10:15:30.00Z
+      instant: "2007-12-03T10:15:30.00Z"
       duration: P2DT3H4M
       simpleDuration: 200millis
       size: 10k

@@ -277,15 +277,15 @@ class TestConfigSpec {
 
         @JvmStatic
         fun prefixInferenceSource(): Stream<Arguments> = argumentsOf(
-            twoArgsOf(configSpecInstance.prefix, ""),
-            twoArgsOf(AnonymousConfigSpec.spec.prefix, ""),
-            twoArgsOf(objectExpression.prefix, ""),
-            twoArgsOf(Uppercase.prefix, "uppercase"),
-            twoArgsOf(OK.prefix, "ok"),
-            twoArgsOf(TCPService.prefix, "tcpService"),
-            twoArgsOf(lowercase.prefix, "lowercase"),
-            twoArgsOf(SuffixSpec.prefix, "suffix"),
-            twoArgsOf(OriginalSpec.prefix, "original")
+            twoArgumentsOf(configSpecInstance.prefix, ""),
+            twoArgumentsOf(AnonymousConfigSpec.spec.prefix, ""),
+            twoArgumentsOf(objectExpression.prefix, ""),
+            twoArgumentsOf(Uppercase.prefix, "uppercase"),
+            twoArgumentsOf(OK.prefix, "ok"),
+            twoArgumentsOf(TCPService.prefix, "tcpService"),
+            twoArgumentsOf(lowercase.prefix, "lowercase"),
+            twoArgumentsOf(SuffixSpec.prefix, "suffix"),
+            twoArgumentsOf(OriginalSpec.prefix, "original")
         )
     }
 }

@@ -2,7 +2,7 @@ package io.github.nhubbard.konf.source.base.helpers
 
 import java.io.Serializable
 
-data class ClassForLoad(
+data class BaseClassForLoad(
     val stringWithComma: String,
     val emptyList: List<Int>,
     val emptySet: Set<Int>,
@@ -15,7 +15,7 @@ data class ClassForLoad(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ClassForLoad
+        other as BaseClassForLoad
 
         if (stringWithComma != other.stringWithComma) return false
         if (emptyList != other.emptyList) return false
