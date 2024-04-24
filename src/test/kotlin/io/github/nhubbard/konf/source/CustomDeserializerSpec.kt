@@ -17,48 +17,19 @@
 
 package io.github.nhubbard.konf.source
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
-import io.github.nhubbard.konf.ConfigSpec
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
 
-@JsonDeserialize(using = SealedClassDeserializer::class)
-sealed class SealedClass
-
-data class VariantA(val int: Int) : SealedClass()
-data class VariantB(val double: Double) : SealedClass()
-
-class SealedClassDeserializer : StdDeserializer<SealedClass>(SealedClass::class.java) {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SealedClass {
-        val node: JsonNode = p.codec.readTree(p)
-        return if (node.has("int")) {
-            VariantA(node.get("int").asInt())
-        } else {
-            VariantB(node.get("double").asDouble())
-        }
-    }
-}
-
-object CustomDeserializerConfig : ConfigSpec("level1.level2") {
-    val variantA by required<SealedClass>()
-    val variantB by required<SealedClass>()
-}
-
 object CustomDeserializerSpec : SubjectSpek<Config>({
-
     subject {
         Config {
             addSpec(CustomDeserializerConfig)
-        }.from.map.kv(loadContent)
+        }.from.map.kv(customDeserializerLoadContent)
     }
     given("a source") {
         on("load the source into config") {
@@ -71,8 +42,3 @@ object CustomDeserializerSpec : SubjectSpek<Config>({
         }
     }
 })
-
-private val loadContent = mapOf<String, Any>(
-    "variantA" to mapOf("int" to 1),
-    "variantB" to mapOf("double" to 2.0)
-).mapKeys { (key, _) -> "level1.level2.$key" }

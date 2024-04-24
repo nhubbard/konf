@@ -36,17 +36,3 @@ object TomlSourceLoadSpec : SubjectSpek<Config>({
     itBehavesLike(SourceLoadBaseSpec)
 })
 
-object TomlSourceReloadSpec : SubjectSpek<Config>({
-
-    subject {
-        val config = Config {
-            addSpec(ConfigForLoad)
-        }.from.toml.resource("source/source.toml")
-        val toml = config.toToml.toText()
-        Config {
-            addSpec(ConfigForLoad)
-        }.from.toml.string(toml)
-    }
-
-    itBehavesLike(SourceLoadBaseSpec)
-})

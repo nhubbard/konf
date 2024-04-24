@@ -26,7 +26,6 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
-import org.jetbrains.spek.subject.itBehavesLike
 import org.junit.jupiter.api.assertThrows
 import spark.Service
 import java.io.File
@@ -218,10 +217,4 @@ object ProviderSpec : SubjectSpek<Provider>({
             }
         }
     }
-})
-
-object MappedProviderSpec : SubjectSpek<Provider>({
-    subject { PropertiesProvider.map { source -> source.withPrefix("prefix")["prefix"] } }
-
-    itBehavesLike(ProviderSpec)
 })

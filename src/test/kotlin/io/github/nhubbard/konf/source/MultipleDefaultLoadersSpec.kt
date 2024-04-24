@@ -42,7 +42,7 @@ object MultipleDefaultLoadersSpec : Spek({
         System.setProperty(config.nameOf(DefaultLoadersConfig.type), "system")
         val afterLoadSystemProperties = afterLoadEnv.from.systemProperties()
         val afterLoadHocon = afterLoadSystemProperties.from.hocon.string(hoconContent)
-        val afterLoadJson = afterLoadHocon.from.json.string(jsonContent)
+        val afterLoadJson = afterLoadHocon.from.json.string(multipleDefaultLoadersJsonContent)
         val afterLoadProperties = afterLoadJson.from.properties.string(propertiesContent)
         val afterLoadToml = afterLoadProperties.from.toml.string(tomlContent)
         val afterLoadXml = afterLoadToml.from.xml.string(xmlContent)
@@ -73,15 +73,3 @@ object MultipleDefaultLoadersSpec : Spek({
         }
     }
 })
-
-//language=Json
-const val jsonContent =
-    """
-{
-  "source": {
-    "test": {
-      "type": "json"
-    }
-  }
-}
-"""

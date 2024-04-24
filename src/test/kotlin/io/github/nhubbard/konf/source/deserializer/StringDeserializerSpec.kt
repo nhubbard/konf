@@ -31,7 +31,7 @@ import org.jetbrains.spek.api.dsl.on
 
 object StringDeserializerSpec : Spek({
     val spec = object : ConfigSpec() {
-        val item by required<StringWrapper>()
+        val item by required<BaseTestStringWrapper>()
     }
     val config by memoized {
         Config {
@@ -91,4 +91,3 @@ object StringDeserializerSpec : Spek({
     }
 })
 
-private data class StringWrapper(val string: String)

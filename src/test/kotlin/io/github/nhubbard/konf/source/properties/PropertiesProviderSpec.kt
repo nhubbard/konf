@@ -25,7 +25,6 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
-import org.jetbrains.spek.subject.itBehavesLike
 
 object PropertiesProviderSpec : SubjectSpek<PropertiesProvider>({
     subject { PropertiesProvider }
@@ -73,8 +72,3 @@ object PropertiesProviderSpec : SubjectSpek<PropertiesProvider>({
     }
 })
 
-object PropertiesProviderInJavaSpec : SubjectSpek<PropertiesProvider>({
-    subject { PropertiesProvider.get() }
-
-    itBehavesLike(PropertiesProviderSpec)
-})

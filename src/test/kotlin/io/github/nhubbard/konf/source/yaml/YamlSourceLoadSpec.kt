@@ -93,17 +93,3 @@ object YamlSourceLoadSpec : SubjectSpek<Config>({
     }
 })
 
-object YamlSourceReloadSpec : SubjectSpek<Config>({
-
-    subject {
-        val config = Config {
-            addSpec(ConfigForLoad)
-        }.from.yaml.resource("source/source.yaml")
-        val yaml = config.toYaml.toText()
-        Config {
-            addSpec(ConfigForLoad)
-        }.from.yaml.string(yaml)
-    }
-
-    itBehavesLike(SourceLoadBaseSpec)
-})

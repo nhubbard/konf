@@ -17,4 +17,10 @@
 
 package io.github.nhubbard.konf.source.hocon
 
+import io.github.nhubbard.konf.source.Source
+
 const val hoconContent = "source.test.type = conf"
+
+fun String.toHoconValueSource(): Source {
+    return HoconProvider.string("key = $this")["key"]
+}

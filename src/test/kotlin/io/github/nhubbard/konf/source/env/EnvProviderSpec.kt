@@ -20,12 +20,10 @@ package io.github.nhubbard.konf.source.env
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
-import io.github.nhubbard.konf.ConfigSpec
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
-import org.jetbrains.spek.subject.itBehavesLike
 import kotlin.test.assertTrue
 
 object EnvProviderSpec : SubjectSpek<EnvProvider>({
@@ -58,22 +56,3 @@ object EnvProviderSpec : SubjectSpek<EnvProvider>({
         }
     }
 })
-
-object EnvProviderInJavaSpec : SubjectSpek<EnvProvider>({
-    subject { EnvProvider.get() }
-
-    itBehavesLike(EnvProviderSpec)
-})
-
-object SourceSpec : ConfigSpec() {
-    object Test : ConfigSpec() {
-        val type by required<String>()
-    }
-
-    val camelCase by required<Boolean>()
-}
-
-object FlattenSourceSpec : ConfigSpec("") {
-    val SOURCE_CAMELCASE by required<Boolean>()
-    val SOURCE_TEST_TYPE by required<String>()
-}

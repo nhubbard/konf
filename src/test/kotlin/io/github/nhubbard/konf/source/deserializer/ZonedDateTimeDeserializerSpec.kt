@@ -31,7 +31,7 @@ import java.time.ZonedDateTime
 
 object ZonedDateTimeDeserializerSpec : Spek({
     val spec = object : ConfigSpec() {
-        val item by required<ZonedDateTimeWrapper>()
+        val item by required<BaseTestZonedDateTimeWrapper>()
     }
     val config by memoized {
         Config {
@@ -73,5 +73,3 @@ object ZonedDateTimeDeserializerSpec : Spek({
         }
     }
 })
-
-private data class ZonedDateTimeWrapper(val zonedDateTime: ZonedDateTime)

@@ -47,14 +47,3 @@ object DefaultJsLoaderSpec : SubjectSpek<DefaultLoaders>({
     }
 })
 
-//language=JavaScript
-const val jsContent =
-    """
-({
-  source: {
-    test: {
-      type: "js"
-    }
-  }
-})
-"""

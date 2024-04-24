@@ -74,4 +74,3 @@ object OffsetDateTimeDeserializerSpec : Spek({
     }
 })
 
-private data class OffsetDateTimeWrapper(val offsetDateTime: OffsetDateTime)

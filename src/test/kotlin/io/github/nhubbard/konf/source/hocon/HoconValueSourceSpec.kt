@@ -82,6 +82,4 @@ object HoconValueSourceSpec : Spek({
     }
 })
 
-private fun String.toHoconValueSource(): Source {
-    return HoconProvider.string("key = $this")["key"]
-}
+

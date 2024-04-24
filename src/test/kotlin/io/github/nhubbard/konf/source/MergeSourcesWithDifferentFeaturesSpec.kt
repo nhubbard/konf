@@ -20,7 +20,6 @@ package io.github.nhubbard.konf.source
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
-import io.github.nhubbard.konf.ConfigSpec
 import io.github.nhubbard.konf.source.hocon.hocon
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it
@@ -31,7 +30,7 @@ object MergeSourcesWithDifferentFeaturesSpec : Spek({
         val config = Config {
             addSpec(ServicingConfig)
         }.withSource(
-            Source.from.hocon.string(content) + Source.from.env()
+            Source.from.hocon.string(mergeSourcesWithDifferentFeaturesContent) + Source.from.env()
         )
         it("should contain the item") {
             assertThat(config[ServicingConfig.baseURL], equalTo("https://service/api"))
@@ -39,15 +38,3 @@ object MergeSourcesWithDifferentFeaturesSpec : Spek({
         }
     }
 })
-
-object ServicingConfig : ConfigSpec("servicing") {
-    val baseURL by required<String>()
-    val url by required<String>()
-}
-
-val content = """
-    servicing {
-      baseURL = "https://service/api"
-      url = "${'$'}{servicing.baseURL}/index.html"
-    }
-""".trimIndent()

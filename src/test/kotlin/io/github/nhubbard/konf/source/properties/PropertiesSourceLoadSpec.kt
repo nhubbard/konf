@@ -36,19 +36,3 @@ object PropertiesSourceLoadSpec : SubjectSpek<Config>({
     itBehavesLike(FlatSourceLoadBaseSpec)
 })
 
-object PropertiesSourceReloadSpec : SubjectSpek<Config>({
-
-    subject {
-        val config = Config {
-            addSpec(ConfigForLoad)
-            addSpec(FlatConfigForLoad)
-        }.from.properties.resource("source/source.properties")
-        val properties = config.toProperties.toText()
-        Config {
-            addSpec(ConfigForLoad)
-            addSpec(FlatConfigForLoad)
-        }.from.properties.string(properties)
-    }
-
-    itBehavesLike(FlatSourceLoadBaseSpec)
-})

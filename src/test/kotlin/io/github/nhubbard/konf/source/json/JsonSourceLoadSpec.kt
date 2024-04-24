@@ -36,17 +36,3 @@ object JsonSourceLoadSpec : SubjectSpek<Config>({
     itBehavesLike(SourceLoadBaseSpec)
 })
 
-object JsonSourceReloadSpec : SubjectSpek<Config>({
-
-    subject {
-        val config = Config {
-            addSpec(ConfigForLoad)
-        }.from.json.resource("source/source.json")
-        val json = config.toJson.toText()
-        Config {
-            addSpec(ConfigForLoad)
-        }.from.json.string(json)
-    }
-
-    itBehavesLike(SourceLoadBaseSpec)
-})

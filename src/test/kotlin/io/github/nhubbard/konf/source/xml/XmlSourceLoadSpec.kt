@@ -36,19 +36,3 @@ object XmlSourceLoadSpec : SubjectSpek<Config>({
     itBehavesLike(FlatSourceLoadBaseSpec)
 })
 
-object XmlSourceReloadSpec : SubjectSpek<Config>({
-
-    subject {
-        val config = Config {
-            addSpec(ConfigForLoad)
-            addSpec(FlatConfigForLoad)
-        }.from.xml.resource("source/source.xml")
-        val xml = config.toXml.toText()
-        Config {
-            addSpec(ConfigForLoad)
-            addSpec(FlatConfigForLoad)
-        }.from.xml.string(xml)
-    }
-
-    itBehavesLike(FlatSourceLoadBaseSpec)
-})

@@ -25,7 +25,6 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
-import org.jetbrains.spek.subject.itBehavesLike
 
 object YamlProviderSpec : SubjectSpek<YamlProvider>({
     subject { YamlProvider }
@@ -63,8 +62,3 @@ object YamlProviderSpec : SubjectSpek<YamlProvider>({
     }
 })
 
-object YamlProviderInJavaSpec : SubjectSpek<YamlProvider>({
-    subject { YamlProvider.get() }
-
-    itBehavesLike(YamlProviderSpec)
-})

@@ -31,7 +31,7 @@ import java.time.Duration
 
 object DurationDeserializerSpec : Spek({
     val spec = object : ConfigSpec() {
-        val item by required<DurationWrapper>()
+        val item by required<BaseTestDurationWrapper>()
     }
     val config by memoized {
         Config {
@@ -73,5 +73,3 @@ object DurationDeserializerSpec : Spek({
         }
     }
 })
-
-private data class DurationWrapper(val duration: Duration)

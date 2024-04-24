@@ -20,7 +20,6 @@ package io.github.nhubbard.konf.source.git
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
-import io.github.nhubbard.konf.ConfigSpec
 import io.github.nhubbard.konf.source.Loader
 import io.github.nhubbard.konf.source.Sequential
 import io.github.nhubbard.konf.source.properties.PropertiesProvider
@@ -39,7 +38,7 @@ import java.util.concurrent.TimeUnit
 
 object GitLoaderSpec : SubjectSpek<Loader>({
     val parentConfig = Config {
-        addSpec(SourceType)
+        addSpec(GitTestSourceType)
     }
     subject {
         Loader(parentConfig, PropertiesProvider)
@@ -62,7 +61,7 @@ object GitLoaderSpec : SubjectSpek<Loader>({
                 val repo = dir.toURI()
                 val config = subject.git(repo.toString(), "test")
                 it("should return a config which contains value in git repository") {
-                    assertThat(config[SourceType.type], equalTo("git"))
+                    assertThat(config[GitTestSourceType.type], equalTo("git"))
                 }
             }
         }
@@ -104,7 +103,7 @@ object GitLoaderSpec : SubjectSpek<Loader>({
                     }
                     val repo = dir.toURI()
                     val config = func(subject, repo.toString())
-                    val originalValue = config[SourceType.type]
+                    val originalValue = config[GitTestSourceType.type]
                     file.writeText("type = newValue")
                     Git.open(dir).use { git ->
                         git.add().apply {
@@ -117,7 +116,7 @@ object GitLoaderSpec : SubjectSpek<Loader>({
                     runBlocking(Dispatchers.Sequential) {
                         delay(TimeUnit.SECONDS.toMillis(1))
                     }
-                    val newValue = config[SourceType.type]
+                    val newValue = config[GitTestSourceType.type]
                     it("should return a config which contains value in git repository") {
                         assertThat(originalValue, equalTo("originalValue"))
                     }
@@ -150,9 +149,9 @@ object GitLoaderSpec : SubjectSpek<Loader>({
                     unit = TimeUnit.SECONDS,
                     context = Dispatchers.Sequential
                 ) { config, _ ->
-                    newValue = config[SourceType.type]
+                    newValue = config[GitTestSourceType.type]
                 }
-                val originalValue = config[SourceType.type]
+                val originalValue = config[GitTestSourceType.type]
                 file.writeText("type = newValue")
                 Git.open(dir).use { git ->
                     git.add().apply {
@@ -175,7 +174,3 @@ object GitLoaderSpec : SubjectSpek<Loader>({
         }
     }
 })
-
-private object SourceType : ConfigSpec("") {
-    val type by required<String>()
-}

@@ -25,7 +25,6 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.jetbrains.spek.subject.SubjectSpek
-import org.jetbrains.spek.subject.itBehavesLike
 
 object XmlProviderSpec : SubjectSpek<XmlProvider>({
     subject { XmlProvider }
@@ -75,8 +74,3 @@ object XmlProviderSpec : SubjectSpek<XmlProvider>({
     }
 })
 
-object XmlProviderInJavaSpec : SubjectSpek<XmlProvider>({
-    subject { XmlProvider.get() }
-
-    itBehavesLike(XmlProviderSpec)
-})

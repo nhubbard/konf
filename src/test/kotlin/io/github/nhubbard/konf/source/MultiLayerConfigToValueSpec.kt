@@ -56,5 +56,3 @@ db:
         }
     }
 })
-
-data class ConfigTestReport(val db: Map<String, String>)
