@@ -253,8 +253,6 @@ class TestCompleteSourceLoad {
         assertEquals(classForLoad.stringWithComma, subject[FlatConfigForLoad.flatClass].stringWithComma)
     }
 
-    // TODO: FlatSourceLoadBaseSpec makes this more complicated...
-
     companion object {
         @JvmStatic
         fun sourceLoadProvider(): Stream<Arguments> = Stream.concat(
