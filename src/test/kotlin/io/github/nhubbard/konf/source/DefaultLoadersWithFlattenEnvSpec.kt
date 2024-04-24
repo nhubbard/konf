@@ -3,6 +3,7 @@ package io.github.nhubbard.konf.source
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
+import io.github.nhubbard.konf.source.helpers.FlattenDefaultLoadersConfig
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it

@@ -34,6 +34,7 @@ import io.github.nhubbard.konf.name
 import io.github.nhubbard.konf.source.base.ValueSource
 import io.github.nhubbard.konf.source.base.asKVSource
 import io.github.nhubbard.konf.source.base.toHierarchical
+import io.github.nhubbard.konf.source.helpers.assertCausedBy
 import io.github.nhubbard.konf.toPath
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given

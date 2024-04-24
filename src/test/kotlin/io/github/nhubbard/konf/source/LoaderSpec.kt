@@ -22,6 +22,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.throws
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.ConfigSpec
+import io.github.nhubbard.konf.source.helpers.Sequential
 import io.github.nhubbard.konf.tempFileOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

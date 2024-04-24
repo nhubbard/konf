@@ -21,7 +21,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.DefaultLoaders
-import io.github.nhubbard.konf.source.DefaultLoadersConfig
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
 import io.github.nhubbard.konf.tempFileOf
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it

@@ -1,4 +1,4 @@
-package io.github.nhubbard.konf.source.deserializer
+package io.github.nhubbard.konf.source.deserializer.helpers
 
 import java.time.ZonedDateTime
 

@@ -20,6 +20,9 @@ package io.github.nhubbard.konf.source
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
+import io.github.nhubbard.konf.source.helpers.multipleDefaultLoadersJsonContent
+import io.github.nhubbard.konf.source.helpers.propertiesContent
 import io.github.nhubbard.konf.source.hocon.hocon
 import io.github.nhubbard.konf.source.hocon.hoconContent
 import io.github.nhubbard.konf.source.toml.toml

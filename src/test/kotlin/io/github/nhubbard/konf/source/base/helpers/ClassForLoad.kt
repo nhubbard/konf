@@ -1,4 +1,4 @@
-package io.github.nhubbard.konf.source.base
+package io.github.nhubbard.konf.source.base.helpers
 
 import java.io.Serializable
 

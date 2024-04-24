@@ -1,21 +1,20 @@
-package io.github.nhubbard.konf.source.js
+package io.github.nhubbard.konf.source
 
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.ConfigForLoad
-import io.github.nhubbard.konf.source.SourceLoadBaseSpec
+import io.github.nhubbard.konf.source.helpers.kvLoadContent
 import org.jetbrains.spek.subject.SubjectSpek
 import org.jetbrains.spek.subject.itBehavesLike
 
-object JsSourceReloadSpec : SubjectSpek<Config>({
+object SourceReloadSpec : SubjectSpek<Config>({
 
     subject {
         val config = Config {
             addSpec(ConfigForLoad)
-        }.from.js.resource("source/source.js")
-        val js = config.toJs.toText()
+        }.from.map.kv(kvLoadContent)
         Config {
             addSpec(ConfigForLoad)
-        }.from.js.string(js)
+        }.from.map.kv(config.toMap())
     }
 
     itBehavesLike(SourceLoadBaseSpec)

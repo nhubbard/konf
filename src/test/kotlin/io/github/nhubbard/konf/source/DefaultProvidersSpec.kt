@@ -21,7 +21,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.sameInstance
 import com.natpryce.hamkrest.throws
-import io.github.nhubbard.konf.Config
+import io.github.nhubbard.konf.source.helpers.*
 import io.github.nhubbard.konf.source.properties.PropertiesProvider
 import io.github.nhubbard.konf.tempFileOf
 import org.jetbrains.spek.api.dsl.given

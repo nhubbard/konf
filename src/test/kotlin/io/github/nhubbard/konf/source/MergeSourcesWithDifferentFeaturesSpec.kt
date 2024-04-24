@@ -20,6 +20,8 @@ package io.github.nhubbard.konf.source
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
+import io.github.nhubbard.konf.source.helpers.ServicingConfig
+import io.github.nhubbard.konf.source.helpers.mergeSourcesWithDifferentFeaturesContent
 import io.github.nhubbard.konf.source.hocon.hocon
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.it

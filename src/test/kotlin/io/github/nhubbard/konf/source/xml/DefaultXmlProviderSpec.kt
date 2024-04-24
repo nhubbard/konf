@@ -19,10 +19,10 @@ package io.github.nhubbard.konf.source.xml
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import io.github.nhubbard.konf.source.DefaultLoadersConfig
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
 import io.github.nhubbard.konf.source.DefaultProviders
 import io.github.nhubbard.konf.source.Source
-import io.github.nhubbard.konf.source.toConfig
+import io.github.nhubbard.konf.source.helpers.toConfig
 import io.github.nhubbard.konf.tempFileOf
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it

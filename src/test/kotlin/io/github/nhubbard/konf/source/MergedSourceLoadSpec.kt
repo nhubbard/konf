@@ -19,6 +19,9 @@ package io.github.nhubbard.konf.source
 
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.Feature
+import io.github.nhubbard.konf.source.helpers.ConfigForLoad
+import io.github.nhubbard.konf.source.helpers.mergedSourceFacadeContent
+import io.github.nhubbard.konf.source.helpers.mergedSourceFallbackContent
 import org.jetbrains.spek.subject.SubjectSpek
 import org.jetbrains.spek.subject.itBehavesLike
 

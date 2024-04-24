@@ -1,4 +1,4 @@
-package io.github.nhubbard.konf.source.serializer
+package io.github.nhubbard.konf.source.serializer.helpers
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider

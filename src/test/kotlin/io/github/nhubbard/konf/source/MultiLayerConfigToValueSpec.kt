@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
+import io.github.nhubbard.konf.source.helpers.ConfigTestReport
 import io.github.nhubbard.konf.source.yaml.yaml
 import io.github.nhubbard.konf.toValue
 import org.jetbrains.spek.api.Spek

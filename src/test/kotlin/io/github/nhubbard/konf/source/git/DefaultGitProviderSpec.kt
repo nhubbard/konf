@@ -20,6 +20,9 @@ package io.github.nhubbard.konf.source.git
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.source.*
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
+import io.github.nhubbard.konf.source.helpers.propertiesContent
+import io.github.nhubbard.konf.source.helpers.toConfig
 import io.github.nhubbard.konf.tempDirectory
 import org.eclipse.jgit.api.Git
 import org.jetbrains.spek.api.dsl.given

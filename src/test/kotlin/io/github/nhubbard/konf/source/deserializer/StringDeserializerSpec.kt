@@ -23,7 +23,8 @@ import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.ConfigSpec
 import io.github.nhubbard.konf.source.ObjectMappingException
-import io.github.nhubbard.konf.source.assertCausedBy
+import io.github.nhubbard.konf.source.deserializer.helpers.BaseTestStringWrapper
+import io.github.nhubbard.konf.source.helpers.assertCausedBy
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it

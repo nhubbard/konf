@@ -1,4 +1,4 @@
-package io.github.nhubbard.konf.source
+package io.github.nhubbard.konf.source.helpers
 
 import io.github.nhubbard.konf.ConfigSpec
 

@@ -22,6 +22,9 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.json.toJson
+import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedString
+import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedStringStdDeserializer
+import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedStringStdSerializer
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on

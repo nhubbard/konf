@@ -21,9 +21,9 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.DefaultLoaders
-import io.github.nhubbard.konf.source.DefaultLoadersConfig
-import io.github.nhubbard.konf.source.Sequential
-import io.github.nhubbard.konf.source.propertiesContent
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
+import io.github.nhubbard.konf.source.helpers.Sequential
+import io.github.nhubbard.konf.source.helpers.propertiesContent
 import io.github.nhubbard.konf.tempDirectory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

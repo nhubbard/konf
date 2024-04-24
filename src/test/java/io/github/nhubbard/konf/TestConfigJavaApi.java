@@ -30,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @DisplayName("test Java API of Config")
-class ConfigJavaApiTest {
+class TestConfigJavaApi {
     private Config config;
 
     @BeforeEach

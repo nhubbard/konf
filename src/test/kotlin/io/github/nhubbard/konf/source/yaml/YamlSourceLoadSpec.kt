@@ -21,7 +21,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.Feature
-import io.github.nhubbard.konf.source.ConfigForLoad
+import io.github.nhubbard.konf.source.helpers.ConfigForLoad
 import io.github.nhubbard.konf.source.SourceLoadBaseSpec
 import io.github.nhubbard.konf.toValue
 import org.jetbrains.spek.api.dsl.given
