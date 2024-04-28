@@ -17,32 +17,25 @@
 
 package io.github.nhubbard.konf.source
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.CustomDeserializerConfig
 import io.github.nhubbard.konf.source.helpers.VariantA
 import io.github.nhubbard.konf.source.helpers.VariantB
 import io.github.nhubbard.konf.source.helpers.customDeserializerLoadContent
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.subject.SubjectSpek
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
-object CustomDeserializerSpec : SubjectSpek<Config>({
-    subject {
-        Config {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestCustomDeserializer {
+    @Test
+    fun testSource_onLoadSourceIntoConfig_itShouldContainEveryValueSpecifiedInTheSource() {
+        val subject = Config {
             addSpec(CustomDeserializerConfig)
         }.from.map.kv(customDeserializerLoadContent)
+        val variantA = VariantA(1)
+        val variantB = VariantB(2.0)
+        assertEquals(subject[CustomDeserializerConfig.variantA], variantA)
+        assertEquals(subject[CustomDeserializerConfig.variantB], variantB)
     }
-    given("a source") {
-        on("load the source into config") {
-            it("should contain every value specified in the source") {
-                val variantA = VariantA(1)
-                val variantB = VariantB(2.0)
-                assertThat(subject[CustomDeserializerConfig.variantA], equalTo(variantA))
-                assertThat(subject[CustomDeserializerConfig.variantB], equalTo(variantB))
-            }
-        }
-    }
-})
+}

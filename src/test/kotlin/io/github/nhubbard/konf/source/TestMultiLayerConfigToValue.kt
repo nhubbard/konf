@@ -24,12 +24,13 @@ import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.ConfigTestReport
 import io.github.nhubbard.konf.source.yaml.yaml
 import io.github.nhubbard.konf.toValue
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
-object MultiLayerConfigToValueSpec : Spek({
-    val yamlContent = """
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestMultiLayerConfigToValue {
+    //language=YAML
+    private val yamlContent = """
 db:
   driverClassName: org.h2.Driver
   url: 'jdbc:h2:mem:db;DB_CLOSE_DELAY=-1'
@@ -39,7 +40,9 @@ db:
         "driverClassName" to "org.h2.Driver",
         "url" to "jdbc:h2:mem:db;DB_CLOSE_DELAY=-1"
     )
-    on("load from multiple sources") {
+
+    @Test
+    fun testLoadFromMultipleSources_itShouldCastToValueCorrectly() {
         val config = Config {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
@@ -51,9 +54,7 @@ db:
             )
             .from.systemProperties()
             .from.env()
-        it("should cast to value correctly") {
-            val db = config.toValue<ConfigTestReport>()
-            assertThat(db.db, equalTo(map))
-        }
+        val db = config.toValue<ConfigTestReport>()
+        assertThat(db.db, equalTo(map))
     }
-})
+}

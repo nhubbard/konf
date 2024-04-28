@@ -17,8 +17,6 @@
 
 package io.github.nhubbard.konf.source
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
 import io.github.nhubbard.konf.source.helpers.multipleDefaultLoadersJsonContent
@@ -31,12 +29,14 @@ import io.github.nhubbard.konf.source.xml.xml
 import io.github.nhubbard.konf.source.xml.xmlContent
 import io.github.nhubbard.konf.source.yaml.yaml
 import io.github.nhubbard.konf.source.yaml.yamlContent
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
-object MultipleDefaultLoadersSpec : Spek({
-    on("load from multiple sources") {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestMultipleDefaultLoaders {
+    @Test
+    fun testLoadFromMultipleSources_itShouldLoadTheCorrespondingValueInEachLayer() {
         val config = Config {
             addSpec(DefaultLoadersConfig)
         }
@@ -54,25 +54,21 @@ object MultipleDefaultLoadersSpec : Spek({
         val afterLoadKv = afterLoadFlat.from.map.kv(mapOf("source.test.type" to "kv"))
         val afterLoadHierarchical = afterLoadKv.from.map.hierarchical(
             mapOf(
-                "source" to
-                        mapOf(
-                            "test" to
-                                    mapOf("type" to "hierarchical")
-                        )
+                "source" to mapOf(
+                    "test" to mapOf("type" to "hierarchical")
+                )
             )
         )
-        it("should load the corresponding value in each layer") {
-            assertThat(afterLoadEnv[item], equalTo("env"))
-            assertThat(afterLoadSystemProperties[item], equalTo("system"))
-            assertThat(afterLoadHocon[item], equalTo("conf"))
-            assertThat(afterLoadJson[item], equalTo("json"))
-            assertThat(afterLoadProperties[item], equalTo("properties"))
-            assertThat(afterLoadToml[item], equalTo("toml"))
-            assertThat(afterLoadXml[item], equalTo("xml"))
-            assertThat(afterLoadYaml[item], equalTo("yaml"))
-            assertThat(afterLoadFlat[item], equalTo("flat"))
-            assertThat(afterLoadKv[item], equalTo("kv"))
-            assertThat(afterLoadHierarchical[item], equalTo("hierarchical"))
-        }
+        assertEquals("env", afterLoadEnv[item])
+        assertEquals("system", afterLoadSystemProperties[item])
+        assertEquals("conf", afterLoadHocon[item])
+        assertEquals("json", afterLoadJson[item])
+        assertEquals("properties", afterLoadProperties[item])
+        assertEquals("toml", afterLoadToml[item])
+        assertEquals("xml", afterLoadXml[item])
+        assertEquals("yaml", afterLoadYaml[item])
+        assertEquals("flat", afterLoadFlat[item])
+        assertEquals("kv", afterLoadKv[item])
+        assertEquals("hierarchical", afterLoadHierarchical[item])
     }
-})
+}

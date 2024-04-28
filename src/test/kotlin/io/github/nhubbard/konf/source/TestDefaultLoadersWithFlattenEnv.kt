@@ -17,24 +17,19 @@
 
 package io.github.nhubbard.konf.source
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.FlattenDefaultLoadersConfig
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
-object DefaultLoadersWithFlattenEnvSpec : Spek({
-    given("a loader") {
-        on("load as flatten format from system environment") {
-            val config = Config {
-                addSpec(FlattenDefaultLoadersConfig)
-            }.from.env(nested = false)
-            it("should return a config which contains value from system environment") {
-                assertThat(config[FlattenDefaultLoadersConfig.SOURCE_TEST_TYPE], equalTo("env"))
-            }
-        }
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestDefaultLoadersWithFlattenEnv {
+    @Test
+    fun testLoader_onLoadAsFlattenFormatFromSystemEnvironment_itShouldReturnAConfigWhichContainsValueFromSystemEnvironment() {
+        val config = Config {
+            addSpec(FlattenDefaultLoadersConfig)
+        }.from.env(nested = false)
+        assertEquals(config[FlattenDefaultLoadersConfig.SOURCE_TEST_TYPE], "env")
     }
-})
+}

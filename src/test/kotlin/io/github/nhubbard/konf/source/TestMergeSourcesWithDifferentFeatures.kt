@@ -17,26 +17,24 @@
 
 package io.github.nhubbard.konf.source
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.ServicingConfig
 import io.github.nhubbard.konf.source.helpers.mergeSourcesWithDifferentFeaturesContent
 import io.github.nhubbard.konf.source.hocon.hocon
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
-object MergeSourcesWithDifferentFeaturesSpec : Spek({
-    on("load from merged sources") {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestMergeSourcesWithDifferentFeatures {
+    @Test
+    fun testLoadFromMergedSource_itShouldContainTheItem() {
         val config = Config {
             addSpec(ServicingConfig)
         }.withSource(
             Source.from.hocon.string(mergeSourcesWithDifferentFeaturesContent) + Source.from.env()
         )
-        it("should contain the item") {
-            assertThat(config[ServicingConfig.baseURL], equalTo("https://service/api"))
-            assertThat(config[ServicingConfig.url], equalTo("https://service/api/index.html"))
-        }
+        assertEquals(config[ServicingConfig.baseURL], "https://service/api")
+        assertEquals(config[ServicingConfig.url], "https://service/api/index.html")
     }
-})
+}

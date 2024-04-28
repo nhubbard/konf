@@ -17,27 +17,23 @@
 
 package io.github.nhubbard.konf.source
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.EmptyNode
 import io.github.nhubbard.konf.TreeNode
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.subject.SubjectSpek
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
-object ListSourceNodeSpec : SubjectSpek<ListSourceNode>({
-    subject { ListSourceNode(listOf(EmptyNode, EmptyNode)) }
-    on("get children") {
-        it("should return a map indexed by integer") {
-            assertThat(
-                subject.children,
-                equalTo(
-                    mutableMapOf<String, TreeNode>(
-                        "0" to EmptyNode,
-                        "1" to EmptyNode
-                    )
-                )
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestListSourceNode {
+    @Test
+    fun testListSourceNode_onGetChildren_itShouldReturnAMapIndexedByInteger() {
+        val subject = ListSourceNode(listOf(EmptyNode, EmptyNode))
+        assertEquals(
+            subject.children,
+            mutableMapOf<String, TreeNode>(
+                "0" to EmptyNode,
+                "1" to EmptyNode
             )
-        }
+        )
     }
-})
+}

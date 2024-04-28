@@ -21,8 +21,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.throws
 import io.github.nhubbard.konf.Config
-import io.github.nhubbard.konf.ConfigSpec
 import io.github.nhubbard.konf.source.helpers.Sequential
+import io.github.nhubbard.konf.source.helpers.SourceType
 import io.github.nhubbard.konf.tempFileOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -343,7 +343,3 @@ object LoaderSpec : SubjectSpek<Loader>({
         }
     }
 })
-
-private object SourceType : ConfigSpec("") {
-    val type by required<String>()
-}
