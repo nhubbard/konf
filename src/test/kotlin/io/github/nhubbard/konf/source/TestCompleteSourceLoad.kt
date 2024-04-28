@@ -434,7 +434,6 @@ class TestCompleteSourceLoad {
                         addSpec(ConfigForLoad)
                     }.from.yaml.resource("source/source.yaml")
                     val yaml = config.toYaml.toText()
-                    Paths.get("/Users/nhubbard/output.yaml").writeText(yaml)
                     Config {
                         addSpec(ConfigForLoad)
                     }.from.yaml.string(yaml)
