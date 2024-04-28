@@ -1,5 +1,3 @@
-// noinspection BadExpressionStatementJS
-
 /*
  * Copyright (c) 2017-2024 Uchuhimo
  * Copyright (c) 2024-present Nicholas Hubbard
@@ -16,6 +14,8 @@
  * See the License for specific language governing permissions and
  * limitations under the License.
  */
+
+// noinspection BadExpressionStatementJS
 
 ({
     level1: {
