@@ -17,32 +17,26 @@
 
 package io.github.nhubbard.konf.source.xml
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
-import io.github.nhubbard.konf.source.DefaultLoaders
 import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
 import io.github.nhubbard.konf.tempFileOf
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.subject.SubjectSpek
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import kotlin.test.assertEquals
 
-object DefaultXmlLoaderSpec : SubjectSpek<DefaultLoaders>({
-    subject {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestDefaultXmlLoader {
+    private val provider = {
         Config {
             addSpec(DefaultLoadersConfig)
         }.from
     }
+    private val item = DefaultLoadersConfig.type
 
-    val item = DefaultLoadersConfig.type
-
-    given("a loader") {
-        on("load from XML file") {
-            val config = subject.file(tempFileOf(xmlContent, suffix = ".xml"))
-            it("should load as auto-detected file format") {
-                assertThat(config[item], equalTo("xml"))
-            }
-        }
+    @Test
+    fun testLoader_onLoadFromXmlFile_itShouldLoadAsAutoDetectedFileFormat() {
+        val subject = provider()
+        val config = subject.file(tempFileOf(xmlContent, suffix = ".xml"))
+        assertEquals("xml", config[item])
     }
-})
+}
