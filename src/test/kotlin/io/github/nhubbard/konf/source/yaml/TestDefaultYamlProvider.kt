@@ -17,29 +17,23 @@
 
 package io.github.nhubbard.konf.source.yaml
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
-import io.github.nhubbard.konf.source.DefaultProviders
 import io.github.nhubbard.konf.source.Source
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
 import io.github.nhubbard.konf.source.helpers.toConfig
 import io.github.nhubbard.konf.tempFileOf
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.subject.SubjectSpek
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import kotlin.test.assertEquals
 
-object DefaultYamlProviderSpec : SubjectSpek<DefaultProviders>({
-    subject { Source.from }
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestDefaultYamlProvider {
+    private val provider = { Source.from }
+    private val item = DefaultLoadersConfig.type
 
-    val item = DefaultLoadersConfig.type
-
-    given("a provider") {
-        on("provide source from YAML file") {
-            val config = subject.file(tempFileOf(yamlContent, suffix = ".yaml")).toConfig()
-            it("should provide as auto-detected file format") {
-                assertThat(config[item], equalTo("yaml"))
-            }
-        }
+    @Test
+    fun testGivenProvider_onProvideSourceFromYamlFile_itShouldProvideAsAutoDetectedFileFormat() {
+        val subject = provider()
+        val config = subject.file(tempFileOf(yamlContent, suffix = ".yaml")).toConfig()
+        assertEquals("yaml", config[item])
     }
-})
+}
