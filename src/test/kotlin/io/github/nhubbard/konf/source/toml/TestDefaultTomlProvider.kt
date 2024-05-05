@@ -17,29 +17,23 @@
 
 package io.github.nhubbard.konf.source.toml
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
-import io.github.nhubbard.konf.source.DefaultProviders
 import io.github.nhubbard.konf.source.Source
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
 import io.github.nhubbard.konf.source.helpers.toConfig
 import io.github.nhubbard.konf.tempFileOf
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.subject.SubjectSpek
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import kotlin.test.assertEquals
 
-object DefaultTomlProviderSpec : SubjectSpek<DefaultProviders>({
-    subject { Source.from }
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestDefaultTomlProvider {
+    private val provider = { Source.from }
+    private val item = DefaultLoadersConfig.type
 
-    val item = DefaultLoadersConfig.type
-
-    given("a provider") {
-        on("provide source from TOML file") {
-            val config = subject.file(tempFileOf(tomlContent, suffix = ".toml")).toConfig()
-            it("should provide as auto-detected file format") {
-                assertThat(config[item], equalTo("toml"))
-            }
-        }
+    @Test
+    fun testProvider_onProvideSourceFromTomlFile_itShouldProvideAsAutoDetectedFileFormat() {
+        val subject = provider()
+        val config = subject.file(tempFileOf(tomlContent, suffix = ".toml")).toConfig()
+        assertEquals("toml", config[item])
     }
-})
+}
