@@ -15,13 +15,10 @@
  * limitations under the License.
  */
 
-package io.github.nhubbard.konf.source.properties
+package io.github.nhubbard.konf.source.serializer.helpers
 
-import org.jetbrains.spek.subject.SubjectSpek
-import org.jetbrains.spek.subject.itBehavesLike
+import io.github.nhubbard.konf.ConfigSpec
 
-object PropertiesProviderInJavaSpec : SubjectSpek<PropertiesProvider>({
-    subject { PropertiesProvider.get() }
-
-    itBehavesLike(PropertiesProviderSpec)
-})
+object TestSerializerWrappedStringSpec : ConfigSpec("") {
+    val wrappedString by optional(name = "wrapped-string", default = TestSerializerWrappedString("value"))
+}

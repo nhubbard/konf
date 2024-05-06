@@ -18,20 +18,19 @@
 package io.github.nhubbard.konf.source.serializer
 
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.json.toJson
 import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedString
+import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedStringSpec
 import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedStringStdDeserializer
 import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedStringStdSerializer
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.subject.SubjectSpek
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import kotlin.test.assertEquals
 
-object PrimitiveStdSerializerSpec : SubjectSpek<Config>({
-    subject {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestPrimitiveStdSerializer {
+    private val provider = {
         Config {
             addSpec(TestSerializerWrappedStringSpec)
             mapper.registerModule(
@@ -42,25 +41,24 @@ object PrimitiveStdSerializerSpec : SubjectSpek<Config>({
             )
         }
     }
+    private val json = """
+        {
+          "wrapped-string" : "1234"
+        }
+    """.trimIndent().replace("\n", System.lineSeparator())
 
-    given("a config") {
-        val json = """
-            {
-              "wrapped-string" : "1234"
-            }
-        """.trimIndent().replace("\n", System.lineSeparator())
-        on("write wrapped string to json") {
-            subject[TestSerializerWrappedStringSpec.wrappedString] = TestSerializerWrappedString("1234")
-            val result = subject.toJson.toText()
-            it("should serialize wrapped string as string") {
-                assertThat(result, equalTo(json))
-            }
-        }
-        on("read wrapped string from json") {
-            val config = subject.from.json.string(json)
-            it("should deserialize wrapped string from string") {
-                assertThat(config[TestSerializerWrappedStringSpec.wrappedString], equalTo(TestSerializerWrappedString("1234")))
-            }
-        }
+    @Test
+    fun testConfig_onWriteWrappedStringToJson_itShouldSerializeWrappedStringAsString() {
+        val subject = provider()
+        subject[TestSerializerWrappedStringSpec.wrappedString] = TestSerializerWrappedString("1234")
+        val result = subject.toJson.toText()
+        assertEquals(json, result)
     }
-})
+
+    @Test
+    fun testConfig_onReadWrappedStringFromJson_itShouldDeserializeWrappedStringFromString() {
+        val subject = provider()
+        val config = subject.from.json.string(json)
+        assertEquals(TestSerializerWrappedString("1234"), config[TestSerializerWrappedStringSpec.wrappedString])
+    }
+}
