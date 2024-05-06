@@ -17,29 +17,21 @@
 
 package io.github.nhubbard.konf.source.js
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
-import io.github.nhubbard.konf.source.DefaultProviders
 import io.github.nhubbard.konf.source.Source
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
 import io.github.nhubbard.konf.source.helpers.toConfig
 import io.github.nhubbard.konf.tempFileOf
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.subject.SubjectSpek
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import kotlin.test.assertEquals
 
-object DefaultJsProviderSpec : SubjectSpek<DefaultProviders>({
-    subject { Source.from }
-
-    val item = DefaultLoadersConfig.type
-
-    given("a provider") {
-        on("provider source from JavaScript file") {
-            val config = subject.file(tempFileOf(jsContent, suffix = ".js")).toConfig()
-            it("should provide as auto-detected file format") {
-                assertThat(config[item], equalTo("js"))
-            }
-        }
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestDefaultJsProvider {
+    @Test
+    fun testJsProvider_onProviderSourceFromJsFile_itShouldProvideAsAutoDetectedFileFormat() {
+        val subject = Source.from
+        val item = DefaultLoadersConfig.type
+        val config = subject.file(tempFileOf(jsContent, suffix = ".js")).toConfig()
+        assertEquals("js", config[item])
     }
-})
+}

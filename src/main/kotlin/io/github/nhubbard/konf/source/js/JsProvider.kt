@@ -23,6 +23,7 @@ import io.github.nhubbard.konf.source.RegisterExtension
 import io.github.nhubbard.konf.source.Source
 import io.github.nhubbard.konf.source.json.JsonProvider
 import org.graalvm.polyglot.Context
+import org.graalvm.polyglot.Engine
 import java.io.InputStream
 import java.io.Reader
 import java.util.stream.Collectors
@@ -34,7 +35,8 @@ import java.util.stream.Collectors
 object JsProvider : Provider {
     override fun reader(reader: Reader): Source {
         val sourceString = reader.buffered().lines().collect(Collectors.joining("\n"))
-        Context.create().use { context ->
+        val engine = Engine.newBuilder().option("engine.WarnInterpreterOnly", "false").build()
+        Context.newBuilder("js").engine(engine).build().use { context ->
             val value = context.eval("js", sourceString)
             context.getBindings("js").putMember("source", value)
             val jsonString = context.eval("js", "JSON.stringify(source)").asString()

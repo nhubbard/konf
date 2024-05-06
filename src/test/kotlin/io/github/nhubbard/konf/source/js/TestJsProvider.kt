@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-package io.github.nhubbard.konf.source.xml
+package io.github.nhubbard.konf.source.js
 
 import io.github.nhubbard.konf.singleArgumentsOf
 import io.github.nhubbard.konf.source.asValue
 import io.github.nhubbard.konf.tempFileOf
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -30,66 +28,52 @@ import java.util.stream.Stream
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
-class TestXmlProvider {
-
-    //language=XML
-    private fun xmlDoc(name: String, value: String) =
-        """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <configuration>
-            <property>
-                <name>$name</name>
-                <value>$value</value>
-            </property>
-        </configuration>
-        """.trimIndent()
-
+class TestJsProvider {
     @ParameterizedTest
     @MethodSource("providerSource")
-    fun testXmlProvider_onCreateSourceFromReader_itShouldHaveCorrectType(provider: () -> XmlProvider) {
+    fun testJsProvider_onCreateSourceFromReader_itShouldHaveCorrectType(provider: () -> JsProvider) {
         val subject = provider()
-        val source = subject.reader(xmlDoc("type", "reader").reader())
-        assertEquals("XML", source.info["type"])
+        val source = subject.reader("({type: 'reader'})".reader())
+        assertEquals("JavaScript", source.info["type"])
     }
 
     @ParameterizedTest
     @MethodSource("providerSource")
-    fun testXmlProvider_onCreateSourceFromReader_itShouldReturnASourceWhichContainsValueFromReader(provider: () -> XmlProvider) {
+    fun testJsProvider_onCreateSourceFromReader_itShouldReturnSourceWithValueFromReader(provider: () -> JsProvider) {
         val subject = provider()
-        val source = subject.reader(xmlDoc("type", "reader").reader())
+        val source = subject.reader("({type: 'reader'})".reader())
         assertEquals("reader", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
     @MethodSource("providerSource")
-    fun testXmlProvider_onCreateSourceFromInputStream_itShouldHaveCorrectType(provider: () -> XmlProvider) {
+    fun testJsProvider_onCreateSourceFromInputStream_itShouldHaveCorrectType(provider: () -> JsProvider) {
         val subject = provider()
-        val source = subject.inputStream(tempFileOf(xmlDoc("type", "inputStream")).inputStream())
-        assertEquals("XML", source.info["type"])
+        val source = subject.inputStream(tempFileOf("({type: 'inputStream'})").inputStream())
+        assertEquals("JavaScript", source.info["type"])
     }
 
     @ParameterizedTest
     @MethodSource("providerSource")
-    fun testXmlProvider_onCreateSourceFromInputStream_itShouldReturnASourceThatContainsTheValueFromTheInputStream(provider: () -> XmlProvider) {
+    fun testJsProvider_onCreateSourceFromInputStream_itShouldReturnSourceWithValueFromReader(provider: () -> JsProvider) {
         val subject = provider()
-        val source = subject.inputStream(tempFileOf(xmlDoc("type", "inputStream")).inputStream())
+        val source = subject.inputStream(tempFileOf("({type: 'inputStream'})").inputStream())
         assertEquals("inputStream", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
     @MethodSource("providerSource")
-    fun testXmlProvider_onCreateSourceFromEmptyFile_itShouldReturnEmptySource(provider: () -> XmlProvider) {
+    fun testJsProvider_onCreateSourceFromEmptyFile_itShouldReturnAnEmptySource(provider: () -> JsProvider) {
         val subject = provider()
-        val file = tempFileOf("<?xml version=\"1.0\" encoding=\"UTF-8\"?><configuration></configuration>")
+        val file = tempFileOf("({})")
         assertEquals(mutableMapOf(), subject.file(file).tree.children)
     }
 
     companion object {
         @JvmStatic
         fun providerSource(): Stream<Arguments> = singleArgumentsOf(
-            { XmlProvider },
-            { XmlProvider.get() }
+            { JsProvider },
+            { JsProvider.get() }
         )
     }
 }

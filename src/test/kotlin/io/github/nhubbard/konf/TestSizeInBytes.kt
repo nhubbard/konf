@@ -20,10 +20,13 @@ package io.github.nhubbard.konf
 import io.github.nhubbard.konf.source.ParseException
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestSizeInBytes {
     @Test
     fun testValidString_parsesAsValidSizeInBytes() {

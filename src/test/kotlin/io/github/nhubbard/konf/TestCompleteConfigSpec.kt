@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -36,13 +38,13 @@ import java.util.stream.Stream
 class TestCompleteConfigSpec {
     val spec = NetworkBuffer
     val size = NetworkBuffer.size
-    val maxSize = NetworkBuffer.maxSize
+    private val maxSize = NetworkBuffer.maxSize
     val name = NetworkBuffer.name
     val type = NetworkBuffer.type
-    val offset = NetworkBuffer.offset
+    private val offset = NetworkBuffer.offset
 
-    val invalidItem by ConfigSpec("invalid").required<Int>()
-    val invalidItemName = "invalid.invalidItem"
+    private val invalidItem by ConfigSpec("invalid").required<Int>()
+    private val invalidItemName = "invalid.invalidItem"
 
     private fun String.qualify(name: String): String = if (isEmpty()) name else "$this.$name"
 
@@ -725,6 +727,7 @@ class TestCompleteConfigSpec {
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
+    @Execution(ExecutionMode.SAME_THREAD)
     fun testSetOperation_setWhenAfterSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
         val subject = provider()
         val childConfig = subject.withLayer()

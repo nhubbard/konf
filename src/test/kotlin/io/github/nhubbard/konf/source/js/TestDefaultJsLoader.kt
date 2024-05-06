@@ -17,11 +17,22 @@
 
 package io.github.nhubbard.konf.source.js
 
-import org.jetbrains.spek.subject.SubjectSpek
-import org.jetbrains.spek.subject.itBehavesLike
+import io.github.nhubbard.konf.Config
+import io.github.nhubbard.konf.source.helpers.DefaultLoadersConfig
+import io.github.nhubbard.konf.tempFileOf
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import kotlin.test.assertEquals
 
-object JsProviderInJavaSpec : SubjectSpek<JsProvider>({
-    subject { JsProvider.get() }
-
-    itBehavesLike(JsProviderSpec)
-})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class TestDefaultJsLoader {
+    @Test
+    fun testJsLoader_onLoadFromJsFile_itShouldLoadAsAutoDetectedFileFormat() {
+        val subject = Config {
+            addSpec(DefaultLoadersConfig)
+        }.from
+        val item = DefaultLoadersConfig.type
+        val config = subject.file(tempFileOf(jsContent, suffix = ".js"))
+        assertEquals("js", config[item])
+    }
+}

@@ -15,42 +15,34 @@
  * limitations under the License.
  */
 
-package io.github.nhubbard.konf.source.xml
+package io.github.nhubbard.konf.source.js
 
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.ConfigSpec
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.ByteArrayOutputStream
 import java.io.StringWriter
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
-class TestXmlWriter {
+class TestJsWriter {
     private val provider = {
         val config = Config {
             addSpec(object : ConfigSpec() {
+                @Suppress("unused")
                 val key by optional("value")
             })
         }
-        config.toXml
+        config.toJs
     }
-    private val expectedString = """
-        |<?xml version="1.0" encoding="UTF-8"?>
-        |
-        |<configuration>
-        |  <property>
-        |    <name>key</name>
-        |    <value>value</value>
-        |  </property>
-        |</configuration>
-        |""".trimMargin().replace("\n", System.lineSeparator())
+    private val expectedString =
+        """({
+        |  key: "value"
+        |})""".trimMargin().replace("\n", System.lineSeparator())
 
     @Test
-    fun testXmlWriter_onSaveToWriter_itShouldReturnAWriterWhichContainsContentFromConfig() {
+    fun testJsWriter_onSaveToWriter_itShouldReturnWriterWithContentFromConfig() {
         val subject = provider()
         val writer = StringWriter()
         subject.toWriter(writer)
@@ -58,7 +50,7 @@ class TestXmlWriter {
     }
 
     @Test
-    fun testXmlWriter_onSaveToOutputStream_itShouldReturnAnOutputStreamWhichContainsContentFromConfig() {
+    fun testJsWriter_onSaveToOutputStream_itShouldReturnOutputStreamWithContentFromConfig() {
         val subject = provider()
         val outputStream = ByteArrayOutputStream()
         subject.toOutputStream(outputStream)

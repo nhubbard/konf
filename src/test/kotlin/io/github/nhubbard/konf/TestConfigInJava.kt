@@ -22,12 +22,8 @@ package io.github.nhubbard.konf
 import io.github.nhubbard.konf.helpers.NetworkBuffer
 import io.github.nhubbard.konf.source.base.asKVSource
 import io.github.nhubbard.konf.source.base.toHierarchicalMap
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

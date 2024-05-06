@@ -20,8 +20,11 @@ package io.github.nhubbard.konf
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestMergedMap {
     private val facadeMap: () -> MutableMap<String, Int> = { mutableMapOf("a" to 1, "b" to 2) }
     private val fallbackMap: () -> MutableMap<String, Int> = { mutableMapOf("b" to 3, "c" to 4) }

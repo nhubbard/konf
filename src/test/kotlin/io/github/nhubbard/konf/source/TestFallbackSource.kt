@@ -23,8 +23,11 @@ import io.github.nhubbard.konf.toPath
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestFallbackSource {
     @Test
     fun testSourceWithFallback_itContainsFacadeAndFallbackInfo() {
