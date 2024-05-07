@@ -17,6 +17,7 @@
 
 package io.github.nhubbard.konf
 
+import org.eclipse.jgit.api.Git
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.params.provider.Arguments
 import java.io.File
@@ -101,3 +102,45 @@ fun configSpecOf(prefix: String = "network.buffer", provider: () -> Config) =
  */
 fun <A, B, C> threeArgumentsOf(first: A, second: B, third: C): Arguments =
     Arguments.of(first, second, third)
+
+/**
+ * Initializes a new Git repository in the specified directory and applies the given block of code to it.
+ *
+ * @param directory the directory to initialize the Git repository in
+ * @param block the block of code to apply to the initialized Git repository
+ * @return the initialized Git repository
+ */
+fun gitInit(directory: File, block: Git.() -> Unit): Git = Git.init().apply {
+    setDirectory(directory)
+}.call().apply(block)
+
+/**
+ * Opens a Git repository in the given directory and applies the specified block of code to it.
+ *
+ * @param directory the directory where the Git repository is located.
+ * @param block the code block to be applied to the Git repository.
+ * @return the Git object representing the opened repository.
+ */
+fun gitOpen(directory: File, block: Git.() -> Unit): Git = Git.open(directory).apply(block)
+
+/**
+ * Adds the specified file pattern to the Git repository.
+ *
+ * @param filePattern the pattern of the files to be added
+ */
+fun Git.add(filePattern: String) {
+    add().apply {
+        addFilepattern(filePattern)
+    }.call()
+}
+
+/**
+ * Commits the changes in the Git repository with the specified commit message.
+ *
+ * @param message the commit message
+ */
+fun Git.commit(message: String) {
+    commit().apply {
+        this.message = message
+    }.call()
+}

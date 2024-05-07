@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.github.nhubbard.konf.source.git
+package io.github.nhubbard.konf.source.git.helpers
 
 import io.github.nhubbard.konf.ConfigSpec
 
