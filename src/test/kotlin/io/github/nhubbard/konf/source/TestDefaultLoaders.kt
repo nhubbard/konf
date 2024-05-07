@@ -186,10 +186,10 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromWatchedFile_itShouldHaveOldAndNewValue(provider: () -> DefaultLoaders) {
         val subject = provider()
         val file = tempFileOf(propertiesContent, suffix = ".properties")
-        val config = subject.watchFile(file, 1, unit = TimeUnit.SECONDS, context = Dispatchers.Sequential)
+        val config = subject.watchFile(file, 1, unit = TimeUnit.SECONDS, context = Dispatchers.Default)
         val originalValue = config[item]
         file.writeText(propertiesContent.replace("properties", "newValue"))
-        runBlocking(Dispatchers.Sequential) {
+        runBlocking(Dispatchers.Default) {
             delay(TimeUnit.SECONDS.toMillis(5))
         }
         val newValue = config[item]
@@ -202,10 +202,10 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromWatchedFileWithDefaultDelayTime_itShouldHaveOldAndNewValue(provider: () -> DefaultLoaders) {
         val subject = provider()
         val file = tempFileOf(propertiesContent, suffix = ".properties")
-        val config = subject.watchFile(file, delayTime = 1, unit = TimeUnit.SECONDS, context = Dispatchers.Sequential)
+        val config = subject.watchFile(file, delayTime = 1, unit = TimeUnit.SECONDS, context = Dispatchers.Default)
         val originalValue = config[item]
         file.writeText(propertiesContent.replace("properties", "newValue"))
-        runBlocking(Dispatchers.Sequential) {
+        runBlocking(Dispatchers.Default) {
             delay(TimeUnit.SECONDS.toMillis(5))
         }
         val newValue = config[item]
@@ -223,12 +223,12 @@ class TestDefaultLoaders {
             file,
             1,
             unit = TimeUnit.SECONDS,
-            context = Dispatchers.Sequential
+            context = Dispatchers.Default
         ) { config, _ ->
             newValue = config[item]
         }
         file.writeText(propertiesContent.replace("properties", "newValue"))
-        runBlocking(Dispatchers.Sequential) {
+        runBlocking(Dispatchers.Default) {
             delay(TimeUnit.SECONDS.toMillis(5))
         }
         assertEquals(newValue, "newValue")
@@ -239,10 +239,10 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromWatchedFilePath_itShouldHaveOldAndNewValue(provider: () -> DefaultLoaders) {
         val subject = provider()
         val file = tempFileOf(propertiesContent, suffix = ".properties")
-        val config = subject.watchFile(file.path, 1, unit = TimeUnit.SECONDS, context = Dispatchers.Sequential)
+        val config = subject.watchFile(file.path, 1, unit = TimeUnit.SECONDS, context = Dispatchers.Default)
         val originalValue = config[item]
         file.writeText(propertiesContent.replace("properties", "newValue"))
-        runBlocking(Dispatchers.Sequential) {
+        runBlocking(Dispatchers.Default) {
             delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
@@ -255,10 +255,10 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromWatchedFilePathWithDefaultDelayTime_itShouldHaveOldAndNewValue(provider: () -> DefaultLoaders) {
         val subject = provider()
         val file = tempFileOf(propertiesContent, suffix = ".properties")
-        val config = subject.watchFile(file.path, delayTime = 1, context = Dispatchers.Sequential)
+        val config = subject.watchFile(file.path, delayTime = 1, context = Dispatchers.Default)
         val originalValue = config[item]
         file.writeText(propertiesContent.replace("properties", "newValue"))
-        runBlocking(Dispatchers.Sequential) {
+        runBlocking(Dispatchers.Default) {
             delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
