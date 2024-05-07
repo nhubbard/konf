@@ -190,7 +190,7 @@ class TestDefaultLoaders {
         val originalValue = config[item]
         file.writeText(propertiesContent.replace("properties", "newValue"))
         runBlocking(Dispatchers.Sequential) {
-            delay(TimeUnit.SECONDS.toMillis(1))
+            delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
         assertEquals(originalValue, "properties")
@@ -229,7 +229,7 @@ class TestDefaultLoaders {
         }
         file.writeText(propertiesContent.replace("properties", "newValue"))
         runBlocking(Dispatchers.Sequential) {
-            delay(TimeUnit.SECONDS.toMillis(1))
+            delay(TimeUnit.SECONDS.toMillis(2))
         }
         assertEquals(newValue, "newValue")
     }
@@ -243,7 +243,7 @@ class TestDefaultLoaders {
         val originalValue = config[item]
         file.writeText(propertiesContent.replace("properties", "newValue"))
         runBlocking(Dispatchers.Sequential) {
-            delay(TimeUnit.SECONDS.toMillis(1))
+            delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
         assertEquals(originalValue, "properties")
@@ -255,11 +255,11 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromWatchedFilePathWithDefaultDelayTime_itShouldHaveOldAndNewValue(provider: () -> DefaultLoaders) {
         val subject = provider()
         val file = tempFileOf(propertiesContent, suffix = ".properties")
-        val config = subject.watchFile(file.path, context = Dispatchers.Sequential)
+        val config = subject.watchFile(file.path, delayTime = 1, context = Dispatchers.Sequential)
         val originalValue = config[item]
         file.writeText(propertiesContent.replace("properties", "newValue"))
         runBlocking(Dispatchers.Sequential) {
-            delay(TimeUnit.SECONDS.toMillis(5))
+            delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
         assertEquals(originalValue, "properties")
@@ -280,7 +280,7 @@ class TestDefaultLoaders {
         val originalValue = config[item]
         content = propertiesContent.replace("properties", "newValue")
         runBlocking(Dispatchers.Sequential) {
-            delay(TimeUnit.SECONDS.toMillis(1))
+            delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
         assertEquals(originalValue, "properties")
@@ -297,11 +297,11 @@ class TestDefaultLoaders {
         service.get("/source.properties") { _, _ -> content }
         service.awaitInitialization()
         val url = "http://localhost:${service.port()}/source.properties"
-        val config = subject.watchUrl(URI(url).toURL(), context = Dispatchers.Sequential)
+        val config = subject.watchUrl(URI(url).toURL(), period = 1, unit = TimeUnit.SECONDS, context = Dispatchers.Sequential)
         val originalValue = config[item]
         content = propertiesContent.replace("properties", "newValue")
         runBlocking(Dispatchers.Sequential) {
-            delay(TimeUnit.SECONDS.toMillis(5))
+            delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
         assertEquals(originalValue, "properties")
@@ -322,7 +322,7 @@ class TestDefaultLoaders {
         val originalValue = config[item]
         content = propertiesContent.replace("properties", "newValue")
         runBlocking(Dispatchers.Sequential) {
-            delay(TimeUnit.SECONDS.toMillis(1))
+            delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
         assertEquals(originalValue, "properties")
@@ -338,12 +338,12 @@ class TestDefaultLoaders {
         service.port(0)
         service.get("/source.properties") { _, _ -> content }
         service.awaitInitialization()
-        val url = "http://localhost:${service.port()}/source.properties"
-        val config = subject.watchUrl(url, context = Dispatchers.Sequential)
+        val url = URI("http://localhost:${service.port()}/source.properties").toURL()
+        val config = subject.watchUrl(url, period = 1, unit = TimeUnit.SECONDS, context = Dispatchers.Sequential)
         val originalValue = config[item]
         content = propertiesContent.replace("properties", "newValue")
         runBlocking(Dispatchers.Sequential) {
-            delay(TimeUnit.SECONDS.toMillis(5))
+            delay(TimeUnit.SECONDS.toMillis(2))
         }
         val newValue = config[item]
         assertEquals(originalValue, "properties")
