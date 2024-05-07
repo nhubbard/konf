@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-package io.github.nhubbard.konf.source.env
+package io.github.nhubbard.konf.source.env.helpers
 
-import org.jetbrains.spek.subject.SubjectSpek
-import org.jetbrains.spek.subject.itBehavesLike
+import io.github.nhubbard.konf.ConfigSpec
 
-object EnvProviderInJavaSpec : SubjectSpek<EnvProvider>({
-    subject { EnvProvider.get() }
-
-    itBehavesLike(EnvProviderSpec)
-})
+object FlattenSourceSpec : ConfigSpec("") {
+    val SOURCE_CAMELCASE by required<Boolean>()
+    val SOURCE_TEST_TYPE by required<String>()
+}

@@ -29,7 +29,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import org.junit.jupiter.api.Assertions.assertTrue
-import java.io.File
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.*
@@ -64,23 +63,6 @@ inline fun <reified T : Any> loadSource(value: Any): Config =
             }
         )
     }.withSource(mapOf("item" to value).asSource())
-
-fun <T> useFile(block: () -> T): T {
-    val file = File("server.yml")
-    //language=YAML
-    file.writeText(
-        """
-        server:
-            host: 127.0.0.1
-            tcp_port: 8080
-        """.trimIndent()
-    )
-    try {
-        return block()
-    } finally {
-        file.delete()
-    }
-}
 
 data class Person(val name: String)
 
