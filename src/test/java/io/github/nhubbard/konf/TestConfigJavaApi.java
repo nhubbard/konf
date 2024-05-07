@@ -26,8 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static kotlin.test.AssertionsKt.assertEquals;
 
 class TestConfigJavaApi {
     private Config config;
@@ -42,14 +41,14 @@ class TestConfigJavaApi {
     @DisplayName("test `Configs.create`")
     void create() {
         final Config config = Configs.create();
-        assertThat(config.getItems().size(), equalTo(0));
+        assertEquals(0, config.getItems().size(), null);
     }
 
     @Test
     @DisplayName("test `Configs.create` with init block")
     void createWithInit() {
         final Config config = Configs.create(it -> it.addSpec(NetworkBufferInJava.spec));
-        assertThat(config.getItems().size(), equalTo(5));
+        assertEquals(5, config.getItems().size(), null);
     }
 
     @Test
@@ -58,7 +57,7 @@ class TestConfigJavaApi {
         final HashMap<String, Integer> map = new HashMap<>();
         map.put(config.nameOf(NetworkBufferInJava.size), 1024);
         final Config newConfig = config.from().map.kv(map);
-        assertThat(newConfig.get(NetworkBufferInJava.size), equalTo(1024));
+        assertEquals(1024, newConfig.get(NetworkBufferInJava.size), null);
     }
 
     @Test
@@ -66,7 +65,7 @@ class TestConfigJavaApi {
     void loadFromSystem() {
         System.setProperty(config.nameOf(NetworkBufferInJava.size), "1024");
         final Config newConfig = config.from().systemProperties();
-        assertThat(newConfig.get(NetworkBufferInJava.size), equalTo(1024));
+        assertEquals(1024, newConfig.get(NetworkBufferInJava.size), null);
     }
 
     @Test
@@ -76,35 +75,35 @@ class TestConfigJavaApi {
         map.put(config.nameOf(NetworkBufferInJava.size), 1024);
         Source.from();
         final Config newConfig = config.withSource(DefaultProviders.map.kv(map));
-        assertThat(newConfig.get(NetworkBufferInJava.size), equalTo(1024));
+        assertEquals(1024, newConfig.get(NetworkBufferInJava.size), null);
     }
 
     @Test
     @DisplayName("test `get(Item<T>)`")
     void getWithItem() {
         final String name = config.get(NetworkBufferInJava.name);
-        assertThat(name, equalTo("buffer"));
+        assertEquals("buffer", name, null);
     }
 
     @Test
     @DisplayName("test `get(String)`")
     void getWithName() {
         final NetworkBuffer.Type type = config.get(config.nameOf(NetworkBufferInJava.type));
-        assertThat(type, equalTo(NetworkBuffer.Type.OFF_HEAP));
+        assertEquals(NetworkBuffer.Type.OFF_HEAP, type, null);
     }
 
     @Test
     @DisplayName("test `set(Item<T>, T)`")
     void setWithItem() {
         config.set(NetworkBufferInJava.size, 1024);
-        assertThat(config.get(NetworkBufferInJava.size), equalTo(1024));
+        assertEquals(1024, config.get(NetworkBufferInJava.size), null);
     }
 
     @Test
     @DisplayName("test `set(String, T)`")
     void setWithName() {
         config.set(config.nameOf(NetworkBufferInJava.size), 1024);
-        assertThat(config.get(NetworkBufferInJava.size), equalTo(1024));
+        assertEquals(1024, config.get(NetworkBufferInJava.size), null);
     }
 
     @Test
@@ -112,7 +111,7 @@ class TestConfigJavaApi {
     void lazySetWithItem() {
         config.lazySet(NetworkBufferInJava.maxSize, it -> it.get(NetworkBufferInJava.size) * 4);
         config.set(NetworkBufferInJava.size, 1024);
-        assertThat(config.get(NetworkBufferInJava.maxSize), equalTo(1024 * 4));
+        assertEquals(1024 * 4, config.get(NetworkBufferInJava.maxSize), null);
     }
 
     @Test
@@ -121,6 +120,6 @@ class TestConfigJavaApi {
         config.lazySet(
                 config.nameOf(NetworkBufferInJava.maxSize), it -> it.get(NetworkBufferInJava.size) * 4);
         config.set(NetworkBufferInJava.size, 1024);
-        assertThat(config.get(NetworkBufferInJava.maxSize), equalTo(1024 * 4));
+        assertEquals(1024 * 4, config.get(NetworkBufferInJava.maxSize), null);
     }
 }

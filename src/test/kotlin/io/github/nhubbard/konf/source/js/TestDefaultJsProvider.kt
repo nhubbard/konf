@@ -32,7 +32,7 @@ import kotlin.test.assertEquals
 class TestDefaultJsProvider {
     @Test
     fun testJsProvider_onProviderSourceFromJsFile_itShouldProvideAsAutoDetectedFileFormat() {
-        val subject = Source.from
+        val subject = Source.from.js
         val item = DefaultLoadersConfig.type
         val config = subject.file(tempFileOf(jsContent, suffix = ".js")).toConfig()
         assertEquals("js", config[item])

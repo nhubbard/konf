@@ -30,7 +30,7 @@ import kotlin.test.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
 class TestDefaultTomlProvider {
-    private val provider = { Source.from }
+    private val provider = { Source.from.toml }
     private val item = DefaultLoadersConfig.type
 
     @Test

@@ -18,8 +18,6 @@
 package io.github.nhubbard.konf.source
 
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.ConfigTestReport
 import io.github.nhubbard.konf.source.yaml.yaml
@@ -28,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -58,6 +57,6 @@ db:
             .from.systemProperties()
             .from.env()
         val db = config.toValue<ConfigTestReport>()
-        assertThat(db.db, equalTo(map))
+        assertEquals(map, db.db)
     }
 }
