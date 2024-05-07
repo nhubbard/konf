@@ -108,12 +108,6 @@ dependencies {
     testImplementation("com.sparkjava:spark-core:2.9.4")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testRuntimeOnly("org.slf4j:slf4j-simple:2.0.12")
-    testImplementation("org.jetbrains.spek:spek-api:1.1.5")
-    testImplementation("org.jetbrains.spek:spek-data-driven-extension:1.1.5")
-    testImplementation("org.jetbrains.spek:spek-subject-extension:1.1.5")
-    testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
-    testImplementation("com.natpryce:hamkrest:1.8.0.1")
-    testImplementation("org.hamcrest:hamcrest:2.2")
 
     // Snippet implementation
     snippetImplementation(sourceSets.main.get().output)
@@ -127,7 +121,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform {
-        includeEngines("spek", "junit-jupiter")
+        includeEngines("junit-jupiter")
     }
     testLogging.apply {
         showStandardStreams = true
