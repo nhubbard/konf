@@ -21,12 +21,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.FileNotFoundException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
 class TestOptionalSourceByDefault {
     @Test
     fun testAConfig_whenTheFeatureIsDisabled_shouldThrowExceptionWhenFileDoesNotExist() {

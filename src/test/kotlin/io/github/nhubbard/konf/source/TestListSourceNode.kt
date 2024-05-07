@@ -22,11 +22,8 @@ import io.github.nhubbard.konf.TreeNode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
 class TestListSourceNode {
     @Test
     fun testListSourceNode_onGetChildren_itShouldReturnAMapIndexedByInteger() {

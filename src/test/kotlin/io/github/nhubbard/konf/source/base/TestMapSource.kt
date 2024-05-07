@@ -22,15 +22,12 @@ import io.github.nhubbard.konf.source.asValue
 import io.github.nhubbard.konf.toPath
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
 class TestMapSource {
     private val provider = { MapSource(map = mapOf("1" to 1)) }
 

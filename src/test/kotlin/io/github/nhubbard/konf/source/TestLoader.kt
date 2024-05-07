@@ -27,14 +27,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import spark.Service
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
 class TestLoader {
     companion object {
         @JvmStatic

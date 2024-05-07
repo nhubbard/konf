@@ -26,12 +26,9 @@ import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedSt
 import io.github.nhubbard.konf.source.serializer.helpers.TestSerializerWrappedStringStdSerializer
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
 class TestPrimitiveStdSerializer {
     private val provider = {
         Config {
