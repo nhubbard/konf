@@ -21,6 +21,8 @@ import io.github.nhubbard.konf.singleArgumentsOf
 import io.github.nhubbard.konf.source.asValue
 import io.github.nhubbard.konf.tempFileOf
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -28,6 +30,7 @@ import java.util.stream.Stream
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestJsonProvider {
     @ParameterizedTest
     @MethodSource("providerSource")

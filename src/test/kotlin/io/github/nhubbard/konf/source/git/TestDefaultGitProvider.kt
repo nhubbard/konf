@@ -27,10 +27,13 @@ import io.github.nhubbard.konf.source.helpers.toConfig
 import io.github.nhubbard.konf.tempDirectory
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.nio.file.Paths
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestDefaultGitProvider {
     private val provider = { Source.from }
     private val item = DefaultLoadersConfig.type

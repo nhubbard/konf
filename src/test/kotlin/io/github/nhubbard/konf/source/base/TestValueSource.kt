@@ -17,28 +17,26 @@
 
 package io.github.nhubbard.konf.source.base
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.sameInstance
-import com.natpryce.hamkrest.throws
 import io.github.nhubbard.konf.source.NoSuchPathException
 import io.github.nhubbard.konf.source.asSource
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertSame
 
-object ValueSourceSpec : Spek({
-    given("a value source") {
-        on("get with non-empty path") {
-            it("should throw NoSuchPathException") {
-                assertThat({ 1.asSource()["a"] }, throws<NoSuchPathException>())
-            }
-        }
-        on("invoke `asSource`") {
-            val source = 1.asSource()
-            it("should return itself") {
-                assertThat(source.asSource(), sameInstance(source))
-            }
-        }
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
+class TestValueSource {
+    @Test
+    fun testValueSource_onGetWithNonEmptyPath_itShouldThrowNoSuchPathException() {
+        assertThrows<NoSuchPathException> { 1.asSource()["a"] }
     }
-})
+
+    @Test
+    fun testValueSource_onInvokeAsSource_itShouldReturnItself() {
+        val source = 1.asSource()
+        assertSame(source, source.asSource())
+    }
+}

@@ -22,10 +22,13 @@ import io.github.nhubbard.konf.source.asValue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestHoconValueSource {
     @Test
     fun testHoconValueSource_onTreatObjectValueSourceAsHoconSource_itShouldContainSpecifiedValue() {

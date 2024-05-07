@@ -32,9 +32,12 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.concurrent.locks.ReentrantLock
 import java.util.stream.Stream
+import kotlin.concurrent.withLock
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestCompleteConfigSpec {
     val spec = NetworkBuffer
     val size = NetworkBuffer.size
@@ -42,6 +45,8 @@ class TestCompleteConfigSpec {
     val name = NetworkBuffer.name
     val type = NetworkBuffer.type
     private val offset = NetworkBuffer.offset
+
+    private val lock = ReentrantLock()
 
     private val invalidItem by ConfigSpec("invalid").required<Int>()
     private val invalidItemName = "invalid.invalidItem"
@@ -387,38 +392,42 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testExportValuesToMap_shouldContainCorrespondingItemsInMap(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[size] = 4
-        subject[type] = NetworkBuffer.Type.ON_HEAP
-        subject[offset] = 0
-        val map = subject.toMap()
-        assertEquals(
-            map,
-            mapOf(
-                prefix.qualify(size.name) to 4,
-                prefix.qualify(maxSize.name) to 8,
-                prefix.qualify(name.name) to "buffer",
-                prefix.qualify(type.name) to NetworkBuffer.Type.ON_HEAP.name,
-                prefix.qualify(offset.name) to 0
+        lock.withLock {
+            val subject = provider()
+            subject[size] = 4
+            subject[type] = NetworkBuffer.Type.ON_HEAP
+            subject[offset] = 0
+            val map = subject.toMap()
+            assertEquals(
+                map,
+                mapOf(
+                    prefix.qualify(size.name) to 4,
+                    prefix.qualify(maxSize.name) to 8,
+                    prefix.qualify(name.name) to "buffer",
+                    prefix.qualify(type.name) to NetworkBuffer.Type.ON_HEAP.name,
+                    prefix.qualify(offset.name) to 0
+                )
             )
-        )
+        }
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testExportValuesToMap_shouldRecoverAllItemsWhenReloadedFromMap(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[size] = 4
-        subject[type] = NetworkBuffer.Type.ON_HEAP
-        subject[offset] = 0
-        val map = subject.toMap()
-        val newConfig = Config { addSpec(spec[spec.prefix].withPrefix(prefix)) }.from.map.kv(map)
-        assertEquals(newConfig[size], 4)
-        assertEquals(newConfig[maxSize], 8)
-        assertEquals(newConfig[name], "buffer")
-        assertEquals(newConfig[type], NetworkBuffer.Type.ON_HEAP)
-        assertEquals(newConfig[offset], 0)
-        assertEquals(newConfig.toMap(), subject.toMap())
+        lock.withLock {
+            val subject = provider()
+            subject[size] = 4
+            subject[type] = NetworkBuffer.Type.ON_HEAP
+            subject[offset] = 0
+            val map = subject.toMap()
+            val newConfig = Config { addSpec(spec[spec.prefix].withPrefix(prefix)) }.from.map.kv(map)
+            assertEquals(newConfig[size], 4)
+            assertEquals(newConfig[maxSize], 8)
+            assertEquals(newConfig[name], "buffer")
+            assertEquals(newConfig[type], NetworkBuffer.Type.ON_HEAP)
+            assertEquals(newConfig[offset], 0)
+            assertEquals(newConfig.toMap(), subject.toMap())
+        }
     }
 
     @ParameterizedTest
@@ -441,41 +450,45 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testExportValuesToHierarchicalMap_shouldContainCorrespondingItemsInMap(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[size] = 4
-        subject[type] = NetworkBuffer.Type.ON_HEAP
-        subject[offset] = 0
-        val map = subject.toHierarchicalMap()
-        assertEquals(
-            map,
-            prefixToMap(
-                prefix,
-                mapOf(
-                    "size" to 4,
-                    "maxSize" to 8,
-                    "name" to "buffer",
-                    "type" to NetworkBuffer.Type.ON_HEAP.name,
-                    "offset" to 0
+        lock.withLock {
+            val subject = provider()
+            subject[size] = 4
+            subject[type] = NetworkBuffer.Type.ON_HEAP
+            subject[offset] = 0
+            val map = subject.toHierarchicalMap()
+            assertEquals(
+                map,
+                prefixToMap(
+                    prefix,
+                    mapOf(
+                        "size" to 4,
+                        "maxSize" to 8,
+                        "name" to "buffer",
+                        "type" to NetworkBuffer.Type.ON_HEAP.name,
+                        "offset" to 0
+                    )
                 )
             )
-        )
+        }
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testExportValuesToHierarchicalMap_shouldRecoverAllItemsWhenReloadedFromMap(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[size] = 4
-        subject[type] = NetworkBuffer.Type.ON_HEAP
-        subject[offset] = 0
-        val map = subject.toHierarchicalMap()
-        val newConfig = Config { addSpec(spec[spec.prefix].withPrefix(prefix)) }.from.map.hierarchical(map)
-        assertEquals(newConfig[size], 4)
-        assertEquals(newConfig[maxSize], 8)
-        assertEquals(newConfig[name], "buffer")
-        assertEquals(newConfig[type], NetworkBuffer.Type.ON_HEAP)
-        assertEquals(newConfig[offset], 0)
-        assertEquals(newConfig.toMap(), subject.toMap())
+        lock.withLock {
+            val subject = provider()
+            subject[size] = 4
+            subject[type] = NetworkBuffer.Type.ON_HEAP
+            subject[offset] = 0
+            val map = subject.toHierarchicalMap()
+            val newConfig = Config { addSpec(spec[spec.prefix].withPrefix(prefix)) }.from.map.hierarchical(map)
+            assertEquals(newConfig[size], 4)
+            assertEquals(newConfig[maxSize], 8)
+            assertEquals(newConfig[name], "buffer")
+            assertEquals(newConfig[type], NetworkBuffer.Type.ON_HEAP)
+            assertEquals(newConfig[offset], 0)
+            assertEquals(newConfig.toMap(), subject.toMap())
+        }
     }
 
     @ParameterizedTest
@@ -630,46 +643,56 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_rawSetWithValidItem_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject.rawSet(size, 2048)
-        assertEquals(subject[size], 2048)
+        lock.withLock {
+            val subject = provider()
+            subject.rawSet(size, 2048)
+            assertEquals(subject[size], 2048)
+        }
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_setWithValidItemWhenCorrespondingValueIsLazy_fromLazyToNormal(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[size] = 1024
-        assertEquals(subject[maxSize], subject[size] * 2)
-        subject[maxSize] = 0
-        assertEquals(subject[maxSize], 0)
-        subject[size] = 2048
-        assertNotEquals(subject[maxSize], subject[size] * 2)
-        assertEquals(subject[maxSize], 0)
+        lock.withLock {
+            val subject = provider()
+            subject[size] = 1024
+            assertEquals(subject[maxSize], subject[size] * 2)
+            subject[maxSize] = 0
+            assertEquals(subject[maxSize], 0)
+            subject[size] = 2048
+            assertNotEquals(subject[maxSize], subject[size] * 2)
+            assertEquals(subject[maxSize], 0)
+        }
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_setWithInvalidItem_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItem] = 1024 }
-        assertEquals(e.name, invalidItem.asName)
+        lock.withLock {
+            val subject = provider()
+            val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItem] = 1024 }
+            assertEquals(e.name, invalidItem.asName)
+        }
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_setWithValidName_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[prefix.qualify("size")] = 1024
-        assertEquals(subject[size], 1024)
+        lock.withLock {
+            val subject = provider()
+            subject[prefix.qualify("size")] = 1024
+            assertEquals(subject[size], 1024)
+        }
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_setWithValidNameWhichContainsTrailingWhitespaces_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[prefix.qualify("size  ")] = 1024
-        assertEquals(subject[size], 1024)
+        lock.withLock {
+            val subject = provider()
+            subject[prefix.qualify("size  ")] = 1024
+            assertEquals(subject[size], 1024)
+        }
     }
 
     @ParameterizedTest
@@ -691,104 +714,111 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_setWhenBeforeSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        val childConfig = subject.withLayer()
-        subject[size] = 1
-        var counter = 0
-        val handler1 = childConfig.beforeSet { item, value ->
-            counter += 1
-            assertEquals(item, size)
-            assertEquals(value, 2)
-            assertEquals(childConfig[size], 1)
-        }
-        val handler2 = childConfig.beforeSet { item, value ->
-            counter += 1
-            assertEquals(item, size)
-            assertEquals(value, 2)
-            assertEquals(childConfig[size], 1)
-        }
-        val handler3 = size.beforeSet { _, value ->
-            counter += 1
-            assertEquals(value, 2)
-            assertEquals(childConfig[size], 1)
-        }
-        val handler4 = size.beforeSet { _, value ->
-            counter += 1
-            assertEquals(value, 2)
-            assertEquals(childConfig[size], 1)
-        }
-        subject[size] = 2
-        handler1.close()
-        handler2.close()
-        handler3.close()
-        handler4.close()
-        assertEquals(counter, 4)
-    }
-
-    @ParameterizedTest
-    @MethodSource("configTestSpecSource")
-    @Execution(ExecutionMode.SAME_THREAD)
-    fun testSetOperation_setWhenAfterSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        val childConfig = subject.withLayer()
-        subject[size] = 1
-        var counter = 0
-        val handler1 = childConfig.afterSet { item, value ->
-            counter += 1
-            assertEquals(item, size)
-            assertEquals(value, 2)
-            assertEquals(childConfig[size], 2)
-        }
-        val handler2 = childConfig.afterSet { item, value ->
-            counter += 1
-            assertEquals(item, size)
-            assertEquals(value, 2)
-            assertEquals(childConfig[size], 2)
-        }
-        val handler3 = size.afterSet { _, value ->
-            counter += 1
-            assertEquals(value, 2)
-            assertEquals(childConfig[size], 2)
-        }
-        val handler4 = size.afterSet { _, value ->
-            counter += 1
-            assertEquals(value, 2)
-            assertEquals(childConfig[size], 2)
-        }
-        subject[size] = 2
-        handler1.close()
-        handler2.close()
-        handler3.close()
-        handler4.close()
-        assertEquals(counter, 4)
-    }
-
-    @ParameterizedTest
-    @MethodSource("configTestSpecSource")
-    fun testSetOperation_setWhenOnSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        var counter = 0
-        size.onSet { counter += 1 }.use {
+        lock.withLock {
+            val subject = provider()
+            val childConfig = subject.withLayer()
             subject[size] = 1
-            subject[size] = 16
-            subject[size] = 256
-            subject[size] = 1024
+            var counter = 0
+            val handler1 = childConfig.beforeSet { item, value ->
+                counter += 1
+                assertEquals(item, size)
+                assertEquals(value, 2)
+                assertEquals(childConfig[size], 1)
+            }
+            val handler2 = childConfig.beforeSet { item, value ->
+                counter += 1
+                assertEquals(item, size)
+                assertEquals(value, 2)
+                assertEquals(childConfig[size], 1)
+            }
+            val handler3 = size.beforeSet { _, value ->
+                counter += 1
+                assertEquals(value, 2)
+                assertEquals(childConfig[size], 1)
+            }
+            val handler4 = size.beforeSet { _, value ->
+                counter += 1
+                assertEquals(value, 2)
+                assertEquals(childConfig[size], 1)
+            }
+            subject[size] = 2
+            handler1.close()
+            handler2.close()
+            handler3.close()
+            handler4.close()
             assertEquals(counter, 4)
         }
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
-    fun testSetOperation_setWhenMultipleOnSetSubscribersAreDefined(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        var counter = 0
-        size.onSet { counter += 1 }.use {
-            size.onSet { counter += 2 }.use {
+    fun testSetOperation_setWhenAfterSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
+        lock.withLock {
+            val subject = provider()
+            val childConfig = subject.withLayer()
+            subject[size] = 1
+            var counter = 0
+            val handler1 = childConfig.afterSet { item, value ->
+                counter += 1
+                assertEquals(item, size)
+                assertEquals(value, 2)
+                assertEquals(childConfig[size], 2)
+            }
+            val handler2 = childConfig.afterSet { item, value ->
+                counter += 1
+                assertEquals(item, size)
+                assertEquals(value, 2)
+                assertEquals(childConfig[size], 2)
+            }
+            val handler3 = size.afterSet { _, value ->
+                counter += 1
+                assertEquals(value, 2)
+                assertEquals(childConfig[size], 2)
+            }
+            val handler4 = size.afterSet { _, value ->
+                counter += 1
+                assertEquals(value, 2)
+                assertEquals(childConfig[size], 2)
+            }
+            subject[size] = 2
+            handler1.close()
+            handler2.close()
+            handler3.close()
+            handler4.close()
+            assertEquals(counter, 4)
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWhenOnSetSubscriberIsDefined(prefix: String, provider: () -> Config) {
+        lock.withLock {
+            val subject = provider()
+            var counter = 0
+            size.onSet { counter += 1 }.use {
                 subject[size] = 1
                 subject[size] = 16
                 subject[size] = 256
                 subject[size] = 1024
-                assertEquals(counter, 12)
+                assertEquals(counter, 4)
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("configTestSpecSource")
+    fun testSetOperation_setWhenMultipleOnSetSubscribersAreDefined(prefix: String, provider: () -> Config) {
+        lock.withLock {
+            val subject = provider()
+            var counter = 0
+            size.onSet { counter += 1 }.use {
+                size.onSet { counter += 2 }.use {
+                    subject[size] = 1
+                    subject[size] = 16
+                    subject[size] = 256
+                    subject[size] = 1024
+                    assertEquals(counter, 12)
+                }
             }
         }
     }
@@ -796,10 +826,12 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_lazySetWithValidItem_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject.lazySet(maxSize) { it[size] * 4 }
-        subject[size] = 1024
-        assertEquals(subject[maxSize], subject[size] * 4)
+        lock.withLock {
+            val subject = provider()
+            subject.lazySet(maxSize) { it[size] * 4 }
+            subject[size] = 1024
+            assertEquals(subject[maxSize], subject[size] * 4)
+        }
     }
 
     @ParameterizedTest
@@ -813,10 +845,12 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_lazySetWithValidName_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject.lazySet(prefix.qualify(maxSize.name)) { it[size] * 4 }
-        subject[size] = 1024
-        assertEquals(subject[maxSize], subject[size] * 4)
+        lock.withLock {
+            val subject = provider()
+            subject.lazySet(prefix.qualify(maxSize.name)) { it[size] * 4 }
+            subject[size] = 1024
+            assertEquals(subject[maxSize], subject[size] * 4)
+        }
     }
 
     @ParameterizedTest
@@ -881,14 +915,16 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testClearOperation_shouldContainNoValues(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[size] = 1
-        subject[maxSize] = 4
-        assertEquals(subject[size], 1)
-        assertEquals(subject[maxSize], 4)
-        subject.clear()
-        assertNull(subject.getOrNull(size))
-        assertNull(subject.getOrNull(maxSize))
+        lock.withLock {
+            val subject = provider()
+            subject[size] = 1
+            subject[maxSize] = 4
+            assertEquals(subject[size], 1)
+            assertEquals(subject[maxSize], 4)
+            subject.clear()
+            assertNull(subject.getOrNull(size))
+            assertNull(subject.getOrNull(maxSize))
+        }
     }
 
     @ParameterizedTest
@@ -910,9 +946,11 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testCheckWhetherAllRequiredItemsHaveValuesOrNot_shouldReturnTrueWhenAllRequiredItemsHaveValues(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[size] = 1
-        assertTrue(subject.containsRequired())
+        lock.withLock {
+            val subject = provider()
+            subject[size] = 1
+            assertTrue(subject.containsRequired())
+        }
     }
 
     @ParameterizedTest
@@ -925,9 +963,11 @@ class TestCompleteConfigSpec {
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testValidateWhetherAllRequiredItemsHaveValuesOrNot_shouldReturnItselfWhenAllRequiredItemsHaveValues(prefix: String, provider: () -> Config) {
-        val subject = provider()
-        subject[size] = 1
-        assertTrue(subject === subject.validateRequired())
+        lock.withLock {
+            val subject = provider()
+            subject[size] = 1
+            assertTrue(subject === subject.validateRequired())
+        }
     }
 
     @ParameterizedTest
