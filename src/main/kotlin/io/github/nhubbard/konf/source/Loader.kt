@@ -19,8 +19,10 @@ package io.github.nhubbard.konf.source
 
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.Feature
-import io.github.nhubbard.konf.Path
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
 import java.io.Reader
@@ -28,7 +30,6 @@ import java.net.URI
 import java.net.URL
 import java.nio.file.FileSystems
 import java.nio.file.StandardWatchEventKinds
-import java.nio.file.WatchEvent
 import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
