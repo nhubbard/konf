@@ -53,6 +53,8 @@ class TestYamlWriter {
         val subject = provider()
         val writer = StringWriter()
         subject.toWriter(writer)
+        println("Expected: ${expectedString.replace("\r", "\\r").replace("\n", "\\n")}")
+        println("Actual: ${writer.toString().replace("\r", "\\r").replace("\n", "\\n")}")
         assertEquals(writer.toString(), expectedString)
     }
 
@@ -61,6 +63,8 @@ class TestYamlWriter {
         val subject = provider()
         val outputStream = ByteArrayOutputStream()
         subject.toOutputStream(outputStream)
+        println("Expected: ${expectedString.replace("\r", "\\r").replace("\n", "\\n")}")
+        println("Actual: ${outputStream.toString().replace("\r", "\\r").replace("\n", "\\n")}")
         assertEquals(outputStream.toString(), expectedString)
     }
 }
