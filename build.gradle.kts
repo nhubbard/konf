@@ -237,3 +237,9 @@ signing {
     isRequired = signPublication
     if (signPublication) useGpgCmd()
 }
+
+kover {
+    excludeSourceSets {
+        names("benchmark", "snippet")
+    }
+}
