@@ -19,6 +19,8 @@ package io.github.nhubbard.konf.source.xml
 
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.ConfigSpec
+import io.github.nhubbard.konf.debugLineEndings
+import io.github.nhubbard.konf.isWindows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
@@ -54,6 +56,10 @@ class TestXmlWriter {
         val subject = provider()
         val writer = StringWriter()
         subject.toWriter(writer)
+        if (isWindows()) {
+            println("Expected: ${expectedString.debugLineEndings()}")
+            println("Actual: ${writer.toString().debugLineEndings()}")
+        }
         assertEquals(expectedString, writer.toString())
     }
 
@@ -62,6 +68,10 @@ class TestXmlWriter {
         val subject = provider()
         val outputStream = ByteArrayOutputStream()
         subject.toOutputStream(outputStream)
+        if (isWindows()) {
+            println("Expected: ${expectedString.debugLineEndings()}")
+            println("Actual: ${outputStream.toString().debugLineEndings()}")
+        }
         assertEquals(expectedString, outputStream.toString())
     }
 }
