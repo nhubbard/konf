@@ -37,7 +37,7 @@ import java.util.stream.Stream
 import kotlin.concurrent.withLock
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Execution(ExecutionMode.CONCURRENT)
+@Execution(ExecutionMode.SAME_THREAD)
 class TestCompleteConfigSpec {
     val spec = NetworkBuffer
     val size = NetworkBuffer.size
