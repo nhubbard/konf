@@ -151,8 +151,6 @@ class Loader(
                             if (key != null) {
                                 for (event in key.pollEvents()) {
                                     val kind = event.kind()
-                                    @Suppress("UNCHECKED_CAST")
-                                    event as WatchEvent<Path>
                                     val filename = event.context()
                                     if (filename.toString() == absoluteFile.name) {
                                         if (kind == StandardWatchEventKinds.OVERFLOW) {
