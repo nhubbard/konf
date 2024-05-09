@@ -20,10 +20,10 @@ package io.github.nhubbard.konf
 import io.github.nhubbard.konf.source.asSource
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -44,25 +44,25 @@ class TestLoadKeysAsLittleCamelCase {
         ).asSource()
         val config = Config().withSource(source)
         val someKey by config.required<String>()
-        assertEquals(someKey, "value")
+        assertEquals("value", someKey)
         val someKey2 by config.required<String>()
-        assertEquals(someKey2, "value")
+        assertEquals("value", someKey2)
         val someKey3 by config.required<String>()
-        assertEquals(someKey3, "value")
+        assertEquals("value", someKey3)
         val someKey4 by config.required<String>()
-        assertEquals(someKey4, "value")
+        assertEquals("value", someKey4)
         val some0key5 by config.required<String>()
-        assertEquals(some0key5, "value")
+        assertEquals("value", some0key5)
         val someKey6 by config.required<String>()
-        assertEquals(someKey6, "value")
+        assertEquals("value", someKey6)
         val someKey7 by config.required<String>()
-        assertEquals(someKey7, "value")
+        assertEquals("value", someKey7)
         val someSomeKey8 by config.required<String>()
-        assertEquals(someSomeKey8, "value")
+        assertEquals("value", someSomeKey8)
         val someKey9 by config.required<String>()
-        assertEquals(someKey9, "value")
+        assertEquals("value", someKey9)
         val someKey10 by config.required<String>()
-        assertEquals(someKey10, "value")
+        assertEquals("value", someKey10)
     }
 
     @Test
@@ -70,7 +70,7 @@ class TestLoadKeysAsLittleCamelCase {
         val source = mapOf("some_key" to "value").asSource().enabled(Feature.LOAD_KEYS_AS_LITTLE_CAMEL_CASE)
         val config = Config().withSource(source)
         val someKey by config.required<String>()
-        assertEquals(someKey, "value")
+        assertEquals("value", someKey)
     }
 
     // FIXME: Investigate why I had to make the second statement in both of these tests assert an exception.
@@ -83,9 +83,9 @@ class TestLoadKeysAsLittleCamelCase {
         val source = mapOf("some_key" to "value").asSource()
         val config = Config().disable(Feature.LOAD_KEYS_AS_LITTLE_CAMEL_CASE).withSource(source)
         val someKey by config.required<String>()
-        assertThrows<UnsetValueException> { someKey.isNotEmpty() }
+        assertFailsWith<UnsetValueException> { someKey.isNotEmpty() }
         val someKey2 by config.required<String>()
-        assertThrows<UnsetValueException> { assertEquals(someKey2, "value") }
+        assertFailsWith<UnsetValueException> { assertEquals(someKey2, "value") }
     }
 
     @Test
@@ -93,8 +93,8 @@ class TestLoadKeysAsLittleCamelCase {
         val source = mapOf("some_key" to "value").asSource().disabled(Feature.LOAD_KEYS_AS_LITTLE_CAMEL_CASE)
         val config = Config().withSource(source)
         val someKey by config.required<String>()
-        assertThrows<UnsetValueException> { someKey.isNotEmpty() }
+        assertFailsWith<UnsetValueException> { someKey.isNotEmpty() }
         val someKey1 by config.required<String>()
-        assertThrows<UnsetValueException> { assertEquals(someKey1, "value") }
+        assertFailsWith<UnsetValueException> { assertEquals(someKey1, "value") }
     }
 }

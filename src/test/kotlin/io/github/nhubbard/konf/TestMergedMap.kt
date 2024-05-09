@@ -17,11 +17,14 @@
 
 package io.github.nhubbard.konf
 
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -34,7 +37,7 @@ class TestMergedMap {
     @Test
     fun testMergedMap_onGetSize_itShouldReturnTheMergedSize() {
         val subject = provider()
-        assertEquals(subject.size, 3)
+        assertEquals(3, subject.size)
     }
 
     @Test
@@ -56,9 +59,9 @@ class TestMergedMap {
     @Test
     fun testMergedMap_onGetValue_itShouldQueryBothMaps() {
         val subject = provider()
-        assertEquals(subject["a"], 1)
-        assertEquals(subject["b"], 2)
-        assertEquals(subject["c"], 4)
+        assertEquals(1, subject["a"])
+        assertEquals(2, subject["b"])
+        assertEquals(4, subject["c"])
         assertNull(subject["d"])
     }
 
@@ -74,19 +77,19 @@ class TestMergedMap {
     @Test
     fun testMergedMap_onGetEntries_itShouldReturnEntriesInBothMaps() {
         val subject = provider()
-        assertEquals(subject.entries, mergedMap.entries)
+        assertEquals(mergedMap.entries, subject.entries)
     }
 
     @Test
     fun testMergedMap_onGetKeys_itShouldReturnKeysFromBothMaps() {
         val subject = provider()
-        assertEquals(subject.keys, mergedMap.keys)
+        assertEquals(mergedMap.keys, subject.keys)
     }
 
     @Test
     fun testMergedMap_onGetValues_itShouldReturnValuesFromBothMaps() {
         val subject = provider()
-        assertEquals(subject.values.toList(), mergedMap.values.toList())
+        assertEquals(mergedMap.values.toList(), subject.values.toList())
     }
 
     @Test
@@ -102,8 +105,8 @@ class TestMergedMap {
     fun testMergedMap_onAddNewPair_itShouldBePlacedInTheFacadeMap() {
         val subject = provider()
         subject["d"] = 5
-        assertEquals(subject["d"], 5)
-        assertEquals(subject.facade["d"], 5)
+        assertEquals(5, subject["d"])
+        assertEquals(5, subject.facade["d"])
         assertNull(subject.fallback["d"])
     }
 
@@ -111,10 +114,10 @@ class TestMergedMap {
     fun testMergedMap_onPutNewPairs_itShouldPutThemInTheFacadeMap() {
         val subject = provider()
         subject.putAll(mapOf("d" to 5, "e" to 6))
-        assertEquals(subject["d"], 5)
-        assertEquals(subject["e"], 6)
-        assertEquals(subject.facade["d"], 5)
-        assertEquals(subject.facade["e"], 6)
+        assertEquals(5, subject["d"])
+        assertEquals(6, subject["e"])
+        assertEquals(5, subject.facade["d"])
+        assertEquals(6, subject.facade["e"])
         assertNull(subject.fallback["d"])
         assertNull(subject.fallback["e"])
     }

@@ -19,16 +19,15 @@ package io.github.nhubbard.konf
 
 import com.fasterxml.jackson.databind.type.TypeFactory
 import io.github.nhubbard.konf.helpers.*
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.test.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -42,31 +41,31 @@ class TestConfigSpec {
     @ParameterizedTest
     @MethodSource("testItemSource")
     fun testConfigSpec_onItem_itShouldHaveTheSpecifiedDescription(spec: Spec, item: Item<*>, description: String) {
-        assertEquals(item.description, "description")
+        assertEquals("description", item.description)
     }
 
     @ParameterizedTest
     @MethodSource("testItemSource")
     fun testConfigSpec_onItem_itShouldNameWithoutPrefix(spec: Spec, item: Item<*>, description: String) {
-        assertEquals(item.name, "c.int")
+        assertEquals("c.int", item.name)
     }
 
     @ParameterizedTest
     @MethodSource("testItemSource")
     fun testConfigSpec_onItem_itShouldHaveAValidPath(spec: Spec, item: Item<*>, description: String) {
-        assertEquals(item.path, listOf("c", "int"))
+        assertEquals(listOf("c", "int"), item.path)
     }
 
     @ParameterizedTest
     @MethodSource("testItemSource")
     fun testConfigSpec_onItem_itShouldPointToTheSpec(spec: Spec, item: Item<*>, description: String) {
-        assertEquals(item.spec, spec)
+        assertEquals(spec, item.spec)
     }
 
     @ParameterizedTest
     @MethodSource("testItemSource")
     fun testConfigSpec_onItem_itShouldHaveTheSpecifiedType(spec: Spec, item: Item<*>, description: String) {
-        assertEquals(item.type, TypeFactory.defaultInstance().constructType(Int::class.javaObjectType))
+        assertEquals(TypeFactory.defaultInstance().constructType(Int::class.javaObjectType), item.type)
     }
 
     @Test
@@ -75,9 +74,9 @@ class TestConfigSpec {
         assertTrue(specForRequired.item.isRequired)
         assertFalse(specForRequired.item.isOptional)
         assertFalse(specForRequired.item.isLazy)
-        assertTrue(specForRequired.item.asRequiredItem === specForRequired.item)
-        assertThrows<ClassCastException> { specForRequired.item.asOptionalItem }
-        assertThrows<ClassCastException> { specForRequired.item.asLazyItem }
+        assertSame(specForRequired.item, specForRequired.item.asRequiredItem)
+        assertFailsWith<ClassCastException> { specForRequired.item.asOptionalItem }
+        assertFailsWith<ClassCastException> { specForRequired.item.asLazyItem }
     }
 
     @Test
@@ -86,14 +85,14 @@ class TestConfigSpec {
         assertFalse(specForOptional.item.isRequired)
         assertTrue(specForOptional.item.isOptional)
         assertFalse(specForOptional.item.isLazy)
-        assertThrows<ClassCastException> { specForOptional.item.asRequiredItem }
-        assertTrue(specForOptional.item.asOptionalItem === specForOptional.item)
-        assertThrows<ClassCastException> { specForOptional.item.asLazyItem }
+        assertFailsWith<ClassCastException> { specForOptional.item.asRequiredItem }
+        assertSame(specForOptional.item, specForOptional.item.asOptionalItem)
+        assertFailsWith<ClassCastException> { specForOptional.item.asLazyItem }
     }
 
     @Test
     fun testConfigSpec_forOptionalItem_onAddToSpec_itShouldContainTheSpecifiedDefaultValue() {
-        assertEquals(specForOptional.item.default, 1)
+        assertEquals(1, specForOptional.item.default)
     }
 
     @Test
@@ -102,14 +101,14 @@ class TestConfigSpec {
         assertFalse(specForLazy.item.isRequired)
         assertFalse(specForLazy.item.isOptional)
         assertTrue(specForLazy.item.isLazy)
-        assertThrows<ClassCastException> { specForLazy.item.asRequiredItem }
-        assertThrows<ClassCastException> { specForLazy.item.asOptionalItem }
-        assertTrue(specForLazy.item.asLazyItem === specForLazy.item)
+        assertFailsWith<ClassCastException> { specForLazy.item.asRequiredItem }
+        assertFailsWith<ClassCastException> { specForLazy.item.asOptionalItem }
+        assertSame(specForLazy.item, specForLazy.item.asLazyItem)
     }
 
     @Test
     fun testConfigSpec_forLazyItem_onAddToSpec_shouldContainTheSpecifiedThunk() {
-        assertEquals(specForLazy.item.thunk(configForLazy), 2)
+        assertEquals(2, specForLazy.item.thunk(configForLazy))
     }
 
     @Test
@@ -118,7 +117,7 @@ class TestConfigSpec {
         val item by Spec.dummy.required<Int>()
         spec.addItem(item)
         val e = assertCheckedThrows<RepeatedItemException> { spec.addItem(item) }
-        assertEquals(e.name, "item")
+        assertEquals("item", e.name)
     }
 
     @Test
@@ -126,7 +125,7 @@ class TestConfigSpec {
         val spec = ConfigSpec()
         val innerSpec: Spec = ConfigSpec()
         spec.addInnerSpec(innerSpec)
-        assertEquals(spec.innerSpecs, setOf(innerSpec))
+        assertEquals(setOf(innerSpec), spec.innerSpecs)
     }
 
     @Test
@@ -135,35 +134,35 @@ class TestConfigSpec {
         val innerSpec: Spec = ConfigSpec()
         spec.addInnerSpec(innerSpec)
         val e = assertCheckedThrows<RepeatedInnerSpecException> { spec.addInnerSpec(innerSpec) }
-        assertEquals(e.spec, innerSpec)
+        assertEquals(innerSpec, e.spec)
     }
 
     @Test
     fun testConfigSpecGetOperation_onGetAnEmptyPath_itShouldReturnItself() {
-        assertEquals(specForNested[""], specForNested)
+        assertEquals(specForNested, specForNested[""])
     }
 
     @Test
     fun testConfigSpecGetOperation_onGetAValidPath_itShouldReturnAConfigSpecWithProperPrefix() {
-        assertEquals(specForNested["a"].prefix, "bb")
-        assertEquals(specForNested["a.bb"].prefix, "")
+        assertEquals("bb", specForNested["a"].prefix)
+        assertEquals("", specForNested["a.bb"].prefix)
     }
 
     @Test
     fun testConfigSpecGetOperation_onGetAValidPath_itShouldReturnAConfigSpecWithTheProperItemsAndInnerSpecs() {
         specForNested.let {
-            assertEquals(it["a"].items, it.items)
-            assertEquals(it["a"].innerSpecs, it.innerSpecs)
-            assertEquals(it["a.bb.inner"].items, Nested.Inner.items)
-            assertEquals(it["a.bb.inner"].innerSpecs.size, 0)
-            assertEquals(it["a.bb.inner"].prefix, "")
-            assertEquals(it["a.bb.inner2"].items, Nested.Inner2.items)
-            assertEquals(it["a.bb.inner2"].innerSpecs.size, 0)
-            assertEquals(it["a.bb.inner2"].prefix, "level2")
-            assertEquals(it["a.bb.inner3"].items.size, 0)
-            assertEquals(it["a.bb.inner3"].innerSpecs.size, 2)
-            assertEquals(it["a.bb.inner3"].innerSpecs.toList()[0].prefix, "a")
-            assertEquals(it["a.bb.inner3"].innerSpecs.toList()[1].prefix, "b")
+            assertEquals(it.items, it["a"].items)
+            assertEquals(it.innerSpecs, it["a"].innerSpecs)
+            assertEquals(Nested.Inner.items, it["a.bb.inner"].items)
+            assertEquals(0, it["a.bb.inner"].innerSpecs.size)
+            assertEquals("", it["a.bb.inner"].prefix)
+            assertEquals(Nested.Inner2.items, it["a.bb.inner2"].items)
+            assertEquals(0, it["a.bb.inner2"].innerSpecs.size)
+            assertEquals("level2", it["a.bb.inner2"].prefix)
+            assertEquals(0, it["a.bb.inner3"].items.size)
+            assertEquals(2, it["a.bb.inner3"].innerSpecs.size)
+            assertEquals("a", it["a.bb.inner3"].innerSpecs.toList()[0].prefix)
+            assertEquals("b", it["a.bb.inner3"].innerSpecs.toList()[1].prefix)
         }
     }
 
@@ -171,30 +170,30 @@ class TestConfigSpec {
     fun testConfigSpecGetOperation_onGetAnInvalidPath_itShouldThrowNoSuchPathException() {
         specForNested.let {
             var e = assertCheckedThrows<NoSuchPathException> { it["b"] }
-            assertEquals(e.path, "b")
-            assertThrows<InvalidPathException> { it["a."] }
+            assertEquals("b", e.path)
+            assertFailsWith<InvalidPathException> { it["a."] }
             e = assertCheckedThrows<NoSuchPathException> { it["a.b"] }
-            assertEquals(e.path, "a.b")
+            assertEquals("a.b", e.path)
             e = assertCheckedThrows<NoSuchPathException> { it["a.bb.inner4"] }
-            assertEquals(e.path, "a.bb.inner4")
+            assertEquals("a.bb.inner4", e.path)
         }
     }
 
     @Test
     fun testConfigSpecPrefixOperation_onPrefixWithEmptyPath_itShouldReturnItself() {
-        assertEquals(Prefix("") + specForNested, specForNested)
+        assertEquals(specForNested, Prefix("") + specForNested)
     }
 
     @Test
     fun testConfigSpecPrefixOperation_onPrefixWithNonEmptyPath_itShouldReturnAConfigSpecWithProperPrefix() {
-        assertEquals((Prefix("c") + specForNested).prefix, "c.a.bb")
-        assertEquals((Prefix("c") + specForNested["a.bb"]).prefix, "c")
+        assertEquals("c.a.bb", (Prefix("c") + specForNested).prefix)
+        assertEquals("c", (Prefix("c") + specForNested["a.bb"]).prefix)
     }
 
     @Test
     fun testConfigSpecPrefixOperation_onPrefixWithNonEmptyPath_itShouldReturnAConfigSpecWithTheSameItemsAndInnerSpecs() {
-        assertEquals((Prefix("c") + specForNested).items, specForNested.items)
-        assertEquals((Prefix("c") + specForNested).innerSpecs, specForNested.innerSpecs)
+        assertEquals(specForNested.items, (Prefix("c") + specForNested).items)
+        assertEquals(specForNested.innerSpecs, (Prefix("c") + specForNested).innerSpecs)
     }
 
     @Test
@@ -208,18 +207,18 @@ class TestConfigSpec {
     @Test
     fun testConfigSpecPlusOperation_onAddRepeatedItem_shouldThrowRepeatedItemException() {
         val e = assertCheckedThrows<RepeatedItemException> { addSpec.addItem(leftSpec.item1) }
-        assertEquals(e.name, "item1")
+        assertEquals("item1", e.name)
     }
 
     @Test
     fun testConfigSpecPlusOperation_onGetItems_shouldContainAllItemsInBothSpecs() {
-        assertEquals(addSpec.items, leftSpec.items + rightSpec.items)
+        assertEquals(leftSpec.items + rightSpec.items, addSpec.items)
     }
 
     @Test
     fun testConfigSpecPlusOperation_onQualifyItemName_itShouldAddProperPrefix() {
-        assertEquals(addSpec.qualify(leftSpec.item1), "a.item1")
-        assertEquals(addSpec.qualify(rightSpec.item2), "b.item2")
+        assertEquals("a.item1", addSpec.qualify(leftSpec.item1))
+        assertEquals("b.item2", addSpec.qualify(rightSpec.item2))
     }
 
     @Test
@@ -233,23 +232,23 @@ class TestConfigSpec {
     @Test
     fun testConfigSpecWithFallbackOp_onAddRepeatedItem_itShouldThrowRepeatedItemException() {
         val e = assertCheckedThrows<RepeatedItemException> { comboSpec.addItem(fallbackSpec.item1) }
-        assertEquals(e.name, "item1")
+        assertEquals("item1", e.name)
     }
 
     @Test
     fun testConfigSpecWithFallbackOp_onGetItems_itShouldContainAllItemsFromFacadeAndFallback() {
-        assertEquals(comboSpec.items, fallbackSpec.items + facadeSpec.items)
+        assertEquals(fallbackSpec.items + facadeSpec.items, comboSpec.items)
     }
 
     @Test
     fun testConfigSpecWithFallbackOp_onQualify_itShouldAddAProperPrefix() {
-        assertEquals(comboSpec.qualify(fallbackSpec.item1), "a.item1")
-        assertEquals(comboSpec.qualify(facadeSpec.item2), "b.item2")
+        assertEquals("a.item1", comboSpec.qualify(fallbackSpec.item1))
+        assertEquals("b.item2", comboSpec.qualify(facadeSpec.item2))
     }
 
     @ParameterizedTest
     @MethodSource("prefixInferenceSource")
-    fun testConfigSpecPrefixInference_isCorrect(prefix: String, expected: String) {
+    fun testConfigSpecPrefixInference_isCorrect(expected: String, prefix: String) {
         assertEquals(expected, prefix)
     }
 
@@ -297,15 +296,15 @@ class TestConfigSpec {
 
         @JvmStatic
         fun prefixInferenceSource(): Stream<Arguments> = argumentsOf(
-            twoArgumentsOf(configSpecInstance.prefix, ""),
-            twoArgumentsOf(AnonymousConfigSpec.spec.prefix, ""),
-            twoArgumentsOf(objectExpression.prefix, ""),
-            twoArgumentsOf(Uppercase.prefix, "uppercase"),
-            twoArgumentsOf(OK.prefix, "ok"),
-            twoArgumentsOf(TCPService.prefix, "tcpService"),
-            twoArgumentsOf(lowercase.prefix, "lowercase"),
-            twoArgumentsOf(SuffixSpec.prefix, "suffix"),
-            twoArgumentsOf(OriginalSpec.prefix, "original")
+            twoArgumentsOf("", configSpecInstance.prefix),
+            twoArgumentsOf("", AnonymousConfigSpec.spec.prefix),
+            twoArgumentsOf("", objectExpression.prefix),
+            twoArgumentsOf("uppercase", Uppercase.prefix),
+            twoArgumentsOf("ok", OK.prefix),
+            twoArgumentsOf("tcpService", TCPService.prefix),
+            twoArgumentsOf("lowercase", lowercase.prefix),
+            twoArgumentsOf("suffix", SuffixSpec.prefix),
+            twoArgumentsOf("original", OriginalSpec.prefix)
         )
     }
 }

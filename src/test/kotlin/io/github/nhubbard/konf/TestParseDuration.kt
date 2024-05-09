@@ -21,82 +21,82 @@ import io.github.nhubbard.konf.source.ParseException
 import io.github.nhubbard.konf.source.toDuration
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.time.Duration
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
 class TestParseDuration {
     @Test
     fun testParseEmptyString_shouldThrowParseException() {
-        assertThrows<ParseException> { "".toDuration() }
+        assertFailsWith<ParseException> { "".toDuration() }
     }
 
     @Test
     fun testParseStringWithoutUnit_shouldParseAsMilliseconds() {
-        assertEquals("1".toDuration(), Duration.ofMillis(1))
+        assertEquals(Duration.ofMillis(1), "1".toDuration())
     }
 
     @Test
     fun testParseStringWithMillisecondUnit_shouldParseAsMilliseconds() {
-        assertEquals("1ms".toDuration(), Duration.ofMillis(1))
-        assertEquals("1 millis".toDuration(), Duration.ofMillis(1))
-        assertEquals("1 milliseconds".toDuration(), Duration.ofMillis(1))
+        assertEquals(Duration.ofMillis(1), "1ms".toDuration())
+        assertEquals(Duration.ofMillis(1), "1 millis".toDuration())
+        assertEquals(Duration.ofMillis(1), "1 milliseconds".toDuration())
     }
 
     @Test
     fun testParseStringWithMicrosecondUnit_shouldParseAsMicroseconds() {
-        assertEquals("1us".toDuration(), Duration.ofNanos(1000))
-        assertEquals("1 micros".toDuration(), Duration.ofNanos(1000))
-        assertEquals("1 microseconds".toDuration(), Duration.ofNanos(1000))
+        assertEquals(Duration.ofNanos(1000), "1us".toDuration())
+        assertEquals(Duration.ofNanos(1000), "1 micros".toDuration())
+        assertEquals(Duration.ofNanos(1000), "1 microseconds".toDuration())
     }
 
     @Test
     fun testParseStringWithNanosecondUnit_shouldParseAsNanoseconds() {
-        assertEquals("1ns".toDuration(), Duration.ofNanos(1))
-        assertEquals("1 nanos".toDuration(), Duration.ofNanos(1))
-        assertEquals("1 nanoseconds".toDuration(), Duration.ofNanos(1))
+        assertEquals(Duration.ofNanos(1), "1ns".toDuration())
+        assertEquals(Duration.ofNanos(1), "1 nanos".toDuration())
+        assertEquals(Duration.ofNanos(1), "1 nanoseconds".toDuration())
     }
 
     @Test
     fun testParseStringWithDayUnit_shouldParseAsDays() {
-        assertEquals("1d".toDuration(), Duration.ofDays(1))
-        assertEquals("1 days".toDuration(), Duration.ofDays(1))
+        assertEquals(Duration.ofDays(1), "1d".toDuration())
+        assertEquals(Duration.ofDays(1), "1 days".toDuration())
     }
 
     @Test
     fun testParseStringWithHourUnit_shouldParseAsHours() {
-        assertEquals("1h".toDuration(), Duration.ofHours(1))
-        assertEquals("1 hours".toDuration(), Duration.ofHours(1))
+        assertEquals(Duration.ofHours(1), "1h".toDuration())
+        assertEquals(Duration.ofHours(1), "1 hours".toDuration())
     }
 
     @Test
     fun testParseStringWithSecondUnit_shouldParseAsSeconds() {
-        assertEquals("1s".toDuration(), Duration.ofSeconds(1))
-        assertEquals("1 seconds".toDuration(), Duration.ofSeconds(1))
+        assertEquals(Duration.ofSeconds(1), "1s".toDuration())
+        assertEquals(Duration.ofSeconds(1), "1 seconds".toDuration())
     }
 
     @Test
     fun testParseStringWithMinuteUnit_shouldParseAsMinutes() {
-        assertEquals("1m".toDuration(), Duration.ofMinutes(1))
-        assertEquals("1 minutes".toDuration(), Duration.ofMinutes(1))
+        assertEquals(Duration.ofMinutes(1), "1m".toDuration())
+        assertEquals(Duration.ofMinutes(1), "1 minutes".toDuration())
     }
 
     @Test
     fun testParseStringWithFloatNumber_shouldParseAndConvertFromDoubleToLong() {
-        assertEquals("1.5ms".toDuration(), Duration.ofNanos(1_500_000))
+        assertEquals(Duration.ofNanos(1_500_000), "1.5ms".toDuration())
     }
 
     @Test
     fun testParseStringWithInvalidUnit_shouldThrowParseException() {
-        assertThrows<ParseException> { "1x".toDuration() }
+        assertFailsWith<ParseException> { "1x".toDuration() }
     }
 
     @Test
     fun testParseStringWithInvalidNumber_shouldThrowParseException() {
-        assertThrows<ParseException> { "*1s".toDuration() }
+        assertFailsWith<ParseException> { "*1s".toDuration() }
     }
 }

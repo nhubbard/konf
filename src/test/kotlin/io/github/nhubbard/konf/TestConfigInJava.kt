@@ -23,8 +23,8 @@ import io.github.nhubbard.konf.helpers.NetworkBuffer
 import io.github.nhubbard.konf.source.base.asKVSource
 import io.github.nhubbard.konf.source.base.toHierarchicalMap
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Test
+import kotlin.test.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestConfigInJava {
@@ -67,7 +67,7 @@ class TestConfigInJava {
                 fun testShouldContainItemsInNewSpec() {
                     assertTrue(newSpec.minSize in config)
                     assertTrue(spec.qualify(newSpec.minSize) in config)
-                    assertEquals(config.nameOf(newSpec.minSize), spec.qualify(newSpec.minSize))
+                    assertEquals(spec.qualify(newSpec.minSize), config.nameOf(newSpec.minSize))
                 }
 
                 @Test
@@ -78,7 +78,7 @@ class TestConfigInJava {
 
                 @Test
                 fun testShouldLoadValuesFromExistingSourcesForItemsInNewSpec() {
-                    assertEquals(config[newSpec.minSize], 2)
+                    assertEquals(2, config[newSpec.minSize])
                 }
             }
 
@@ -87,7 +87,7 @@ class TestConfigInJava {
                 @Test
                 fun testShouldThrowRepeatedItemException() {
                     val e = assertCheckedThrows<RepeatedItemException> { subject.addSpec(spec) }
-                    assertEquals(e.name, spec.qualify(size))
+                    assertEquals(spec.qualify(size), e.name)
                 }
             }
 
@@ -99,7 +99,7 @@ class TestConfigInJava {
 
                 @Test
                 fun testShouldThrowNameConflictException() {
-                    assertThrows<NameConflictException> {
+                    assertFailsWith<NameConflictException> {
                         subject.addSpec(newSpec)
                     }
                 }
@@ -113,7 +113,7 @@ class TestConfigInJava {
 
                 @Test
                 fun testShouldThrowNameConflictException() {
-                    assertThrows<NameConflictException> {
+                    assertFailsWith<NameConflictException> {
                         subject.addSpec(
                             newSpec.withPrefix(prefix.toPath().let { it.subList(0, it.size - 1) }.name)
                         )
@@ -129,7 +129,7 @@ class TestConfigInJava {
 
                 @Test
                 fun testShouldThrowNameConflictException() {
-                    assertThrows<NameConflictException> {
+                    assertFailsWith<NameConflictException> {
                         subject.addSpec(newSpec)
                     }
                 }
@@ -151,12 +151,12 @@ class TestConfigInJava {
                 fun testShouldContainItem() {
                     assertTrue(minSize in config)
                     assertTrue(spec.qualify(minSize) in config)
-                    assertEquals(config.nameOf(minSize), spec.qualify(minSize))
+                    assertEquals(spec.qualify(minSize), config.nameOf(minSize))
                 }
 
                 @Test
                 fun testShouldLoadValuesFromExistingSourcesForItem() {
-                    assertEquals(config[minSize], 2)
+                    assertEquals(2, config[minSize])
                 }
             }
 
@@ -165,7 +165,7 @@ class TestConfigInJava {
                 @Test
                 fun testShouldThrowRepeatedItemException() {
                     val e = assertCheckedThrows<RepeatedItemException> { subject.addItem(size, spec.prefix) }
-                    assertEquals(e.name, spec.qualify(size))
+                    assertEquals(spec.qualify(size), e.name)
                 }
             }
 
@@ -175,7 +175,7 @@ class TestConfigInJava {
 
                 @Test
                 fun testShouldThrowNameConflictException() {
-                    assertThrows<NameConflictException> {
+                    assertFailsWith<NameConflictException> {
                         subject.addItem(size, prefix)
                     }
                 }
@@ -187,7 +187,7 @@ class TestConfigInJava {
 
                 @Test
                 fun testShouldThrowNameConflictException() {
-                    assertThrows<NameConflictException> {
+                    assertFailsWith<NameConflictException> {
                         subject.addItem(buffer, prefix.toPath().let { it.subList(0, it.size - 1) }.name)
                     }
                 }
@@ -199,7 +199,7 @@ class TestConfigInJava {
 
                 @Test
                 fun testShouldThrowNameConflictException() {
-                    assertThrows<NameConflictException> {
+                    assertFailsWith<NameConflictException> {
                         subject.addItem(subType, qualify(type.name))
                     }
                 }
@@ -210,12 +210,12 @@ class TestConfigInJava {
         inner class Iterators {
             @Test
             fun testIteratorCoversAllItemsInConfig() {
-                assertEquals(subject.items.toSet(), spec.items.toSet())
+                assertEquals(spec.items.toSet(), subject.items.toSet())
             }
 
             @Test
             fun testNameIteratorCoversAllItemsInConfig() {
-                assertEquals(subject.nameOfItems.toSet(), spec.items.map { qualify(it.name) }.toSet())
+                assertEquals(spec.items.map { qualify(it.name) }.toSet(), subject.nameOfItems.toSet())
             }
         }
 
@@ -224,12 +224,12 @@ class TestConfigInJava {
             @Test
             fun testShouldNotContainUnsetItemsInMap() {
                 assertEquals(
-                    subject.toMap(),
                     mapOf<String, Any>(
                         qualify(name.name) to "buffer",
                         qualify(type.name) to NetworkBuffer.Type.OFF_HEAP.name,
                         qualify(offset.name) to "null"
-                    )
+                    ),
+                    subject.toMap()
                 )
             }
 
@@ -240,14 +240,14 @@ class TestConfigInJava {
                 subject[offset] = 0
                 val map = subject.toMap()
                 assertEquals(
-                    map,
                     mapOf(
                         qualify(size.name) to 4,
                         qualify(maxSize.name) to 8,
                         qualify(name.name) to "buffer",
                         qualify(type.name) to NetworkBuffer.Type.ON_HEAP.name,
                         qualify(offset.name) to 0
-                    )
+                    ),
+                    map
                 )
             }
 
@@ -258,12 +258,12 @@ class TestConfigInJava {
                 subject[offset] = 0
                 val map = subject.toMap()
                 val newConfig = Config { addSpec(spec[spec.prefix].withPrefix(prefix)) }.from.map.kv(map)
-                assertEquals(newConfig[size], 4)
-                assertEquals(newConfig[maxSize], 8)
-                assertEquals(newConfig[name], "buffer")
-                assertEquals(newConfig[type], NetworkBuffer.Type.ON_HEAP)
-                assertEquals(newConfig[offset], 0)
-                assertEquals(newConfig.toMap(), subject.toMap())
+                assertEquals(4, newConfig[size])
+                assertEquals(8, newConfig[maxSize])
+                assertEquals("buffer", newConfig[name])
+                assertEquals(NetworkBuffer.Type.ON_HEAP, newConfig[type])
+                assertEquals(0, newConfig[offset])
+                assertEquals(subject.toMap(), newConfig.toMap())
             }
         }
 
@@ -280,7 +280,6 @@ class TestConfigInJava {
             @Test
             fun testShouldNotContainUnsetItemsInMap() {
                 assertEquals(
-                    subject.toHierarchicalMap(),
                     prefixToMap(
                         prefix,
                         mapOf(
@@ -288,7 +287,8 @@ class TestConfigInJava {
                             "type" to NetworkBuffer.Type.OFF_HEAP.name,
                             "offset" to "null"
                         )
-                    )
+                    ),
+                    subject.toHierarchicalMap()
                 )
             }
 
@@ -299,7 +299,6 @@ class TestConfigInJava {
                 subject[offset] = 0
                 val map = subject.toHierarchicalMap()
                 assertEquals(
-                    map,
                     prefixToMap(
                         prefix,
                         mapOf(
@@ -309,7 +308,8 @@ class TestConfigInJava {
                             "type" to NetworkBuffer.Type.ON_HEAP.name,
                             "offset" to 0
                         )
-                    )
+                    ),
+                    map
                 )
             }
 
@@ -320,12 +320,12 @@ class TestConfigInJava {
                 subject[offset] = 0
                 val map = subject.toHierarchicalMap()
                 val newConfig = Config { addSpec(spec[spec.prefix].withPrefix(prefix)) }.from.map.hierarchical(map)
-                assertEquals(newConfig[size], 4)
-                assertEquals(newConfig[maxSize], 8)
-                assertEquals(newConfig[name], "buffer")
-                assertEquals(newConfig[type], NetworkBuffer.Type.ON_HEAP)
-                assertEquals(newConfig[offset], 0)
-                assertEquals(newConfig.toMap(), subject.toMap())
+                assertEquals(4, newConfig[size])
+                assertEquals(8, newConfig[maxSize])
+                assertEquals("buffer", newConfig[name])
+                assertEquals(NetworkBuffer.Type.ON_HEAP, newConfig[type])
+                assertEquals(0, newConfig[offset])
+                assertEquals(subject.toMap(), newConfig.toMap())
             }
         }
 
@@ -349,7 +349,7 @@ class TestConfigInJava {
 
             @Test
             fun testShouldConvertToStringInMapLikeFormat() {
-                assertEquals(subject.toString(), "Config(items=$map)")
+                assertEquals("Config(items=$map)", subject.toString())
             }
         }
 
@@ -366,7 +366,7 @@ class TestConfigInJava {
         inner class GetOperation {
             @Test
             fun testGetWithValidItemShouldReturnCorrespondingValue() {
-                assertEquals(subject[name], "buffer")
+                assertEquals("buffer", subject[name])
                 assertTrue(name in subject)
                 assertNull(subject[offset])
                 assertTrue(offset in subject)
@@ -377,7 +377,7 @@ class TestConfigInJava {
             @Test
             fun testGetWithInvalidItemShouldThrowUsingGet() {
                 val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItem] }
-                assertEquals(e.name, invalidItem.asName)
+                assertEquals(invalidItem.asName, e.name)
             }
 
             @Test
@@ -388,15 +388,15 @@ class TestConfigInJava {
 
             @Test
             fun testGetWithValidNameShouldReturnCorrespondingValue() {
-                assertEquals(subject(qualify("name")), "buffer")
-                assertEquals(subject.getOrNull<String>(qualify("name")), "buffer")
+                assertEquals("buffer", subject(qualify("name")))
+                assertEquals("buffer", subject.getOrNull<String>(qualify("name")))
                 assertTrue(qualify("name") in subject)
             }
 
             @Test
             fun testGetWithInvalidNameShouldThrowWhenUsingGet() {
                 val e = assertCheckedThrows<NoSuchItemException> { subject<String>(spec.qualify(invalidItem)) }
-                assertEquals(e.name, spec.qualify(invalidItem))
+                assertEquals(spec.qualify(invalidItem), e.name)
             }
 
             @Test
@@ -408,9 +408,9 @@ class TestConfigInJava {
             @Test
             fun testGetUnsetItemShouldThrowUnsetValueException() {
                 var e = assertCheckedThrows<UnsetValueException> { subject[size] }
-                assertEquals(e.name, size.asName)
+                assertEquals(size.asName, e.name)
                 e = assertCheckedThrows<UnsetValueException> { subject[maxSize] }
-                assertEquals(e.name, size.asName)
+                assertEquals(size.asName, e.name)
                 assertTrue(size in subject)
                 assertTrue(maxSize in subject)
             }
@@ -428,7 +428,7 @@ class TestConfigInJava {
                 val thunk = { _: ItemContainer -> null } as (ItemContainer) -> Int
                 val lazyItem by Spec.dummy.lazy(thunk = thunk)
                 subject.addItem(lazyItem, prefix)
-                assertThrows<InvalidLazySetException> {
+                assertFailsWith<InvalidLazySetException> {
                     subject[lazyItem]
                 }
             }
@@ -439,15 +439,15 @@ class TestConfigInJava {
             @Test
             fun testSetWithValidItemWhenCorrespondingValueIsUnsetShouldContainTheSpecifiedValue() {
                 subject[size] = 1024
-                assertEquals(subject[size], 1024)
+                assertEquals(1024, subject[size])
             }
 
             @Test
             fun testSetWithValidItemWhenCorrespondingValueExistsShouldContainTheSpecifiedValue() {
                 subject[name] = "newName"
-                assertEquals(subject[name], "newName")
+                assertEquals("newName", subject[name])
                 subject[offset] = 0
-                assertEquals(subject[offset], 0)
+                assertEquals(0, subject[offset])
                 subject[offset] = null
                 assertNull(subject[offset])
             }
@@ -455,44 +455,44 @@ class TestConfigInJava {
             @Test
             fun testRawSetWithValidItemShouldContainTheSpecifiedValue() {
                 subject.rawSet(size, 2048)
-                assertEquals(subject[size], 2048)
+                assertEquals(2048, subject[size])
             }
 
             @Test
             fun testSetWithValidItemWhenCorrespondingValueIsLazyHasCorrectLifecycle() {
                 subject[size] = 1024
-                assertEquals(subject[maxSize], subject[size] * 2)
+                assertEquals(subject[size] * 2, subject[maxSize])
                 subject[maxSize] = 0
-                assertEquals(subject[maxSize], 0)
+                assertEquals(0, subject[maxSize])
                 subject[size] = 2048
-                assertNotEquals(subject[maxSize], subject[size] * 2)
-                assertEquals(subject[maxSize], 0)
+                assertNotEquals(subject[size] * 2, subject[maxSize])
+                assertEquals(0, subject[maxSize])
             }
 
             @Test
             fun testSetWithInvalidItemShouldThrowNoSuchItemException() {
                 val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItem] = 1024 }
-                assertEquals(e.name, invalidItem.asName)
+                assertEquals(invalidItem.asName, e.name)
             }
 
             @Test
             fun testSetWithValidNameShouldContainTheSpecifiedValue() {
                 subject[qualify("size")] = 1024
-                assertEquals(subject[size], 1024)
+                assertEquals(1024, subject[size])
             }
 
             @Test
             fun testSetWithInvalidNameShouldThrowNoSuchItemException() {
                 val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItemName] = 1024 }
-                assertEquals(e.name, invalidItemName)
+                assertEquals(invalidItemName, e.name)
             }
 
             @Test
             fun testSetWithIncorrectTypeOfValueShouldThrowClassCastException() {
-                assertThrows<ClassCastException> {
+                assertFailsWith<ClassCastException> {
                     subject[qualify(size.name)] = "1024"
                 }
-                assertThrows<ClassCastException> {
+                assertFailsWith<ClassCastException> {
                     subject[qualify(size.name)] = null
                 }
             }
@@ -501,26 +501,26 @@ class TestConfigInJava {
             fun testLazySetWithValidItemShouldContainTheSpecifiedValue() {
                 subject.lazySet(maxSize) { it[size] * 4 }
                 subject[size] = 1024
-                assertEquals(subject[maxSize], subject[size] * 4)
+                assertEquals(subject[size] * 4, subject[maxSize])
             }
 
             @Test
             fun testLazySetWithInvalidItemShouldThrowNoSuchItemException() {
                 val e = assertCheckedThrows<NoSuchItemException> { subject.lazySet(invalidItem) { 1024 } }
-                assertEquals(e.name, invalidItem.asName)
+                assertEquals(invalidItem.asName, e.name)
             }
 
             @Test
             fun testLazySetWithValidNameShouldContainTheSpecifiedValue() {
                 subject.lazySet(qualify(maxSize.name)) { it[size] * 4 }
                 subject[size] = 1024
-                assertEquals(subject[maxSize], subject[size] * 4)
+                assertEquals(subject[size] * 4, subject[maxSize])
             }
 
             @Test
             fun testLazySetWithValidNameAndInvalidValueWithIncompatibleTypeThrowsInvalidLazySetException() {
                 subject.lazySet(qualify(maxSize.name)) { "string" }
-                assertThrows<InvalidLazySetException> {
+                assertFailsWith<InvalidLazySetException> {
                     subject[qualify(maxSize.name)]
                 }
             }
@@ -528,7 +528,7 @@ class TestConfigInJava {
             @Test
             fun testLazySetWithInvalidNameShouldThrowNoSuchItemException() {
                 val e = assertCheckedThrows<NoSuchItemException> { subject.lazySet(invalidItemName) { 1024 } }
-                assertEquals(e.name, invalidItemName)
+                assertEquals(invalidItemName, e.name)
             }
 
             @Test
@@ -540,7 +540,7 @@ class TestConfigInJava {
             @Test
             fun testUnsetWithInvalidItemShouldThrowNoSuchItemException() {
                 val e = assertCheckedThrows<NoSuchItemException> { subject.unset(invalidItem) }
-                assertEquals(e.name, invalidItem.asName)
+                assertEquals(invalidItem.asName, e.name)
             }
 
             @Test
@@ -552,7 +552,7 @@ class TestConfigInJava {
             @Test
             fun testUnsetWithInvalidNameShouldThrowNoSuchItemException() {
                 val e = assertCheckedThrows<NoSuchItemException> { subject.unset(invalidItemName) }
-                assertEquals(e.name, invalidItemName)
+                assertEquals(invalidItemName, e.name)
             }
         }
 
@@ -573,14 +573,14 @@ class TestConfigInJava {
             @Test
             fun testDeclaringAPropertyByItemShouldBehaveTheSameAsGet() {
                 val nameProperty by subject.property(name)
-                assertEquals(nameProperty, subject[name])
+                assertEquals(subject[name], nameProperty)
             }
 
             @Test
             fun testDeclaringAPropertyByItemShouldSupportTheSetOperation() {
                 var nameProperty by subject.property(name)
                 nameProperty = "newName"
-                assertEquals(nameProperty, "newName")
+                assertEquals("newName", nameProperty)
             }
 
             @Test
@@ -589,20 +589,20 @@ class TestConfigInJava {
                     @Suppress("UNUSED_VARIABLE")
                     val nameProperty by subject.property(invalidItem)
                 }
-                assertEquals(e.name, invalidItem.asName)
+                assertEquals(invalidItem.asName, e.name)
             }
 
             @Test
             fun testDeclaringAPropertyByNameShouldBehaveTheSameAsGet() {
                 val nameProperty by subject.property<String>(qualify(name.name))
-                assertEquals(nameProperty, subject[name])
+                assertEquals(subject[name], nameProperty)
             }
 
             @Test
             fun testDeclaringAPropertyByNameShouldSupportSetOperation() {
                 var nameProperty by subject.property<String>(qualify(name.name))
                 nameProperty = "newName"
-                assertEquals(nameProperty, "newName")
+                assertEquals("newName", nameProperty)
             }
 
             @Test
@@ -611,7 +611,7 @@ class TestConfigInJava {
                     @Suppress("UNUSED_VARIABLE")
                     val nameProperty by subject.property<Int>(invalidItemName)
                 }
-                assertEquals(e.name, invalidItemName)
+                assertEquals(invalidItemName, e.name)
             }
         }
     }

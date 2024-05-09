@@ -22,11 +22,11 @@ import io.github.nhubbard.konf.source.asTree
 import io.github.nhubbard.konf.source.base.toHierarchical
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -64,24 +64,24 @@ class TestTreeNode {
 
     @Test
     fun testConvertToTree_shouldReturnItself() {
-        assertSame(subject.asTree(), subject)
+        assertSame(subject, subject.asTree())
     }
 
     @Test
     fun testConvertToSource_shouldBeTheTreeInTheSource() {
-        assertSame(subject.asSource().tree, subject)
+        assertSame(subject, subject.asSource().tree)
     }
 
     @Test
     fun testSetWithAnInvalidPath_shouldThrowInvalidPathExceptionOnEmptyPath() {
-        assertThrows<PathConflictException> {
+        assertFailsWith<PathConflictException> {
             subject[""] = EmptyNode
         }
     }
 
     @Test
     fun testSetWithAnInvalidPath_shouldThrowInvalidPathExceptionOnInvalidPath() {
-        assertThrows<PathConflictException> {
+        assertFailsWith<PathConflictException> {
             subject["level1.level2.level3"] = EmptyNode
         }
     }

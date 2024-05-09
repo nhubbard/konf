@@ -23,10 +23,8 @@ import io.github.nhubbard.konf.source.LoadException
 import io.github.nhubbard.konf.source.Source
 import io.github.nhubbard.konf.source.base.asKVSource
 import io.github.nhubbard.konf.source.base.toHierarchicalMap
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
@@ -35,6 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.util.concurrent.locks.ReentrantLock
 import java.util.stream.Stream
 import kotlin.concurrent.withLock
+import kotlin.test.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.SAME_THREAD)
@@ -86,8 +85,8 @@ class TestCompleteConfigSpec {
     fun testFeatureOperation_byDefault_shouldUseTheFeatureDefaultSetting(prefix: String, provider: () -> Config) {
         val subject = provider()
         assertEquals(
-            subject.isEnabled(Feature.FAIL_ON_UNKNOWN_PATH),
-            Feature.FAIL_ON_UNKNOWN_PATH.enabledByDefault
+            Feature.FAIL_ON_UNKNOWN_PATH.enabledByDefault,
+            subject.isEnabled(Feature.FAIL_ON_UNKNOWN_PATH)
         )
     }
 
@@ -105,30 +104,30 @@ class TestCompleteConfigSpec {
         ).asKVSource()
         val handler1 = config.beforeLoad {
             counter += 1
-            assertEquals(it, source)
-            assertEquals(config[type], NetworkBuffer.Type.OFF_HEAP)
+            assertEquals(source, it)
+            assertEquals(NetworkBuffer.Type.OFF_HEAP, config[type])
         }
         val handler2 = config.beforeLoad {
             counter += 1
-            assertEquals(it, source)
-            assertEquals(config[type], NetworkBuffer.Type.OFF_HEAP)
+            assertEquals(source, it)
+            assertEquals(NetworkBuffer.Type.OFF_HEAP, config[type])
         }
         val handler3 = config.afterLoad {
             counter += 1
-            assertEquals(it, source)
-            assertEquals(config[type], NetworkBuffer.Type.ON_HEAP)
+            assertEquals(source, it)
+            assertEquals(NetworkBuffer.Type.ON_HEAP, config[type])
         }
         val handler4 = config.afterLoad {
             counter += 1
-            assertEquals(it, source)
-            assertEquals(config[type], NetworkBuffer.Type.ON_HEAP)
+            assertEquals(source, it)
+            assertEquals(NetworkBuffer.Type.ON_HEAP, config[type])
         }
         loadFunction(source)
         handler1.close()
         handler2.close()
         handler3.close()
         handler4.close()
-        assertEquals(counter, 4)
+        assertEquals(4, counter)
     }
 
     @ParameterizedTest
@@ -142,7 +141,7 @@ class TestCompleteConfigSpec {
         config.addSpec(newSpec)
         assertTrue(newSpec.minSize in config)
         assertTrue(newSpec.qualify(newSpec.minSize) in config)
-        assertEquals(config.nameOf(newSpec.minSize), newSpec.qualify(newSpec.minSize))
+        assertEquals(newSpec.qualify(newSpec.minSize), config.nameOf(newSpec.minSize))
     }
 
     @ParameterizedTest
@@ -167,7 +166,7 @@ class TestCompleteConfigSpec {
         }
         val config = subject.withSource(mapOf(newSpec.qualify(newSpec.minSize) to 2).asKVSource())
         config.addSpec(newSpec)
-        assertEquals(config[newSpec.minSize], 2)
+        assertEquals(2, config[newSpec.minSize])
     }
 
     @ParameterizedTest
@@ -255,7 +254,7 @@ class TestCompleteConfigSpec {
         val e = assertCheckedThrows<RepeatedItemException> {
             subject.addSpec(spec)
         }
-        assertEquals(e.name, spec.qualify(size))
+        assertEquals(spec.qualify(size), e.name)
     }
 
     @ParameterizedTest
@@ -265,7 +264,7 @@ class TestCompleteConfigSpec {
         val newSpec = ConfigSpec(prefix).apply {
             val size by required<Int>()
         }
-        assertThrows<NameConflictException> {
+        assertFailsWith<NameConflictException> {
             subject.addSpec(newSpec)
         }
     }
@@ -277,7 +276,7 @@ class TestCompleteConfigSpec {
         val newSpec = ConfigSpec().apply {
             val buffer by required<Int>()
         }
-        assertThrows<NameConflictException> {
+        assertFailsWith<NameConflictException> {
             subject.addSpec(
                 newSpec.withPrefix(prefix.toPath().let { it.subList(0, it.size - 1) }.name)
             )
@@ -291,7 +290,7 @@ class TestCompleteConfigSpec {
         val newSpec = ConfigSpec(prefix.qualify(type.name)).apply {
             val subType by required<Int>()
         }
-        assertThrows<NameConflictException> {
+        assertFailsWith<NameConflictException> {
             subject.addSpec(newSpec)
         }
     }
@@ -305,7 +304,7 @@ class TestCompleteConfigSpec {
         config.addItem(minSize, prefix)
         assertTrue(minSize in config)
         assertTrue(prefix.qualify(minSize.name) in config)
-        assertEquals(config.nameOf(minSize), prefix.qualify(minSize.name))
+        assertEquals(prefix.qualify(minSize.name), config.nameOf(minSize))
     }
 
     @ParameterizedTest
@@ -315,7 +314,7 @@ class TestCompleteConfigSpec {
         val minSize by Spec.dummy.optional(1)
         val config = subject.withSource(mapOf(prefix.qualify(minSize.name) to 2).asKVSource())
         config.addItem(minSize, prefix)
-        assertEquals(config[minSize], 2)
+        assertEquals(2, config[minSize])
     }
 
     @ParameterizedTest
@@ -325,7 +324,7 @@ class TestCompleteConfigSpec {
         val e = assertCheckedThrows<RepeatedItemException> {
             subject.addItem(size, prefix)
         }
-        assertEquals(e.name, prefix.qualify(size.name))
+        assertEquals(prefix.qualify(size.name), e.name)
     }
 
     @ParameterizedTest
@@ -333,7 +332,7 @@ class TestCompleteConfigSpec {
     fun testAddItemOperation_addRepeatedName_shouldThrowNameConflictException(prefix: String, provider: () -> Config) {
         val subject = provider()
         val size by Spec.dummy.required<Int>()
-        assertThrows<NameConflictException> {
+        assertFailsWith<NameConflictException> {
             subject.addItem(size, prefix)
         }
     }
@@ -343,7 +342,7 @@ class TestCompleteConfigSpec {
     fun testAddItemOperation_addConflictPrefixName_shouldThrowNameConflictException(prefix: String, provider: () -> Config) {
         val subject = provider()
         val buffer by Spec.dummy.required<Int>()
-        assertThrows<NameConflictException> {
+        assertFailsWith<NameConflictException> {
             subject.addItem(
                 buffer,
                 prefix.toPath().let { it.subList(0, it.size - 1) }.name
@@ -356,7 +355,7 @@ class TestCompleteConfigSpec {
     fun testAddItemOperation_addConflictExistingName_shouldThrowNameConflictException(prefix: String, provider: () -> Config) {
         val subject = provider()
         val subType by Spec.dummy.required<Int>()
-        assertThrows<NameConflictException> {
+        assertFailsWith<NameConflictException> {
             subject.addItem(subType, prefix.qualify(type.name))
         }
     }
@@ -365,14 +364,14 @@ class TestCompleteConfigSpec {
     @MethodSource("configTestSpecSource")
     fun testIterateItemsInConfig_shouldCoverAllItemsInConfig(prefix: String, provider: () -> Config) {
         val subject = provider()
-        assertEquals(subject.items.toSet(), spec.items.toSet())
+        assertEquals(spec.items.toSet(), subject.items.toSet())
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testIterateNameOfItemsInConfig_shouldCoverAllItemsInConfig(prefix: String, provider: () -> Config) {
         val subject = provider()
-        assertEquals(subject.nameOfItems.toSet(), spec.items.map { prefix.qualify(it.name) }.toSet())
+        assertEquals(spec.items.map { prefix.qualify(it.name) }.toSet(), subject.nameOfItems.toSet())
     }
 
     @ParameterizedTest
@@ -380,12 +379,12 @@ class TestCompleteConfigSpec {
     fun testExportValuesToMap_shouldNotContainUnsetItemsInMap(prefix: String, provider: () -> Config) {
         val subject = provider()
         assertEquals(
-            subject.toMap(),
             mapOf<String, Any>(
                 prefix.qualify(name.name) to "buffer",
                 prefix.qualify(type.name) to NetworkBuffer.Type.OFF_HEAP.name,
                 prefix.qualify(offset.name) to "null"
-            )
+            ),
+            subject.toMap()
         )
     }
 
@@ -399,14 +398,14 @@ class TestCompleteConfigSpec {
             subject[offset] = 0
             val map = subject.toMap()
             assertEquals(
-                map,
                 mapOf(
                     prefix.qualify(size.name) to 4,
                     prefix.qualify(maxSize.name) to 8,
                     prefix.qualify(name.name) to "buffer",
                     prefix.qualify(type.name) to NetworkBuffer.Type.ON_HEAP.name,
                     prefix.qualify(offset.name) to 0
-                )
+                ),
+                map
             )
         }
     }
@@ -421,12 +420,12 @@ class TestCompleteConfigSpec {
             subject[offset] = 0
             val map = subject.toMap()
             val newConfig = Config { addSpec(spec[spec.prefix].withPrefix(prefix)) }.from.map.kv(map)
-            assertEquals(newConfig[size], 4)
-            assertEquals(newConfig[maxSize], 8)
-            assertEquals(newConfig[name], "buffer")
-            assertEquals(newConfig[type], NetworkBuffer.Type.ON_HEAP)
-            assertEquals(newConfig[offset], 0)
-            assertEquals(newConfig.toMap(), subject.toMap())
+            assertEquals(4, newConfig[size])
+            assertEquals(8, newConfig[maxSize])
+            assertEquals("buffer", newConfig[name])
+            assertEquals(NetworkBuffer.Type.ON_HEAP, newConfig[type])
+            assertEquals(0, newConfig[offset])
+            assertEquals(subject.toMap(), newConfig.toMap())
         }
     }
 
@@ -435,7 +434,6 @@ class TestCompleteConfigSpec {
     fun testExportValuesToHierarchicalMap_shouldNotContainUnsetItemsInMap(prefix: String, provider: () -> Config) {
         val subject = provider()
         assertEquals(
-            subject.toHierarchicalMap(),
             prefixToMap(
                 prefix,
                 mapOf(
@@ -443,7 +441,8 @@ class TestCompleteConfigSpec {
                     "type" to NetworkBuffer.Type.OFF_HEAP.name,
                     "offset" to "null"
                 )
-            )
+            ),
+            subject.toHierarchicalMap()
         )
     }
 
@@ -457,7 +456,6 @@ class TestCompleteConfigSpec {
             subject[offset] = 0
             val map = subject.toHierarchicalMap()
             assertEquals(
-                map,
                 prefixToMap(
                     prefix,
                     mapOf(
@@ -467,7 +465,8 @@ class TestCompleteConfigSpec {
                         "type" to NetworkBuffer.Type.ON_HEAP.name,
                         "offset" to 0
                     )
-                )
+                ),
+                map
             )
         }
     }
@@ -482,12 +481,12 @@ class TestCompleteConfigSpec {
             subject[offset] = 0
             val map = subject.toHierarchicalMap()
             val newConfig = Config { addSpec(spec[spec.prefix].withPrefix(prefix)) }.from.map.hierarchical(map)
-            assertEquals(newConfig[size], 4)
-            assertEquals(newConfig[maxSize], 8)
-            assertEquals(newConfig[name], "buffer")
-            assertEquals(newConfig[type], NetworkBuffer.Type.ON_HEAP)
-            assertEquals(newConfig[offset], 0)
-            assertEquals(newConfig.toMap(), subject.toMap())
+            assertEquals(4, newConfig[size])
+            assertEquals(8, newConfig[maxSize])
+            assertEquals("buffer", newConfig[name])
+            assertEquals(NetworkBuffer.Type.ON_HEAP, newConfig[type])
+            assertEquals(0, newConfig[offset])
+            assertEquals(subject.toMap(), newConfig.toMap())
         }
     }
 
@@ -514,7 +513,7 @@ class TestCompleteConfigSpec {
             prefix.qualify(type.name) to NetworkBuffer.Type.OFF_HEAP.name,
             prefix.qualify(offset.name) to "null"
         )
-        assertEquals(subject.toString(), "Config(items=$map)")
+        assertEquals("Config(items=$map)", subject.toString())
     }
 
     @ParameterizedTest
@@ -528,7 +527,7 @@ class TestCompleteConfigSpec {
     @MethodSource("configTestSpecSource")
     fun testGetOperation_getWithValidItem_shouldReturnCorrespondingValue(prefix: String, provider: () -> Config) {
         val subject = provider()
-        assertEquals(subject[name], "buffer")
+        assertEquals("buffer", subject[name])
         assertTrue(name in subject)
         assertNull(subject[offset])
         assertTrue(offset in subject)
@@ -541,7 +540,7 @@ class TestCompleteConfigSpec {
     fun testGetOperation_getWithInvalidItem_shouldThrowNoSuchItemExceptionWhenUsingGet(prefix: String, provider: () -> Config) {
         val subject = provider()
         val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItem] }
-        assertEquals(e.name, invalidItem.asName)
+        assertEquals(invalidItem.asName, e.name)
     }
 
     @ParameterizedTest
@@ -556,8 +555,8 @@ class TestCompleteConfigSpec {
     @MethodSource("configTestSpecSource")
     fun testGetOperation_getWithValidName_shouldReturnCorrespondingValue(prefix: String, provider: () -> Config) {
         val subject = provider()
-        assertEquals(subject(prefix.qualify("name")), "buffer")
-        assertEquals(subject.getOrNull<String>(prefix.qualify("name")), "buffer")
+        assertEquals("buffer", subject(prefix.qualify("name")))
+        assertEquals("buffer", subject.getOrNull<String>(prefix.qualify("name")))
         assertTrue(prefix.qualify("name") in subject)
     }
 
@@ -565,8 +564,8 @@ class TestCompleteConfigSpec {
     @MethodSource("configTestSpecSource")
     fun testGetOperation_getWithValidNameWithTrailingWhitespace_shouldReturnCorrespondingValue(prefix: String, provider: () -> Config) {
         val subject = provider()
-        assertEquals(subject(prefix.qualify("name ")), "buffer")
-        assertEquals(subject.getOrNull<String>(prefix.qualify("name  ")), "buffer")
+        assertEquals("buffer", subject(prefix.qualify("name ")))
+        assertEquals("buffer", subject.getOrNull<String>(prefix.qualify("name  ")))
         assertTrue(prefix.qualify("name   ") in subject)
     }
 
@@ -577,7 +576,7 @@ class TestCompleteConfigSpec {
         val e = assertCheckedThrows<NoSuchItemException> {
             subject<String>(prefix.qualify(invalidItem.name))
         }
-        assertEquals(e.name, prefix.qualify(invalidItem.name))
+        assertEquals(prefix.qualify(invalidItem.name), e.name)
     }
 
     @ParameterizedTest
@@ -593,9 +592,9 @@ class TestCompleteConfigSpec {
     fun testGetOperation_getUnsetItem_shouldThrowUnsetValueException(prefix: String, provider: () -> Config) {
         val subject = provider()
         var e = assertCheckedThrows<UnsetValueException> { subject[size] }
-        assertEquals(e.name, size.asName)
+        assertEquals(size.asName, e.name)
         e = assertCheckedThrows<UnsetValueException> { subject[maxSize] }
-        assertEquals(e.name, size.asName)
+        assertEquals(size.asName, e.name)
         assertTrue(size in subject)
         assertTrue(maxSize in subject)
     }
@@ -617,7 +616,7 @@ class TestCompleteConfigSpec {
         val thunk = { _: ItemContainer -> null } as (ItemContainer) -> Int
         val lazyItem by Spec.dummy.lazy(thunk = thunk)
         subject.addItem(lazyItem, prefix)
-        assertThrows<InvalidLazySetException> { subject[lazyItem] }
+        assertFailsWith<InvalidLazySetException> { subject[lazyItem] }
     }
 
     @ParameterizedTest
@@ -625,7 +624,7 @@ class TestCompleteConfigSpec {
     fun testSetOperation_setWithValidItemWhenCorrespondingValueIsUnset_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
         val subject = provider()
         subject[size] = 1024
-        assertEquals(subject[size], 1024)
+        assertEquals(1024, subject[size])
     }
 
     @ParameterizedTest
@@ -633,9 +632,9 @@ class TestCompleteConfigSpec {
     fun testSetOperation_setWithValidItemWhenCorrespondingValueExists_shouldContainTheSpecifiedValue(prefix: String, provider: () -> Config) {
         val subject = provider()
         subject[name] = "newName"
-        assertEquals(subject[name], "newName")
+        assertEquals("newName", subject[name])
         subject[offset] = 0
-        assertEquals(subject[offset], 0)
+        assertEquals(0, subject[offset])
         subject[offset] = null
         assertNull(subject[offset])
     }
@@ -646,7 +645,7 @@ class TestCompleteConfigSpec {
         lock.withLock {
             val subject = provider()
             subject.rawSet(size, 2048)
-            assertEquals(subject[size], 2048)
+            assertEquals(2048, subject[size])
         }
     }
 
@@ -656,12 +655,12 @@ class TestCompleteConfigSpec {
         lock.withLock {
             val subject = provider()
             subject[size] = 1024
-            assertEquals(subject[maxSize], subject[size] * 2)
+            assertEquals(subject[size] * 2, subject[maxSize])
             subject[maxSize] = 0
-            assertEquals(subject[maxSize], 0)
+            assertEquals(0, subject[maxSize])
             subject[size] = 2048
-            assertNotEquals(subject[maxSize], subject[size] * 2)
-            assertEquals(subject[maxSize], 0)
+            assertNotEquals(subject[size] * 2, subject[maxSize])
+            assertEquals(0, subject[maxSize])
         }
     }
 
@@ -671,7 +670,7 @@ class TestCompleteConfigSpec {
         lock.withLock {
             val subject = provider()
             val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItem] = 1024 }
-            assertEquals(e.name, invalidItem.asName)
+            assertEquals(invalidItem.asName, e.name)
         }
     }
 
@@ -681,7 +680,7 @@ class TestCompleteConfigSpec {
         lock.withLock {
             val subject = provider()
             subject[prefix.qualify("size")] = 1024
-            assertEquals(subject[size], 1024)
+            assertEquals(1024, subject[size])
         }
     }
 
@@ -691,7 +690,7 @@ class TestCompleteConfigSpec {
         lock.withLock {
             val subject = provider()
             subject[prefix.qualify("size  ")] = 1024
-            assertEquals(subject[size], 1024)
+            assertEquals(1024, subject[size])
         }
     }
 
@@ -700,15 +699,15 @@ class TestCompleteConfigSpec {
     fun testSetOperation_setWithInvalidName_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
         val subject = provider()
         val e = assertCheckedThrows<NoSuchItemException> { subject[invalidItemName] = 1024 }
-        assertEquals(e.name, invalidItemName)
+        assertEquals(invalidItemName, e.name)
     }
 
     @ParameterizedTest
     @MethodSource("configTestSpecSource")
     fun testSetOperation_setWithIncorrectTypeOfValue_shouldThrowClassCastException(prefix: String, provider: () -> Config) {
         val subject = provider()
-        assertThrows<ClassCastException> { subject[prefix.qualify(size.name)] = "1024" }
-        assertThrows<ClassCastException> { subject[prefix.qualify(size.name)] = null }
+        assertFailsWith<ClassCastException> { subject[prefix.qualify(size.name)] = "1024" }
+        assertFailsWith<ClassCastException> { subject[prefix.qualify(size.name)] = null }
     }
 
     @ParameterizedTest
@@ -721,32 +720,32 @@ class TestCompleteConfigSpec {
             var counter = 0
             val handler1 = childConfig.beforeSet { item, value ->
                 counter += 1
-                assertEquals(item, size)
-                assertEquals(value, 2)
-                assertEquals(childConfig[size], 1)
+                assertEquals(size, item)
+                assertEquals(2, value)
+                assertEquals(1, childConfig[size])
             }
             val handler2 = childConfig.beforeSet { item, value ->
                 counter += 1
-                assertEquals(item, size)
-                assertEquals(value, 2)
-                assertEquals(childConfig[size], 1)
+                assertEquals(size, item)
+                assertEquals(2, value)
+                assertEquals(1, childConfig[size])
             }
             val handler3 = size.beforeSet { _, value ->
                 counter += 1
-                assertEquals(value, 2)
-                assertEquals(childConfig[size], 1)
+                assertEquals(2, value)
+                assertEquals(1, childConfig[size])
             }
             val handler4 = size.beforeSet { _, value ->
                 counter += 1
-                assertEquals(value, 2)
-                assertEquals(childConfig[size], 1)
+                assertEquals(2, value)
+                assertEquals(1, childConfig[size])
             }
             subject[size] = 2
             handler1.close()
             handler2.close()
             handler3.close()
             handler4.close()
-            assertEquals(counter, 4)
+            assertEquals(4, counter)
         }
     }
 
@@ -760,32 +759,32 @@ class TestCompleteConfigSpec {
             var counter = 0
             val handler1 = childConfig.afterSet { item, value ->
                 counter += 1
-                assertEquals(item, size)
-                assertEquals(value, 2)
-                assertEquals(childConfig[size], 2)
+                assertEquals(size, item)
+                assertEquals(2, value)
+                assertEquals(2, childConfig[size])
             }
             val handler2 = childConfig.afterSet { item, value ->
                 counter += 1
-                assertEquals(item, size)
-                assertEquals(value, 2)
-                assertEquals(childConfig[size], 2)
+                assertEquals(size, item)
+                assertEquals(2, value)
+                assertEquals(2, childConfig[size])
             }
             val handler3 = size.afterSet { _, value ->
                 counter += 1
-                assertEquals(value, 2)
-                assertEquals(childConfig[size], 2)
+                assertEquals(2, value)
+                assertEquals(2, childConfig[size])
             }
             val handler4 = size.afterSet { _, value ->
                 counter += 1
-                assertEquals(value, 2)
-                assertEquals(childConfig[size], 2)
+                assertEquals(2, value)
+                assertEquals(2, childConfig[size])
             }
             subject[size] = 2
             handler1.close()
             handler2.close()
             handler3.close()
             handler4.close()
-            assertEquals(counter, 4)
+            assertEquals(4, counter)
         }
     }
 
@@ -800,7 +799,7 @@ class TestCompleteConfigSpec {
                 subject[size] = 16
                 subject[size] = 256
                 subject[size] = 1024
-                assertEquals(counter, 4)
+                assertEquals(4, counter)
             }
         }
     }
@@ -817,7 +816,7 @@ class TestCompleteConfigSpec {
                     subject[size] = 16
                     subject[size] = 256
                     subject[size] = 1024
-                    assertEquals(counter, 12)
+                    assertEquals(12, counter)
                 }
             }
         }
@@ -830,7 +829,7 @@ class TestCompleteConfigSpec {
             val subject = provider()
             subject.lazySet(maxSize) { it[size] * 4 }
             subject[size] = 1024
-            assertEquals(subject[maxSize], subject[size] * 4)
+            assertEquals(subject[size] * 4, subject[maxSize])
         }
     }
 
@@ -839,7 +838,7 @@ class TestCompleteConfigSpec {
     fun testSetOperation_lazySetWithInvalidItem_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
         val subject = provider()
         val e = assertCheckedThrows<NoSuchItemException> { subject.lazySet(invalidItem) { 1024 } }
-        assertEquals(e.name, invalidItem.asName)
+        assertEquals(invalidItem.asName, e.name)
     }
 
     @ParameterizedTest
@@ -849,7 +848,7 @@ class TestCompleteConfigSpec {
             val subject = provider()
             subject.lazySet(prefix.qualify(maxSize.name)) { it[size] * 4 }
             subject[size] = 1024
-            assertEquals(subject[maxSize], subject[size] * 4)
+            assertEquals(subject[size] * 4, subject[maxSize])
         }
     }
 
@@ -859,7 +858,7 @@ class TestCompleteConfigSpec {
         val subject = provider()
         subject.lazySet(prefix.qualify(maxSize.name + "  ")) { it[size] * 4 }
         subject[size] = 1024
-        assertEquals(subject[maxSize], subject[size] * 4)
+        assertEquals(subject[size] * 4, subject[maxSize])
     }
 
     @ParameterizedTest
@@ -867,7 +866,7 @@ class TestCompleteConfigSpec {
     fun testSetOperation_lazySetWithValidNameAndInvalidValueWithIncompatibleType_shouldThrowInvalidLazySetExceptionWhenGetting(prefix: String, provider: () -> Config) {
         val subject = provider()
         subject.lazySet(prefix.qualify(maxSize.name)) { "string" }
-        assertThrows<InvalidLazySetException> {
+        assertFailsWith<InvalidLazySetException> {
             subject[prefix.qualify(maxSize.name)]
         }
     }
@@ -877,7 +876,7 @@ class TestCompleteConfigSpec {
     fun testSetOperation_lazySetWithInvalidName_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
         val subject = provider()
         val e = assertCheckedThrows<NoSuchItemException> { subject.lazySet(invalidItemName) { 1024 } }
-        assertEquals(e.name, invalidItemName)
+        assertEquals(invalidItemName, e.name)
     }
 
     @ParameterizedTest
@@ -893,7 +892,7 @@ class TestCompleteConfigSpec {
     fun testSetOperation_unsetWithInvalidItem_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
         val subject = provider()
         val e = assertCheckedThrows<NoSuchItemException> { subject.unset(invalidItem) }
-        assertEquals(e.name, invalidItem.asName)
+        assertEquals(invalidItem.asName, e.name)
     }
 
     @ParameterizedTest
@@ -909,7 +908,7 @@ class TestCompleteConfigSpec {
     fun testSetOperation_unsetWithInvalidName_shouldThrowNoSuchItemException(prefix: String, provider: () -> Config) {
         val subject = provider()
         val e = assertCheckedThrows<NoSuchItemException> { subject.unset(invalidItemName) }
-        assertEquals(e.name, invalidItemName)
+        assertEquals(invalidItemName, e.name)
     }
 
     @ParameterizedTest
@@ -919,8 +918,8 @@ class TestCompleteConfigSpec {
             val subject = provider()
             subject[size] = 1
             subject[maxSize] = 4
-            assertEquals(subject[size], 1)
-            assertEquals(subject[maxSize], 4)
+            assertEquals(1, subject[size])
+            assertEquals(4, subject[maxSize])
             subject.clear()
             assertNull(subject.getOrNull(size))
             assertNull(subject.getOrNull(maxSize))
@@ -957,7 +956,7 @@ class TestCompleteConfigSpec {
     @MethodSource("configTestSpecSource")
     fun testValidateWhetherAllRequiredItemsHaveValuesOrNot_shouldThrowUnsetValueExceptionWhenSomeRequiredItemsDoNotHaveValues(prefix: String, provider: () -> Config) {
         val subject = provider()
-        assertThrows<UnsetValueException> { subject.validateRequired() }
+        assertFailsWith<UnsetValueException> { subject.validateRequired() }
     }
 
     @ParameterizedTest
@@ -966,7 +965,7 @@ class TestCompleteConfigSpec {
         lock.withLock {
             val subject = provider()
             subject[size] = 1
-            assertTrue(subject === subject.validateRequired())
+            assertSame(subject.validateRequired(), subject)
         }
     }
 
@@ -975,7 +974,7 @@ class TestCompleteConfigSpec {
     fun testItemProperty_declareAPropertyByItem_shouldBehaveTheSameAsGet(prefix: String, provider: () -> Config) {
         val subject = provider()
         val nameProperty by subject.property(name)
-        assertEquals(nameProperty, subject[name])
+        assertEquals(subject[name], nameProperty)
     }
 
     @ParameterizedTest
@@ -984,7 +983,7 @@ class TestCompleteConfigSpec {
         val subject = provider()
         var nameProperty by subject.property(name)
         nameProperty = "newName"
-        assertEquals(nameProperty, "newName")
+        assertEquals("newName", nameProperty)
     }
 
     @ParameterizedTest
@@ -995,7 +994,7 @@ class TestCompleteConfigSpec {
             @Suppress("UNUSED_VARIABLE")
             var nameProperty by subject.property(invalidItem)
         }
-        assertEquals(e.name, invalidItem.asName)
+        assertEquals(invalidItem.asName, e.name)
     }
 
     @ParameterizedTest
@@ -1003,7 +1002,7 @@ class TestCompleteConfigSpec {
     fun testItemProperty_declareAPropertyByName_shouldBehaveSameAsGet(prefix: String, provider: () -> Config) {
         val subject = provider()
         val nameProperty by subject.property<String>(prefix.qualify(name.name))
-        assertEquals(nameProperty, subject[name])
+        assertEquals(subject[name], nameProperty)
     }
 
     @ParameterizedTest
@@ -1012,7 +1011,7 @@ class TestCompleteConfigSpec {
         val subject = provider()
         var nameProperty by subject.property<String>(prefix.qualify(name.name))
         nameProperty = "newName"
-        assertEquals(nameProperty, "newName")
+        assertEquals("newName", nameProperty)
     }
 
     @ParameterizedTest
@@ -1023,14 +1022,14 @@ class TestCompleteConfigSpec {
             @Suppress("UNUSED_VARIABLE")
             var nameProperty by subject.property<Int>(invalidItemName)
         }
-        assertEquals(e.name, invalidItemName)
+        assertEquals(invalidItemName, e.name)
     }
 
     // Extra test from DrillDownConfigSpec
     @Test
     fun testDrillDownConfig_pathIsEmptyString_shouldReturnItself() {
         val subject = drillDownSource()
-        assertTrue(subject.at("") === subject)
+        assertSame(subject.at(""), subject)
     }
 
     // Extra test from BothConfigSpec
@@ -1038,53 +1037,53 @@ class TestCompleteConfigSpec {
     fun testBothConfig_givenAMergedConfig_whenSetItemInTheFallbackConfig_shouldHaveHigherPriorityThanTheDefaultValue() {
         val subject = bothConfigSource()
         (subject as MergedConfig).fallback[NetworkBuffer.type] = NetworkBuffer.Type.ON_HEAP
-        assertEquals(subject[NetworkBuffer.type], NetworkBuffer.Type.ON_HEAP)
+        assertEquals(NetworkBuffer.Type.ON_HEAP, subject[NetworkBuffer.type])
     }
 
     // Extra test from RollUpConfigSpec
     @Test
     fun testRollUp_givenPrefixIsEmptyString_shouldReturnItself() {
         val subject = rollUpSource()
-        assertTrue(Prefix() + subject === subject)
+        assertSame(Prefix() + subject, subject)
     }
 
     // Extra tests from MultiLayerConfigSpec
     @Test
     fun testMultiLayer_shouldHaveSpecifiedName() {
         val subject = multiLayerSource()
-        assertEquals(subject.name, "multi-layer")
+        assertEquals("multi-layer", subject.name)
     }
 
     @Test
     fun testMultiLayer_shouldContainSameItemsWithParentConfig() {
         val subject = multiLayerSource()
-        assertEquals(subject[NetworkBuffer.name], subject.parent!![NetworkBuffer.name])
-        assertEquals(subject[NetworkBuffer.type], subject.parent!![NetworkBuffer.type])
-        assertEquals(subject[NetworkBuffer.offset], subject.parent!![NetworkBuffer.offset])
+        assertEquals(subject.parent!![NetworkBuffer.name], subject[NetworkBuffer.name])
+        assertEquals(subject.parent!![NetworkBuffer.type], subject[NetworkBuffer.type])
+        assertEquals(subject.parent!![NetworkBuffer.offset], subject[NetworkBuffer.offset])
     }
 
     @Test
     fun testMultiLayer_onSetWithItem_itShouldKeepOtherLevelsUnchanged() {
         val subject = multiLayerSource()
         subject[NetworkBuffer.name] = "newName"
-        assertEquals(subject[NetworkBuffer.name], "newName")
-        assertEquals(subject.parent!![NetworkBuffer.name], "buffer")
+        assertEquals("newName", subject[NetworkBuffer.name])
+        assertEquals("buffer", subject.parent!![NetworkBuffer.name])
     }
 
     @Test
     fun testMultiLayer_onSetWithName_itShouldKeepOtherLevelsUnchanged() {
         val subject = multiLayerSource()
         subject[subject.nameOf(NetworkBuffer.name)] = "newName"
-        assertEquals(subject[NetworkBuffer.name], "newName")
-        assertEquals(subject.parent!![NetworkBuffer.name], "buffer")
+        assertEquals("newName", subject[NetworkBuffer.name])
+        assertEquals("buffer", subject.parent!![NetworkBuffer.name])
     }
 
     @Test
     fun testMultiLayer_onSetParentValue_itShouldPropagate() {
         val subject = multiLayerSource()
         subject.parent!![NetworkBuffer.name] = "newName"
-        assertEquals(subject[NetworkBuffer.name], "newName")
-        assertEquals(subject.parent!![NetworkBuffer.name], "newName")
+        assertEquals("newName", subject[NetworkBuffer.name])
+        assertEquals("newName", subject.parent!![NetworkBuffer.name])
     }
 
     @Test
@@ -1107,14 +1106,14 @@ class TestCompleteConfigSpec {
             @Suppress("unused")
             val minSize by optional(1)
         }
-        assertThrows<LayerFrozenException> { subject.parent!!.addSpec(spec) }
+        assertFailsWith<LayerFrozenException> { subject.parent!!.addSpec(spec) }
     }
 
     @Test
     fun testMultiLayer_onAddItemToParent_itShouldThrowLayerFrozenException() {
         val subject = multiLayerSource()
         val minSize by Spec.dummy.optional(1)
-        assertThrows<LayerFrozenException> { subject.parent!!.addItem(minSize) }
+        assertFailsWith<LayerFrozenException> { subject.parent!!.addItem(minSize) }
     }
 
     @Test
@@ -1126,8 +1125,8 @@ class TestCompleteConfigSpec {
         }
         subject.addSpec(spec)
         assertEquals(
-            subject.iterator().asSequence().toSet(),
-            (NetworkBuffer.items + spec.items).toSet()
+            (NetworkBuffer.items + spec.items).toSet(),
+            subject.iterator().asSequence().toSet()
         )
     }
 
@@ -1139,8 +1138,8 @@ class TestCompleteConfigSpec {
         }
         val parent = Config { addSpec(spec) }
         val child = parent.withLayer("child")
-        assertTrue(parent.mapper === child.mapper)
-        assertThrows<LoadException> { child.from.map.kv(mapOf("item" to "string")) }
+        assertSame(child.mapper, parent.mapper)
+        assertFailsWith<LoadException> { child.from.map.kv(mapOf("item" to "string")) }
     }
 
     @Test
@@ -1151,15 +1150,15 @@ class TestCompleteConfigSpec {
         val parent = Config { addSpec(spec) }
         val child = parent.withLayer("child")
 
-        assertTrue(parent.mapper === child.mapper)
+        assertSame(child.mapper, parent.mapper)
         parent.mapper.registerModule(
             SimpleModule().apply {
                 addDeserializer(StringWrapper::class.java, StringWrapperDeserializer())
             }
         )
         val afterLoad = child.from.map.kv(mapOf("item" to "string"))
-        assertTrue(child.mapper === afterLoad.mapper)
-        assertEquals(afterLoad[spec.item], StringWrapper("string"))
+        assertSame(afterLoad.mapper, child.mapper)
+        assertEquals(StringWrapper("string"), afterLoad[spec.item])
     }
 
     companion object {

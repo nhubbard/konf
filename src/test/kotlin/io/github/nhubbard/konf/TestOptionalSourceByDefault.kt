@@ -17,13 +17,13 @@
 
 package io.github.nhubbard.konf
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.FileNotFoundException
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -31,18 +31,18 @@ class TestOptionalSourceByDefault {
     @Test
     fun testAConfig_whenTheFeatureIsDisabled_shouldThrowExceptionWhenFileDoesNotExist() {
         val config = Config().disable(Feature.OPTIONAL_SOURCE_BY_DEFAULT)
-        assertThrows<FileNotFoundException> { config.from.file("not_existed.json") }
+        assertFailsWith<FileNotFoundException> { config.from.file("not_existed.json") }
     }
 
     @Test
     fun testAConfig_whenTheFeatureIsEnabled_shouldLoadEmptySource() {
         val config = Config().enable(Feature.OPTIONAL_SOURCE_BY_DEFAULT)
         config.from.mapped {
-            assertEquals(it.tree.children, mutableMapOf<String, TreeNode>())
+            assertEquals(mutableMapOf(), it.tree.children)
             it
         }.file("not_existed.json")
         config.from.mapped {
-            assertEquals(it.tree.children, mutableMapOf<String, TreeNode>())
+            assertEquals(mutableMapOf(), it.tree.children)
             it
         }.json.file("not_existed.json")
     }

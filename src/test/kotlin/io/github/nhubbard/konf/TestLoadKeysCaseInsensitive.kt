@@ -18,12 +18,12 @@
 package io.github.nhubbard.konf
 
 import io.github.nhubbard.konf.source.asSource
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -33,9 +33,9 @@ class TestLoadKeysCaseInsensitive {
         val source = mapOf("somekey" to "value").asSource()
         val config = Config().withSource(source)
         val someKey by config.required<String>()
-        assertThrows<UnsetValueException> { someKey.isNotEmpty() }
+        assertFailsWith<UnsetValueException> { someKey.isNotEmpty() }
         val somekey by config.required<String>()
-        assertEquals(somekey, "value")
+        assertEquals("value", somekey)
     }
 
     @Test
@@ -43,9 +43,9 @@ class TestLoadKeysCaseInsensitive {
         val source = mapOf("somekey" to "value").asSource().disabled(Feature.LOAD_KEYS_CASE_INSENSITIVELY)
         val config = Config().withSource(source)
         val someKey by config.required<String>()
-        assertThrows<UnsetValueException> { someKey.isNotEmpty() }
+        assertFailsWith<UnsetValueException> { someKey.isNotEmpty() }
         val somekey by config.required<String>()
-        assertEquals(somekey, "value")
+        assertEquals("value", somekey)
     }
 
     @Test
@@ -53,7 +53,7 @@ class TestLoadKeysCaseInsensitive {
         val source = mapOf("somekey" to "value").asSource()
         val config = Config().enable(Feature.LOAD_KEYS_CASE_INSENSITIVELY).withSource(source)
         val someKey by config.required<String>()
-        assertEquals(someKey, "value")
+        assertEquals("value", someKey)
     }
 
     @Test
@@ -61,6 +61,6 @@ class TestLoadKeysCaseInsensitive {
         val source = mapOf("somekey" to "value").asSource().enabled(Feature.LOAD_KEYS_CASE_INSENSITIVELY)
         val config = Config().withSource(source)
         val someKey by config.required<String>()
-        assertEquals(someKey, "value")
+        assertEquals("value", someKey)
     }
 }

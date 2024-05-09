@@ -19,11 +19,11 @@ package io.github.nhubbard.konf
 
 import io.github.nhubbard.konf.helpers.Valid
 import io.github.nhubbard.konf.source.UnknownPathsException
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -47,7 +47,7 @@ class TestFailOnUnknownPath {
             addSpec(Valid)
         }
         val conf = config.from.disabled(Feature.FAIL_ON_UNKNOWN_PATH).json.string(source)
-        assertEquals(conf[Valid.valid], "value1")
+        assertEquals("value1", conf[Valid.valid])
     }
 
     @Test
@@ -56,7 +56,7 @@ class TestFailOnUnknownPath {
             addSpec(Valid)
         }.enable(Feature.FAIL_ON_UNKNOWN_PATH)
         val e = assertCheckedThrows<UnknownPathsException> { config.from.json.string(source) }
-        assertEquals(e.paths, listOf("level1.level2.invalid"))
+        assertEquals(listOf("level1.level2.invalid"), e.paths)
     }
 
     @Test
@@ -67,6 +67,6 @@ class TestFailOnUnknownPath {
         val e = assertCheckedThrows<UnknownPathsException> {
             config.from.enabled(Feature.FAIL_ON_UNKNOWN_PATH).json.string(source)
         }
-        assertEquals(e.paths, listOf("level1.level2.invalid"))
+        assertEquals(listOf("level1.level2.invalid"), e.paths)
     }
 }
