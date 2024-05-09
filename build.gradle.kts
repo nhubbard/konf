@@ -132,6 +132,7 @@ tasks.test {
     systemProperties["org.slf4j.simpleLogger.defaultLogLevel"] = "warn"
     systemProperties["junit.jupiter.execution.parallel.enabled"] = true
     systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
+    systemProperties["line.separator"] = "\n"
     maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
     environment("SOURCE_TEST_TYPE", "env")
     environment("SOURCE_CAMELCASE", "true")

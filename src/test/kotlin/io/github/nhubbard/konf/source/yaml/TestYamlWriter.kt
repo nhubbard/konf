@@ -47,7 +47,7 @@ class TestYamlWriter {
         }
 
         @JvmStatic
-        val expectedString = "key: value" + System.lineSeparator()
+        val expectedString = "key: value\n".replace("\n", System.lineSeparator())
     }
 
     @Test
@@ -57,7 +57,7 @@ class TestYamlWriter {
         subject.toWriter(writer)
         if (isWindows()) {
             println("Expected: ${expectedString.debugLineEndings()}")
-            println("Actual: ${writer.toString().debugLineEndings()}")
+            println("Actual:   ${writer.toString().debugLineEndings()}")
         }
         assertEquals(writer.toString(), expectedString)
     }
@@ -69,7 +69,7 @@ class TestYamlWriter {
         subject.toOutputStream(outputStream)
         if (isWindows()) {
             println("Expected: ${expectedString.debugLineEndings()}")
-            println("Actual: ${outputStream.toString().debugLineEndings()}")
+            println("Actual:   ${outputStream.toString().debugLineEndings()}")
         }
         assertEquals(outputStream.toString(), expectedString)
     }
