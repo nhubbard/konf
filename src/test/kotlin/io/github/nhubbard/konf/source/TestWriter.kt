@@ -46,7 +46,7 @@ class TestWriter {
         }
 
         @JvmStatic
-        val expectedString = "key=value\n"
+        val expectedString = "key=value" + System.lineSeparator()
     }
 
     @Test

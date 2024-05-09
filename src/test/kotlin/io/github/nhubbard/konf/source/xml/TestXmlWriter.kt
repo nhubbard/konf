@@ -47,7 +47,7 @@ class TestXmlWriter {
         |    <value>value</value>
         |  </property>
         |</configuration>
-        |""".trimMargin()
+        |""".trimMargin().replace("\n", System.lineSeparator())
 
     @Test
     fun testXmlWriter_onSaveToWriter_itShouldReturnAWriterWhichContainsContentFromConfig() {

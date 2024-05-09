@@ -46,7 +46,7 @@ class TestJsonWriter {
         {
           "key" : "value"
         }
-        """.trimIndent()
+        """.trimIndent().replace("\n", System.lineSeparator())
 
     @Test
     fun testJsonWriter_onSaveToWriter_itShouldReturnWriterWithContentFromConfig() {

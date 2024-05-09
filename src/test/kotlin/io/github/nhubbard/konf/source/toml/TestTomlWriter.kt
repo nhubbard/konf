@@ -41,7 +41,7 @@ class TestTomlWriter {
     }
     private val expectedString =
         """key = "value"
-        |""".trimMargin()
+        |""".trimMargin().replace("\n", System.lineSeparator())
 
     @Test
     fun testWriter_onSaveToString_itShouldReturnAStringWhichContainsContentFromConfig() {

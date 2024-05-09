@@ -39,7 +39,7 @@ class TestHoconWriter {
         }
         config.toHocon
     }
-    private val expectedString = "key=value\n"
+    private val expectedString = "key=value" + System.lineSeparator()
 
     @Test
     fun testHoconWriter_onSaveToString_itShouldReturnStringWithContentFromConfig() {
