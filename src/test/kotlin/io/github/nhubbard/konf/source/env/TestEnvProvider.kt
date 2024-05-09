@@ -22,6 +22,8 @@ import io.github.nhubbard.konf.singleArgumentsOf
 import io.github.nhubbard.konf.source.env.helpers.FlattenSourceSpec
 import io.github.nhubbard.konf.source.env.helpers.SourceSpec
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -30,6 +32,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestEnvProvider {
     @ParameterizedTest
     @MethodSource("providerSource")

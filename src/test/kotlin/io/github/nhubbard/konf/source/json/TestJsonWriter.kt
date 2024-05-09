@@ -21,11 +21,14 @@ import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.ConfigSpec
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.ByteArrayOutputStream
 import java.io.StringWriter
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestJsonWriter {
     private val provider = {
         val config = Config {

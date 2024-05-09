@@ -24,10 +24,13 @@ import io.github.nhubbard.konf.source.deserializer.helpers.BaseTestDurationWrapp
 import io.github.nhubbard.konf.source.helpers.assertCausedBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.time.Duration
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestDurationDeserializer {
     private val spec = object : ConfigSpec() {
         val item by required<BaseTestDurationWrapper>()

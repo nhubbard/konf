@@ -20,8 +20,11 @@ package io.github.nhubbard.konf.source
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestSourceInfo {
     companion object {
         @JvmStatic val provider = { SourceInfo("a" to "1") }

@@ -29,6 +29,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.*
@@ -36,6 +38,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestSource {
     companion object {
         @JvmStatic val value: Source = ValueSource(Unit)

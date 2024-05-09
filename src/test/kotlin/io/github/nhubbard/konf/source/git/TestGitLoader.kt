@@ -28,11 +28,14 @@ import kotlinx.coroutines.runBlocking
 import org.eclipse.jgit.lib.Constants
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.parallel.Execution
+import org.junit.jupiter.api.parallel.ExecutionMode
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Execution(ExecutionMode.CONCURRENT)
 class TestGitLoader {
     private val parentConfig = Config {
         addSpec(GitTestSourceType)
