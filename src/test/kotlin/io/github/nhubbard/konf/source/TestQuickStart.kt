@@ -47,10 +47,10 @@ class TestQuickStart {
             .from.yaml.file("server1.yml")
             .from.env()
             .from.systemProperties()
-        assertEquals(config.toMap(), mapOf(
+        assertEquals(mapOf(
             "server.host" to "127.0.0.1",
             "server.tcpPort" to 8080
-        ))
+        ), config.toMap())
         file.delete()
     }
 
@@ -70,10 +70,10 @@ class TestQuickStart {
                 Source.from.env() +
                 Source.from.systemProperties()
         )
-        assertEquals(config.toMap(), mapOf(
+        assertEquals(mapOf(
             "server.host" to "127.0.0.1",
             "server.tcpPort" to 8080
-        ))
+        ), config.toMap())
         file.delete()
     }
 
@@ -94,7 +94,7 @@ class TestQuickStart {
             .from.systemProperties()
             .at("server")
         val server = config.toValue<Server>()
-        assertEquals(server, Server(host = "127.0.0.1", tcpPort = 8080))
+        assertEquals(Server(host = "127.0.0.1", tcpPort = 8080), server)
         file.delete()
     }
 
@@ -115,7 +115,7 @@ class TestQuickStart {
                 Source.from.systemProperties()
         )["server"]
         val server = source.toValue<Server>()
-        assertEquals(server, Server(host = "127.0.0.1", tcpPort = 8080))
+        assertEquals(Server(host = "127.0.0.1", tcpPort = 8080), server)
         file.delete()
     }
 }

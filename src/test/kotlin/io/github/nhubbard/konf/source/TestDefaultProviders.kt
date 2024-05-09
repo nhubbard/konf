@@ -20,16 +20,16 @@ package io.github.nhubbard.konf.source
 import io.github.nhubbard.konf.source.helpers.*
 import io.github.nhubbard.konf.source.properties.PropertiesProvider
 import io.github.nhubbard.konf.tempFileOf
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import spark.Service
 import java.net.URI
 import java.util.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -45,25 +45,25 @@ class TestDefaultProviders {
     @Test
     fun testProvider_onProviderSourceFromSystemEnvironment_itShouldReturnSourceThatContainsValueFromSystemEnvironment() {
         val config = subject.env().toConfig()
-        assertEquals(config[item], "env")
+        assertEquals("env", config[item])
     }
 
     @Test
     fun testProvider_onProvideFlattenSourceFromSystemEnvironment_itShouldReturnSourceThatContainsValue() {
         val config = subject.env(nested = false).toFlattenConfig()
-        assertEquals(config[FlattenDefaultLoadersConfig.SOURCE_TEST_TYPE], "env")
+        assertEquals("env", config[FlattenDefaultLoadersConfig.SOURCE_TEST_TYPE])
     }
 
     @Test
     fun testProvider_onProvideSourceFromSystemProperties_itShouldReturnSourceThatContainsValue() {
         System.setProperty(DefaultLoadersConfig.qualify(DefaultLoadersConfig.type), "system")
         val config = subject.systemProperties().toConfig()
-        assertEquals(config[item], "system")
+        assertEquals("system", config[item])
     }
 
     @Test
     fun testProvider_onDispatchProviderBasedOnExtension_itShouldThrowWhenExtensionIsUnsupported() {
-        assertThrows<UnsupportedExtensionException> { subject.dispatchExtension("txt") }
+        assertFailsWith<UnsupportedExtensionException> { subject.dispatchExtension("txt") }
     }
 
     @Test
@@ -81,7 +81,7 @@ class TestDefaultProviders {
         service.get("/source.properties") { _, _ -> propertiesContent }
         service.awaitInitialization()
         val config = subject.url(URI("http://localhost:${service.port()}/source.properties").toURL()).toConfig()
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
         service.stop()
     }
 
@@ -92,20 +92,20 @@ class TestDefaultProviders {
         service.get("/source.properties") { _, _ -> propertiesContent }
         service.awaitInitialization()
         val config = subject.url("http://localhost:${service.port()}/source.properties").toConfig()
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
         service.stop()
     }
 
     @Test
     fun testProvider_onProvideSourceFromFile_itShouldProvideAsAutoDetectedFileFormat() {
         val config = subject.file(tempFileOf(propertiesContent, suffix = ".properties")).toConfig()
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
     }
 
     @Test
     fun testProvider_onProvideSourceFromFilePath_itShouldProvideAsAutoDetectedFileFormat() {
         val file = tempFileOf(propertiesContent, suffix = ".properties")
         val config = subject.file(file.path).toConfig()
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
     }
 }

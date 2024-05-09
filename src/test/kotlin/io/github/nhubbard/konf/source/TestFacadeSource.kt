@@ -20,11 +20,13 @@ package io.github.nhubbard.konf.source
 import io.github.nhubbard.konf.name
 import io.github.nhubbard.konf.source.base.asKVSource
 import io.github.nhubbard.konf.toPath
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -34,8 +36,8 @@ class TestFacadeSource {
         val facadeSource = 1.asSource()
         val fallbackSource = 2.asSource()
         val source = fallbackSource + facadeSource
-        assertEquals(source.info["facade"], facadeSource.description)
-        assertEquals(source.info["fallback"], fallbackSource.description)
+        assertEquals(facadeSource.description, source.info["facade"])
+        assertEquals(fallbackSource.description, source.info["fallback"])
     }
 
     @Test
@@ -47,10 +49,10 @@ class TestFacadeSource {
         val source = fallbackSource + facadeSource
         assertTrue(path in source)
         assertTrue(key in source)
-        assertEquals(source[path].asValue<String>(), facadeSource[path].asValue<String>())
-        assertEquals(source[key].asValue<String>(), facadeSource[key].asValue<String>())
-        assertEquals(source.getOrNull(path)?.asValue<String>(), facadeSource.getOrNull(path)?.asValue<String>())
-        assertEquals(source.getOrNull(key)?.asValue<String>(), facadeSource.getOrNull(key)?.asValue<String>())
+        assertEquals(facadeSource[path].asValue<String>(), source[path].asValue<String>())
+        assertEquals(facadeSource[key].asValue<String>(), source[key].asValue<String>())
+        assertEquals(facadeSource.getOrNull(path)?.asValue<String>(), source.getOrNull(path)?.asValue<String>())
+        assertEquals(facadeSource.getOrNull(key)?.asValue<String>(), source.getOrNull(key)?.asValue<String>())
     }
 
     @Test
@@ -64,10 +66,10 @@ class TestFacadeSource {
         val source = fallbackSource + facadeSource
         assertTrue(path in source)
         assertTrue(key in source)
-        assertEquals(source[path].asValue<String>(), fallbackSource[path].asValue<String>())
-        assertEquals(source[key].asValue<String>(), fallbackSource[key].asValue<String>())
-        assertEquals(source.getOrNull(path)?.asValue<String>(), fallbackSource.getOrNull(path)?.asValue<String>())
-        assertEquals(source.getOrNull(key)?.asValue<String>(), fallbackSource.getOrNull(key)?.asValue<String>())
+        assertEquals(fallbackSource[path].asValue<String>(), source[path].asValue<String>())
+        assertEquals(fallbackSource[key].asValue<String>(), source[key].asValue<String>())
+        assertEquals(fallbackSource.getOrNull(path)?.asValue<String>(), source.getOrNull(path)?.asValue<String>())
+        assertEquals(fallbackSource.getOrNull(key)?.asValue<String>(), source.getOrNull(key)?.asValue<String>())
     }
 
     @Test

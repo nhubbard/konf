@@ -19,11 +19,11 @@ package io.github.nhubbard.konf.source
 
 import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.FlattenDefaultLoadersConfig
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -33,6 +33,6 @@ class TestDefaultLoadersWithFlattenEnv {
         val config = Config {
             addSpec(FlattenDefaultLoadersConfig)
         }.from.env(nested = false)
-        assertEquals(config[FlattenDefaultLoadersConfig.SOURCE_TEST_TYPE], "env")
+        assertEquals("env", config[FlattenDefaultLoadersConfig.SOURCE_TEST_TYPE])
     }
 }

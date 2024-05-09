@@ -26,12 +26,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import spark.Service
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -47,35 +47,35 @@ class TestLoader {
     @Test
     fun testLoader_itShouldForkFromParentConfig() {
         val subject = provider()
-        assertEquals(subject.config, parentConfig)
+        assertEquals(parentConfig, subject.config)
     }
 
     @Test
     fun testLoader_onLoadFromReader_itShouldReturnCorrectValues() {
         val subject = provider()
         val config = subject.reader("type = reader".reader())
-        assertEquals(config[SourceType.type], "reader")
+        assertEquals("reader", config[SourceType.type])
     }
 
     @Test
     fun testLoader_onLoadFromInputStream_itShouldReturnCorrectValues() {
         val subject = provider()
         val config = subject.inputStream(tempFileOf("type = inputStream").inputStream())
-        assertEquals(config[SourceType.type], "inputStream")
+        assertEquals("inputStream", config[SourceType.type])
     }
 
     @Test
     fun testLoader_onLoadFromFile_itShouldReturnCorrectValues() {
         val subject = provider()
         val config = subject.file(tempFileOf("type = file"))
-        assertEquals(config[SourceType.type], "file")
+        assertEquals("file", config[SourceType.type])
     }
 
     @Test
     fun testLoader_onLoadFromFilePath_itShouldReturnCorrectValues() {
         val subject = provider()
         val config = subject.file(tempFileOf("type = file").toString())
-        assertEquals(config[SourceType.type], "file")
+        assertEquals("file", config[SourceType.type])
     }
 
     @Test
@@ -87,8 +87,8 @@ class TestLoader {
         file.writeText("type = newValue")
         runBlocking(Dispatchers.Sequential) { delay(TimeUnit.SECONDS.toMillis(1)) }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
@@ -102,8 +102,8 @@ class TestLoader {
         file.writeText("type = newValue")
         runBlocking(Dispatchers.Sequential) { delay(TimeUnit.SECONDS.toMillis(1)) }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
         System.setProperty("os.name", os)
     }
 
@@ -116,8 +116,8 @@ class TestLoader {
         file.writeText("type = newValue")
         runBlocking(Dispatchers.Sequential) { delay(TimeUnit.SECONDS.toMillis(5)) }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
@@ -133,7 +133,7 @@ class TestLoader {
         ) { config, _ -> newValue = config[SourceType.type] }
         file.writeText("type = newValue")
         runBlocking(Dispatchers.Sequential) { delay(TimeUnit.SECONDS.toMillis(1)) }
-        assertEquals(newValue, "newValue")
+        assertEquals("newValue", newValue)
     }
 
     @Test
@@ -147,8 +147,8 @@ class TestLoader {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
@@ -160,29 +160,29 @@ class TestLoader {
         file.writeText("type = newValue")
         runBlocking(Dispatchers.Sequential) { delay(TimeUnit.SECONDS.toMillis(5)) }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
     fun testLoader_onLoadFromString_itShouldHaveCorrectValue() {
         val subject = provider()
         val config = subject.string("type = string")
-        assertEquals(config[SourceType.type], "string")
+        assertEquals("string", config[SourceType.type])
     }
 
     @Test
     fun testLoader_onLoadFromByteArray_itShouldHaveCorrectValue() {
         val subject = provider()
         val config = subject.bytes("type = bytes".toByteArray())
-        assertEquals(config[SourceType.type], "bytes")
+        assertEquals("bytes", config[SourceType.type])
     }
 
     @Test
     fun testLoader_onLoadFromByteArraySlice_itShouldHaveCorrectValue() {
         val subject = provider()
         val config = subject.bytes("|type = slice|".toByteArray(), 1, 12)
-        assertEquals(config[SourceType.type], "slice")
+        assertEquals("slice", config[SourceType.type])
     }
 
     @Test
@@ -193,7 +193,7 @@ class TestLoader {
         service.get("/source") { _, _ -> "type = http" }
         service.awaitInitialization()
         val config = subject.url("http://localhost:${service.port()}/source")
-        assertEquals(config[SourceType.type], "http")
+        assertEquals("http", config[SourceType.type])
         service.stop()
     }
 
@@ -202,7 +202,7 @@ class TestLoader {
         val subject = provider()
         val file = tempFileOf("type = fileUrl")
         val config = subject.url(file.toURI().toURL())
-        assertEquals(config[SourceType.type], "fileUrl")
+        assertEquals("fileUrl", config[SourceType.type])
     }
 
     @Test
@@ -210,7 +210,7 @@ class TestLoader {
         val subject = provider()
         val url = tempFileOf("type = fileUrl").toURI().toURL().toString()
         val config = subject.url(url)
-        assertEquals(config[SourceType.type], "fileUrl")
+        assertEquals("fileUrl", config[SourceType.type])
     }
 
     @Test
@@ -227,8 +227,8 @@ class TestLoader {
         content = "type = newValue"
         runBlocking(Dispatchers.Sequential) { delay(TimeUnit.SECONDS.toMillis(5)) }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
         service.stop()
     }
 
@@ -243,8 +243,8 @@ class TestLoader {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
@@ -258,8 +258,8 @@ class TestLoader {
             delay(TimeUnit.SECONDS.toMillis(5))
         }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
@@ -276,8 +276,8 @@ class TestLoader {
         val originalValue = config[SourceType.type]
         file.writeText("type = newValue")
         runBlocking(Dispatchers.Sequential) { delay(TimeUnit.SECONDS.toMillis(1)) }
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
@@ -292,8 +292,8 @@ class TestLoader {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
@@ -306,21 +306,21 @@ class TestLoader {
         file.writeText("type = newValue")
         runBlocking(Dispatchers.Sequential) { delay(TimeUnit.SECONDS.toMillis(5)) }
         val newValue = config[SourceType.type]
-        assertEquals(originalValue, "originalValue")
-        assertEquals(newValue, "newValue")
+        assertEquals("originalValue", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @Test
     fun testLoader_onLoadFromResource_itShouldHaveCorrectValue() {
         val subject = provider()
         val config = subject.resource("source/provider.properties")
-        assertEquals(config[SourceType.type], "resource")
+        assertEquals("resource", config[SourceType.type])
     }
 
     @Test
     fun testLoader_onLoadFromMissingResource_itShouldThrow() {
         val subject = provider()
-        assertThrows<SourceNotFoundException> {
+        assertFailsWith<SourceNotFoundException> {
             subject.resource("source/no-provider.properties")
         }
     }

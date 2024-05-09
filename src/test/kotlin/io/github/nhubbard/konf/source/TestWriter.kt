@@ -21,8 +21,6 @@ import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.ConfigSpec
 import io.github.nhubbard.konf.source.properties.toProperties
 import io.github.nhubbard.konf.tempFile
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
@@ -30,6 +28,8 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.ByteArrayOutputStream
 import java.io.StringWriter
 import java.nio.charset.Charset
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -53,14 +53,14 @@ class TestWriter {
     fun testWriter_onSaveToString_itShouldReturnAStringWhichContainsContentFromConfig() {
         val subject = provider()
         val string = subject.toText()
-        assertEquals(string, expectedString)
+        assertEquals(expectedString, string)
     }
 
     @Test
     fun testWriter_onSaveToByteArray_itShouldReturnAByteArrayWhichContainsContentFromConfig() {
         val subject = provider()
         val byteArray = subject.toBytes()
-        assertEquals(byteArray.toString(Charset.defaultCharset()), expectedString)
+        assertEquals(expectedString, byteArray.toString(Charset.defaultCharset()))
     }
 
     @Test
@@ -68,7 +68,7 @@ class TestWriter {
         val subject = provider()
         val writer = StringWriter()
         subject.toWriter(writer)
-        assertEquals(writer.toString(), expectedString)
+        assertEquals(expectedString, writer.toString())
     }
 
     @Test
@@ -76,7 +76,7 @@ class TestWriter {
         val subject = provider()
         val outputStream = ByteArrayOutputStream()
         subject.toOutputStream(outputStream)
-        assertEquals(outputStream.toString(), expectedString)
+        assertEquals(expectedString, outputStream.toString())
     }
 
     @Test
@@ -84,7 +84,7 @@ class TestWriter {
         val subject = provider()
         val file = tempFile()
         subject.toFile(file)
-        assertEquals(file.readText(), expectedString)
+        assertEquals(expectedString, file.readText())
         assertTrue(file.delete())
     }
 
@@ -94,6 +94,6 @@ class TestWriter {
         val file = tempFile()
         val path = file.toString()
         subject.toFile(path)
-        assertEquals(file.readText(), expectedString)
+        assertEquals(expectedString, file.readText())
     }
 }

@@ -45,9 +45,7 @@ db:
 
     @Test
     fun testLoadFromMultipleSources_itShouldCastToValueCorrectly() {
-        val config = Config {
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        }
+        val config = Config { mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) }
             .from.yaml.string(yamlContent)
             .from.yaml.file(
                 System.getenv("SERVICE_CONFIG")

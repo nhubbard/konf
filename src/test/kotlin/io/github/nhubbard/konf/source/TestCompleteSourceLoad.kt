@@ -37,7 +37,6 @@ import io.github.nhubbard.konf.source.xml.toXml
 import io.github.nhubbard.konf.source.xml.xml
 import io.github.nhubbard.konf.source.yaml.toYaml
 import io.github.nhubbard.konf.source.yaml.yaml
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
@@ -49,11 +48,13 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.nio.file.Paths
 import java.time.*
 import java.util.*
 import java.util.stream.Stream
-import kotlin.io.path.writeText
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -64,36 +65,34 @@ class TestCompleteSourceLoad {
         val subject = provider()
         assertNull(subject[ConfigForLoad.empty])
         assertNull(subject[ConfigForLoad.literalEmpty])
-        assertEquals(subject[ConfigForLoad.present], 1)
-        assertEquals(subject[ConfigForLoad.boolean], false)
+        assertEquals(1, subject[ConfigForLoad.present])
+        assertEquals(false, subject[ConfigForLoad.boolean])
 
-        assertEquals(subject[ConfigForLoad.int], 1)
-        assertEquals(subject[ConfigForLoad.short], 2.toShort())
-        assertEquals(subject[ConfigForLoad.byte], 3.toByte())
-        assertEquals(subject[ConfigForLoad.bigInteger], 4.toBigInteger())
-        assertEquals(subject[ConfigForLoad.long], 4L)
+        assertEquals(1, subject[ConfigForLoad.int])
+        assertEquals(2.toShort(), subject[ConfigForLoad.short])
+        assertEquals(3.toByte(), subject[ConfigForLoad.byte])
+        assertEquals(4.toBigInteger(), subject[ConfigForLoad.bigInteger])
+        assertEquals(4L, subject[ConfigForLoad.long])
 
-        assertEquals(subject[ConfigForLoad.double], 1.5)
-        assertEquals(subject[ConfigForLoad.float], -1.5f)
-        assertEquals(subject[ConfigForLoad.bigDecimal], 1.5.toBigDecimal())
+        assertEquals(1.5, subject[ConfigForLoad.double])
+        assertEquals(-1.5f, subject[ConfigForLoad.float])
+        assertEquals(1.5.toBigDecimal(), subject[ConfigForLoad.bigDecimal])
 
-        assertEquals(subject[ConfigForLoad.char], 'a')
+        assertEquals('a', subject[ConfigForLoad.char])
 
-        assertEquals(subject[ConfigForLoad.string], "string")
-        assertEquals(subject[ConfigForLoad.offsetTime], OffsetTime.parse("10:15:30+01:00"))
-        assertEquals(subject[ConfigForLoad.offsetDateTime], OffsetDateTime.parse("2007-12-03T10:15:30+01:00"))
+        assertEquals("string", subject[ConfigForLoad.string])
+        assertEquals(OffsetTime.parse("10:15:30+01:00"), subject[ConfigForLoad.offsetTime])
+        assertEquals(OffsetDateTime.parse("2007-12-03T10:15:30+01:00"), subject[ConfigForLoad.offsetDateTime])
         assertEquals(
-            subject[ConfigForLoad.zonedDateTime],
-            ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]")
+            ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]"),
+            subject[ConfigForLoad.zonedDateTime]
         )
-        assertEquals(subject[ConfigForLoad.localDate], LocalDate.parse("2007-12-03"))
-        assertEquals(subject[ConfigForLoad.localTime], LocalTime.parse("10:15:30"))
-        assertEquals(subject[ConfigForLoad.localDateTime], LocalDateTime.parse("2007-12-03T10:15:30"))
-        assertEquals(subject[ConfigForLoad.date], Date.from(Instant.parse("2007-12-03T10:15:30Z")))
-        assertEquals(subject[ConfigForLoad.year], Year.parse("2007"))
-        assertEquals(subject[ConfigForLoad.yearMonth], YearMonth.parse("2007-12"))
-        // Realized that I should have been putting the expected value first.
-        // I already knew this. But now I can't really stop.
+        assertEquals(LocalDate.parse("2007-12-03"), subject[ConfigForLoad.localDate])
+        assertEquals(LocalTime.parse("10:15:30"), subject[ConfigForLoad.localTime])
+        assertEquals(LocalDateTime.parse("2007-12-03T10:15:30"), subject[ConfigForLoad.localDateTime])
+        assertEquals(Date.from(Instant.parse("2007-12-03T10:15:30Z")), subject[ConfigForLoad.date])
+        assertEquals(Year.parse("2007"), subject[ConfigForLoad.year])
+        assertEquals(YearMonth.parse("2007-12"), subject[ConfigForLoad.yearMonth])
         assertEquals(Instant.parse("2007-12-03T10:15:30.00Z"), subject[ConfigForLoad.instant])
         assertEquals(Duration.parse("P2DT3H4M"), subject[ConfigForLoad.duration])
         assertEquals(Duration.ofMillis(200), subject[ConfigForLoad.simpleDuration])
@@ -101,26 +100,26 @@ class TestCompleteSourceLoad {
 
         assertEquals(EnumForLoad.LABEL2, subject[ConfigForLoad.enum])
 
-        assertArrayEquals(booleanArrayOf(true, false), subject[ConfigForLoad.booleanArray])
-        assertArrayEquals(byteArrayOf(1, 2, 3), subject[ConfigForLoad.byteArray])
-        assertArrayEquals(shortArrayOf(1, 2, 3), subject[ConfigForLoad.shortArray])
-        assertArrayEquals(intArrayOf(1, 2, 3), subject[ConfigForLoad.intArray])
-        assertArrayEquals(longArrayOf(4, 5, 6), subject[ConfigForLoad.longArray])
-        assertArrayEquals(floatArrayOf(-1.0F, 0.0F, 1.0F), subject[ConfigForLoad.floatArray])
-        assertArrayEquals(doubleArrayOf(-1.0, 0.0, 1.0), subject[ConfigForLoad.doubleArray])
-        assertArrayEquals(charArrayOf('a', 'b', 'c'), subject[ConfigForLoad.charArray])
+        assertContentEquals(booleanArrayOf(true, false), subject[ConfigForLoad.booleanArray])
+        assertContentEquals(byteArrayOf(1, 2, 3), subject[ConfigForLoad.byteArray])
+        assertContentEquals(shortArrayOf(1, 2, 3), subject[ConfigForLoad.shortArray])
+        assertContentEquals(intArrayOf(1, 2, 3), subject[ConfigForLoad.intArray])
+        assertContentEquals(longArrayOf(4, 5, 6), subject[ConfigForLoad.longArray])
+        assertContentEquals(floatArrayOf(-1.0F, 0.0F, 1.0F), subject[ConfigForLoad.floatArray])
+        assertContentEquals(doubleArrayOf(-1.0, 0.0, 1.0), subject[ConfigForLoad.doubleArray])
+        assertContentEquals(charArrayOf('a', 'b', 'c'), subject[ConfigForLoad.charArray])
 
-        assertArrayEquals(arrayOf(true, false), subject[ConfigForLoad.booleanObjectArray])
-        assertArrayEquals(arrayOf(1, 2, 3), subject[ConfigForLoad.intObjectArray])
-        assertArrayEquals(arrayOf("one", "two", "three"), subject[ConfigForLoad.stringArray])
-        assertArrayEquals(
+        assertContentEquals(arrayOf(true, false), subject[ConfigForLoad.booleanObjectArray])
+        assertContentEquals(arrayOf(1, 2, 3), subject[ConfigForLoad.intObjectArray])
+        assertContentEquals(arrayOf("one", "two", "three"), subject[ConfigForLoad.stringArray])
+        assertContentEquals(
             arrayOf(EnumForLoad.LABEL1, EnumForLoad.LABEL2, EnumForLoad.LABEL3),
             subject[ConfigForLoad.enumArray]
         )
 
         assertEquals(listOf(1, 2, 3), subject[ConfigForLoad.list])
 
-        assertTrue(subject[ConfigForLoad.mutableList].toTypedArray().contentEquals(arrayOf(1, 2, 3)))
+        assertContentEquals(arrayOf(1, 2, 3), subject[ConfigForLoad.mutableList].toTypedArray())
 
         assertEquals(listOf(listOf(1, 2), listOf(3, 4)), subject[ConfigForLoad.listOfList])
 
@@ -135,7 +134,7 @@ class TestCompleteSourceLoad {
         assertEquals("c", subject[ConfigForLoad.sortedMap].lastKey())
         assertEquals(listOf(mapOf("a" to 1, "b" to 2), mapOf("a" to 3, "b" to 4)), subject[ConfigForLoad.listOfMap])
 
-        assertTrue(subject[ConfigForLoad.nested].contentEquals(arrayOf(listOf(setOf(mapOf("a" to 1))))))
+        assertContentEquals(arrayOf(listOf(setOf(mapOf("a" to 1)))), subject[ConfigForLoad.nested])
 
         assertEquals(1 to 2, subject[ConfigForLoad.pair])
 
@@ -199,7 +198,7 @@ class TestCompleteSourceLoad {
         assertEquals(classForLoad.simpleDuration, subject[ConfigForLoad.clazz].simpleDuration)
         assertEquals(classForLoad.size, subject[ConfigForLoad.clazz].size)
         assertEquals(classForLoad.enum, subject[ConfigForLoad.clazz].enum)
-        assertTrue(subject[ConfigForLoad.clazz].booleanArray.contentEquals(classForLoad.booleanArray))
+        assertContentEquals(classForLoad.booleanArray, subject[ConfigForLoad.clazz].booleanArray)
         assertTrue(subject[ConfigForLoad.clazz].nested.contentDeepEquals(classForLoad.nested))
     }
 
@@ -264,10 +263,10 @@ class TestCompleteSourceLoad {
             singleElementList = listOf(1),
             multipleElementsList = listOf(1, 2)
         )
-        assertEquals(emptyList<Int>(), subject[FlatConfigForLoad.emptyList])
-        assertEquals(emptySet<Int>(), subject[FlatConfigForLoad.emptySet])
-        assertTrue(subject[FlatConfigForLoad.emptyArray].contentEquals(intArrayOf()))
-        assertTrue(subject[FlatConfigForLoad.emptyObjectArray].contentEquals(arrayOf()))
+        assertEquals(emptyList(), subject[FlatConfigForLoad.emptyList])
+        assertEquals(emptySet(), subject[FlatConfigForLoad.emptySet])
+        assertContentEquals(intArrayOf(), subject[FlatConfigForLoad.emptyArray])
+        assertContentEquals(arrayOf(), subject[FlatConfigForLoad.emptyObjectArray])
         assertEquals(listOf(1), subject[FlatConfigForLoad.singleElementList])
         assertEquals(listOf(1, 2), subject[FlatConfigForLoad.multipleElementsList])
         assertEquals(classForLoad.stringWithComma, subject[FlatConfigForLoad.flatClass].stringWithComma)

@@ -20,9 +20,7 @@ package io.github.nhubbard.konf.source
 import io.github.nhubbard.konf.singleArgumentsOf
 import io.github.nhubbard.konf.source.properties.PropertiesProvider
 import io.github.nhubbard.konf.tempFileOf
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
@@ -35,6 +33,8 @@ import java.io.IOException
 import java.net.URI
 import java.util.stream.Stream
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -52,7 +52,7 @@ class TestProvider {
     fun testProvider_onCreateSourceFromReader_itShouldReturnASourceWithValueFromReader(provider: () -> Provider) {
         val subject = provider()
         val source = subject.reader("type = reader".reader())
-        assertEquals(source["type"].asValue<String>(), "reader")
+        assertEquals("reader", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
@@ -62,7 +62,7 @@ class TestProvider {
         val source = subject.inputStream(
             tempFileOf("type = inputStream").inputStream()
         )
-        assertEquals(source["type"].asValue<String>(), "inputStream")
+        assertEquals("inputStream", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
@@ -71,8 +71,8 @@ class TestProvider {
         val subject = provider()
         val file = tempFileOf("type = file")
         val source = subject.file(file)
-        assertEquals(source.info["file"], file.toString())
-        assertEquals(source["type"].asValue<String>(), "file")
+        assertEquals(file.toString(), source.info["file"])
+        assertEquals("file", source["type"].asValue<String>())
         assertTrue(file.delete())
     }
 
@@ -80,7 +80,7 @@ class TestProvider {
     @MethodSource("providerSource")
     fun testProvider_onCreateSourceFromNonExistentFile_itShouldThrowException(provider: () -> Provider) {
         val subject = provider()
-        assertThrows<FileNotFoundException> {
+        assertFailsWith<FileNotFoundException> {
             subject.file(File("not_existed.json"))
         }
     }
@@ -89,7 +89,7 @@ class TestProvider {
     @MethodSource("providerSource")
     fun testProvider_onCreateSourceFromNonExistentFile_itShouldReturnAnEmptySourceIfOptional(provider: () -> Provider) {
         val subject = provider()
-        assertEquals(subject.file(File("not_existed.json"), optional = true).tree.children, mutableMapOf())
+        assertEquals(mutableMapOf(), subject.file(File("not_existed.json"), optional = true).tree.children)
     }
 
     @ParameterizedTest
@@ -98,15 +98,15 @@ class TestProvider {
         val subject = provider()
         val file = tempFileOf("type = file").toString()
         val source = subject.file(file)
-        assertEquals(source.info["file"], file)
-        assertEquals(source["type"].asValue<String>(), "file")
+        assertEquals(file, source.info["file"])
+        assertEquals("file", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
     @MethodSource("providerSource")
     fun testProvider_onCreateSourceFromNonExistentFilePath_itShouldThrowException(provider: () -> Provider) {
         val subject = provider()
-        assertThrows<FileNotFoundException> {
+        assertFailsWith<FileNotFoundException> {
             subject.file("non_existed.json")
         }
     }
@@ -115,7 +115,7 @@ class TestProvider {
     @MethodSource("providerSource")
     fun testProvider_onCreateSourceFromNonExistentFilePath_itShouldReturnAnEmptySourceIfOptional(provider: () -> Provider) {
         val subject = provider()
-        assertEquals(subject.file("not_existed.json", optional = true).tree.children, mutableMapOf())
+        assertEquals(mutableMapOf(), subject.file("not_existed.json", optional = true).tree.children)
     }
 
     @ParameterizedTest
@@ -124,8 +124,8 @@ class TestProvider {
         val subject = provider()
         val content = "type = string"
         val source = subject.string(content)
-        assertEquals(source.info["content"], "\"\n$content\n\"")
-        assertEquals(source["type"].asValue<String>(), "string")
+        assertEquals("\"\n$content\n\"", source.info["content"])
+        assertEquals("string", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
@@ -133,7 +133,7 @@ class TestProvider {
     fun testProvider_onCreateSourceFromByteArray_itShouldReturnASourceWhichContainsTheValueInTheByteArray(provider: () -> Provider) {
         val subject = provider()
         val source = subject.bytes("type = bytes".toByteArray())
-        assertEquals(source["type"].asValue<String>(), "bytes")
+        assertEquals("bytes", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
@@ -141,7 +141,7 @@ class TestProvider {
     fun testProvider_onCreateSourceFromByteArraySlice_itShouldReturnASourceWhichContainsTheValueInTheByteArraySlice(provider: () -> Provider) {
         val subject = provider()
         val source = subject.bytes("|type = slice|".toByteArray(), 1, 12)
-        assertEquals(source["type"].asValue<String>(), "slice")
+        assertEquals("slice", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
@@ -154,7 +154,7 @@ class TestProvider {
         service.awaitInitialization()
         val urlPath = "http://localhost:${service.port()}/source"
         val source = subject.url(URI(urlPath).toURL())
-        assertEquals(source.info["url"], urlPath)
+        assertEquals(urlPath, source.info["url"])
         service.stop()
     }
 
@@ -168,7 +168,7 @@ class TestProvider {
         service.awaitInitialization()
         val urlPath = "http://localhost:${service.port()}/source"
         val source = subject.url(URI(urlPath).toURL())
-        assertEquals(source["type"].asValue<String>(), "http")
+        assertEquals("http", source["type"].asValue<String>())
         service.stop()
     }
 
@@ -176,7 +176,7 @@ class TestProvider {
     @MethodSource("providerSource")
     fun testProvider_onCreateSourceFromNonExistentURL_itShouldThrow(provider: () -> Provider) {
         val subject = provider()
-        assertThrows<IOException> { subject.url(URI("http://localhost/not_existed.json").toURL()) }
+        assertFailsWith<IOException> { subject.url(URI("http://localhost/not_existed.json").toURL()) }
     }
 
     @ParameterizedTest
@@ -184,8 +184,8 @@ class TestProvider {
     fun testProvider_onCreateSourceFromNonExistentURL_itShouldReturnEmptySourceForOptional(provider: () -> Provider) {
         val subject = provider()
         assertEquals(
-            subject.url(URI("http://localhost/not_existed.json").toURL(), optional = true).tree.children,
-            mutableMapOf()
+            mutableMapOf(),
+            subject.url(URI("http://localhost/not_existed.json").toURL(), optional = true).tree.children
         )
     }
 
@@ -196,7 +196,7 @@ class TestProvider {
         val file = tempFileOf("type = fileUrl")
         val url = file.toURI().toURL()
         val source = subject.url(url)
-        assertEquals(source.info["url"], url.toString())
+        assertEquals(url.toString(), source.info["url"])
     }
 
     @ParameterizedTest
@@ -206,7 +206,7 @@ class TestProvider {
         val file = tempFileOf("type = fileUrl")
         val url = file.toURI().toURL()
         val source = subject.url(url)
-        assertEquals(source["type"].asValue<String>(), "fileUrl")
+        assertEquals("fileUrl", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
@@ -223,7 +223,7 @@ class TestProvider {
     @MethodSource("providerSource")
     fun testProvider_onCreateSourceFromNonExistentFileUrl_itShouldThrow(provider: () -> Provider) {
         val subject = provider()
-        assertThrows<FileNotFoundException> { subject.url(URI("file://localhost/not_existed.json").toURL()) }
+        assertFailsWith<FileNotFoundException> { subject.url(URI("file://localhost/not_existed.json").toURL()) }
     }
 
     @ParameterizedTest
@@ -231,8 +231,8 @@ class TestProvider {
     fun testProvider_onCreateSourceFromNonExistentFileUrl_itShouldReturnEmptySourceIfOptional(provider: () -> Provider) {
         val subject = provider()
         assertEquals(
-            subject.url(URI("file://localhost/not_existed.json").toURL(), optional = true).tree.children,
-            mutableMapOf()
+            mutableMapOf(),
+            subject.url(URI("file://localhost/not_existed.json").toURL(), optional = true).tree.children
         )
     }
 
@@ -243,7 +243,7 @@ class TestProvider {
         val file = tempFileOf("type = fileUrl")
         val url = file.toURI().toURL().toString()
         val source = subject.url(url)
-        assertEquals(source.info["url"], url)
+        assertEquals(url, source.info["url"])
     }
 
     @ParameterizedTest
@@ -253,14 +253,14 @@ class TestProvider {
         val file = tempFileOf("type = fileUrl")
         val url = file.toURI().toURL().toString()
         val source = subject.url(url)
-        assertEquals(source["type"].asValue<String>(), "fileUrl")
+        assertEquals("fileUrl", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
     @MethodSource("providerSource")
     fun testProvider_onCreateSourceFromMissingFileURLString_itShouldThrow(provider: () -> Provider) {
         val subject = provider()
-        assertThrows<FileNotFoundException> { subject.url("file://localhost/not_existed.json") }
+        assertFailsWith<FileNotFoundException> { subject.url("file://localhost/not_existed.json") }
     }
 
     @ParameterizedTest
@@ -268,8 +268,8 @@ class TestProvider {
     fun testProvider_onCreateSourceFromMissingFileURLString_itShouldReturnEmptySourceIfOptional(provider: () -> Provider) {
         val subject = provider()
         assertEquals(
-            subject.url(URI("file://localhost/not_existed.json").toURL(), optional = true).tree.children,
-            mutableMapOf()
+            mutableMapOf(),
+            subject.url(URI("file://localhost/not_existed.json").toURL(), optional = true).tree.children
         )
     }
 
@@ -279,7 +279,7 @@ class TestProvider {
         val subject = provider()
         val resource = "source/provider.properties"
         val source = subject.resource(resource)
-        assertEquals(source.info["resource"], resource)
+        assertEquals(resource, source.info["resource"])
     }
 
     @ParameterizedTest
@@ -288,14 +288,14 @@ class TestProvider {
         val subject = provider()
         val resource = "source/provider.properties"
         val source = subject.resource(resource)
-        assertEquals(source["type"].asValue<String>(), "resource")
+        assertEquals("resource", source["type"].asValue<String>())
     }
 
     @ParameterizedTest
     @MethodSource("providerSource")
     fun testProvider_onCreateSourceFromMissingResource_itShouldThrow(provider: () -> Provider) {
         val subject = provider()
-        assertThrows<SourceNotFoundException> { subject.resource("source/no-provider.properties") }
+        assertFailsWith<SourceNotFoundException> { subject.resource("source/no-provider.properties") }
     }
 
     @ParameterizedTest
@@ -303,8 +303,8 @@ class TestProvider {
     fun testProvider_onCreateSourceFromMissingResource_itShouldReturnAnEmptySourceIfOptional(provider: () -> Provider) {
         val subject = provider()
         assertEquals(
-            subject.resource("source/no-provider.properties", optional = true).tree.children,
-            mutableMapOf()
+            mutableMapOf(),
+            subject.resource("source/no-provider.properties", optional = true).tree.children
         )
     }
 }

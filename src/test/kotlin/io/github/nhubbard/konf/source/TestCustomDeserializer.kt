@@ -22,11 +22,11 @@ import io.github.nhubbard.konf.source.helpers.CustomDeserializerConfig
 import io.github.nhubbard.konf.source.helpers.VariantA
 import io.github.nhubbard.konf.source.helpers.VariantB
 import io.github.nhubbard.konf.source.helpers.customDeserializerLoadContent
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -38,7 +38,7 @@ class TestCustomDeserializer {
         }.from.map.kv(customDeserializerLoadContent)
         val variantA = VariantA(1)
         val variantB = VariantB(2.0)
-        assertEquals(subject[CustomDeserializerConfig.variantA], variantA)
-        assertEquals(subject[CustomDeserializerConfig.variantB], variantB)
+        assertEquals(variantA, subject[CustomDeserializerConfig.variantA])
+        assertEquals(variantB, subject[CustomDeserializerConfig.variantB])
     }
 }

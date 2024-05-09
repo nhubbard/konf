@@ -28,7 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
@@ -40,6 +39,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Stream
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -83,7 +83,7 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromEnvMap_itShouldHaveCorrectValues(provider: () -> DefaultLoaders) {
         val subject = provider()
         val config = subject.envMap(mapOf("SOURCE_TEST_TYPE" to "env"))
-        assertEquals(config[item], "env")
+        assertEquals("env", config[item])
     }
 
     @ParameterizedTest
@@ -91,7 +91,7 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromSysEnv_itShouldHaveCorrectValues(provider: () -> DefaultLoaders) {
         val subject = provider()
         val config = subject.env()
-        assertEquals(config[item], "env")
+        assertEquals("env", config[item])
     }
 
     @ParameterizedTest
@@ -100,14 +100,14 @@ class TestDefaultLoaders {
         val subject = provider()
         System.setProperty(DefaultLoadersConfig.qualify(DefaultLoadersConfig.type), "system")
         val config = subject.systemProperties()
-        assertEquals(config[item], "system")
+        assertEquals("system", config[item])
     }
 
     @ParameterizedTest
     @MethodSource("defaultLoadersSource")
     fun testLoader_onDispatchLoaderBasedOnExtension_itShouldThrowUnsupportedExtensionExceptionOnUnsupported(provider: () -> DefaultLoaders) {
         val subject = provider()
-        assertThrows<UnsupportedExtensionException> {
+        assertFailsWith<UnsupportedExtensionException> {
             subject.dispatchExtension("txt")
         }
     }
@@ -127,7 +127,7 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromProvider_itShouldLoadWithTheProvider(provider: () -> DefaultLoaders) {
         val subject = provider()
         val config = subject.source(PropertiesProvider).file(tempFileOf(propertiesContent, suffix = ".properties"))
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
     }
 
     @ParameterizedTest
@@ -135,7 +135,7 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromProvider_itShouldBuildANewLayerOnTheParentConfig(provider: () -> DefaultLoaders) {
         val subject = provider()
         val config = subject.source(PropertiesProvider).file(tempFileOf(propertiesContent, suffix = ".properties"))
-        assertSame(config.parent!!, subject.config)
+        assertSame(subject.config, config.parent!!)
     }
 
     @ParameterizedTest
@@ -147,7 +147,7 @@ class TestDefaultLoaders {
         service.get("/source.properties") { _, _ -> propertiesContent }
         service.awaitInitialization()
         val config = subject.url(URI("http://localhost:${service.port()}/source.properties").toURL())
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
         service.stop()
     }
 
@@ -160,7 +160,7 @@ class TestDefaultLoaders {
         service.get("/source.properties") { _, _ -> propertiesContent }
         service.awaitInitialization()
         val config = subject.url("http://localhost:${service.port()}/source.properties")
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
         service.stop()
     }
 
@@ -169,7 +169,7 @@ class TestDefaultLoaders {
     fun testLoader_onLoadFromFile_itShouldLoadAsAutoDetectedFileFormat(provider: () -> DefaultLoaders) {
         val subject = provider()
         val config = subject.file(tempFileOf(propertiesContent, suffix = ".properties"))
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
     }
 
     @ParameterizedTest
@@ -178,7 +178,7 @@ class TestDefaultLoaders {
         val subject = provider()
         val file = tempFileOf(propertiesContent, suffix = ".properties")
         val config = subject.file(file.path)
-        assertEquals(config[item], "properties")
+        assertEquals("properties", config[item])
     }
 
     @ParameterizedTest
@@ -193,8 +193,8 @@ class TestDefaultLoaders {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
         val newValue = config[item]
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -209,8 +209,8 @@ class TestDefaultLoaders {
             delay(TimeUnit.SECONDS.toMillis(5))
         }
         val newValue = config[item]
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -231,7 +231,7 @@ class TestDefaultLoaders {
         runBlocking(Dispatchers.Sequential) {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
-        assertEquals(newValue, "newValue")
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -246,8 +246,8 @@ class TestDefaultLoaders {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
         val newValue = config[item]
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -262,8 +262,8 @@ class TestDefaultLoaders {
             delay(TimeUnit.SECONDS.toMillis(5))
         }
         val newValue = config[item]
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -283,8 +283,8 @@ class TestDefaultLoaders {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
         val newValue = config[item]
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -304,8 +304,8 @@ class TestDefaultLoaders {
             delay(TimeUnit.SECONDS.toMillis(5))
         }
         val newValue = config[item]
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -325,8 +325,8 @@ class TestDefaultLoaders {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
         val newValue = config[item]
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -346,8 +346,8 @@ class TestDefaultLoaders {
             delay(TimeUnit.SECONDS.toMillis(5))
         }
         val newValue = config[item]
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
@@ -374,14 +374,14 @@ class TestDefaultLoaders {
         runBlocking(Dispatchers.Sequential) {
             delay(TimeUnit.SECONDS.toMillis(1))
         }
-        assertEquals(originalValue, "properties")
-        assertEquals(newValue, "newValue")
+        assertEquals("properties", originalValue)
+        assertEquals("newValue", newValue)
     }
 
     @ParameterizedTest
     @MethodSource("defaultLoadersSource")
     fun testLoader_onLoadFromMap_itShouldUseTheSameConfig(provider: () -> DefaultLoaders) {
         val subject = provider()
-        assertSame(subject.config, subject.map.config)
+        assertSame(subject.map.config, subject.config)
     }
 }

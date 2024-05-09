@@ -21,11 +21,11 @@ import io.github.nhubbard.konf.Config
 import io.github.nhubbard.konf.source.helpers.ServicingConfig
 import io.github.nhubbard.konf.source.helpers.mergeSourcesWithDifferentFeaturesContent
 import io.github.nhubbard.konf.source.hocon.hocon
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Execution(ExecutionMode.CONCURRENT)
@@ -34,10 +34,8 @@ class TestMergeSourcesWithDifferentFeatures {
     fun testLoadFromMergedSource_itShouldContainTheItem() {
         val config = Config {
             addSpec(ServicingConfig)
-        }.withSource(
-            Source.from.hocon.string(mergeSourcesWithDifferentFeaturesContent) + Source.from.env()
-        )
-        assertEquals(config[ServicingConfig.baseURL], "https://service/api")
-        assertEquals(config[ServicingConfig.url], "https://service/api/index.html")
+        }.withSource(Source.from.hocon.string(mergeSourcesWithDifferentFeaturesContent) + Source.from.env())
+        assertEquals("https://service/api", config[ServicingConfig.baseURL])
+        assertEquals("https://service/api/index.html", config[ServicingConfig.url])
     }
 }
