@@ -42,7 +42,7 @@ class TestJsWriter {
     private val expectedString =
         """({
         |  key: "value"
-        |})""".trimMargin().replace("\n", System.lineSeparator())
+        |})""".trimMargin()
 
     @Test
     fun testJsWriter_onSaveToWriter_itShouldReturnWriterWithContentFromConfig() {

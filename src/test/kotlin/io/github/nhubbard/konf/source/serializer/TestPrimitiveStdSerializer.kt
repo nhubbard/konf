@@ -48,7 +48,7 @@ class TestPrimitiveStdSerializer {
         {
           "wrapped-string" : "1234"
         }
-    """.trimIndent().replace("\n", System.lineSeparator())
+    """.trimIndent()
 
     @Test
     fun testConfig_onWriteWrappedStringToJson_itShouldSerializeWrappedStringAsString() {

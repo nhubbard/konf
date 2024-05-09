@@ -45,7 +45,7 @@ class TestYamlWriter {
         }
 
         @JvmStatic
-        val expectedString = "key: value" + System.lineSeparator()
+        val expectedString = "key: value\n"
     }
 
     @Test
