@@ -144,17 +144,3 @@ fun Git.commit(message: String) {
         this.message = message
     }.call()
 }
-
-/**
- * Determines if the operating system is Windows.
- *
- * @return True if the operating system is Windows, false otherwise.
- */
-fun isWindows() = System.getProperty("os.name").contains("Windows")
-
-/**
- * Replaces carriage return and line feed characters in a string with escape sequences.
- *
- * @return the modified string with escape sequences for carriage return and line feed characters.
- */
-fun String.debugLineEndings() = replace("\r", "\\r").replace("\n", "\\n")
