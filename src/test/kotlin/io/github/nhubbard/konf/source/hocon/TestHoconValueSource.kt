@@ -21,10 +21,10 @@ import io.github.nhubbard.konf.source.NoSuchPathException
 import io.github.nhubbard.konf.source.asValue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -40,7 +40,7 @@ class TestHoconValueSource {
     @Test
     fun testHoconValueSource_onTreatNumberValueSourceAsHoconSource_itShouldThrowNoSuchPathException() {
         val source = "1".toHoconValueSource()
-        assertThrows<NoSuchPathException> { source["key"] }
+        assertFailsWith<NoSuchPathException> { source["key"] }
     }
 
     @Test

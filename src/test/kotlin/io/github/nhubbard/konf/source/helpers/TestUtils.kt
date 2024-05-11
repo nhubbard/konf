@@ -28,12 +28,12 @@ import io.github.nhubbard.konf.toSizeInBytes
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
-import org.junit.jupiter.api.Assertions.assertTrue
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.*
 import java.util.*
 import java.util.concurrent.Executors
+import kotlin.test.assertTrue
 
 object DefaultLoadersConfig : ConfigSpec("source.test") {
     val type by required<String>()

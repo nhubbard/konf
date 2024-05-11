@@ -24,7 +24,6 @@ import io.github.nhubbard.konf.source.asValue
 import io.github.nhubbard.konf.toPath
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
@@ -34,6 +33,7 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.stream.Stream
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -79,7 +79,7 @@ class TestJsonSource {
     @ParameterizedTest
     @MethodSource("wrongTypeSource")
     fun testJsonSource_castOp_onGetInvalidValue_itShouldThrowWrongTypeException(source: () -> Unit) {
-        assertThrows<WrongTypeException> { source() }
+        assertFailsWith<WrongTypeException> { source() }
     }
 
     @Test

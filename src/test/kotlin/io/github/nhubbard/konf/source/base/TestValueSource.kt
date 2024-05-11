@@ -21,9 +21,9 @@ import io.github.nhubbard.konf.source.NoSuchPathException
 import io.github.nhubbard.konf.source.asSource
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -31,7 +31,7 @@ import kotlin.test.assertSame
 class TestValueSource {
     @Test
     fun testValueSource_onGetWithNonEmptyPath_itShouldThrowNoSuchPathException() {
-        assertThrows<NoSuchPathException> { 1.asSource()["a"] }
+        assertFailsWith<NoSuchPathException> { 1.asSource()["a"] }
     }
 
     @Test

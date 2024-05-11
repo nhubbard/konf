@@ -22,10 +22,10 @@ import io.github.nhubbard.konf.source.asSource
 import io.github.nhubbard.konf.source.asValue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -38,13 +38,13 @@ class TestTomlValueSource {
 
     @Test
     fun testGivenTomlSource_onGetIntFromLongSourceOutOfRange_itShouldThrowParseException() {
-        assertThrows<ParseException> { Long.MAX_VALUE.asSource().asValue<Int>() }
-        assertThrows<ParseException> { Long.MIN_VALUE.asSource().asValue<Int>() }
+        assertFailsWith<ParseException> { Long.MAX_VALUE.asSource().asValue<Int>() }
+        assertFailsWith<ParseException> { Long.MIN_VALUE.asSource().asValue<Int>() }
     }
 
     @Test
     fun testGivenTomlSource_onInvokeAsTomlSource_itShouldReturnItself() {
         val source = 1.asSource()
-        assertSame(source.asSource(), source)
+        assertSame(source, source.asSource())
     }
 }

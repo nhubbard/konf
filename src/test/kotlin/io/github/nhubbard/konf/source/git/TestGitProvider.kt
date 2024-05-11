@@ -27,11 +27,11 @@ import io.github.nhubbard.konf.tempDirectory
 import org.eclipse.jgit.lib.Constants
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.nio.file.Paths
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -80,7 +80,7 @@ class TestGitProvider {
                 add("test")
                 commit("init commit")
             }
-            assertThrows<InvalidRemoteRepoException> {
+            assertFailsWith<InvalidRemoteRepoException> {
                 subject.git(tempDirectory().path, "test", dir = dir.path)
             }
         }

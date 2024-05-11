@@ -53,7 +53,7 @@ class TestYamlWriter {
         val subject = provider()
         val writer = StringWriter()
         subject.toWriter(writer)
-        assertEquals(writer.toString(), expectedString)
+        assertEquals(expectedString, writer.toString())
     }
 
     @Test
@@ -61,6 +61,6 @@ class TestYamlWriter {
         val subject = provider()
         val outputStream = ByteArrayOutputStream()
         subject.toOutputStream(outputStream)
-        assertEquals(outputStream.toString(), expectedString)
+        assertEquals(expectedString, outputStream.toString())
     }
 }

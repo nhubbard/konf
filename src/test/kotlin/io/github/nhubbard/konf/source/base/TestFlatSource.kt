@@ -23,8 +23,8 @@ import io.github.nhubbard.konf.source.Source
 import io.github.nhubbard.konf.source.asValue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -91,7 +91,7 @@ class TestFlatSource {
 
     @Test
     fun testFlatMapSource_onInvalidKey_itShouldThrowInvalidPathException() {
-        assertThrows<InvalidPathException> {
+        assertFailsWith<InvalidPathException> {
             FlatSource(map = mapOf("level1.level2.key." to "value"))
         }
     }
@@ -105,25 +105,25 @@ class TestFlatSource {
     @Test
     fun testFlatMapSource_givenCastOperation_onNonBooleanValue_itShouldThrowParseExceptionWhenCastingToBoolean() {
         val source = FlatSource(map = mapOf("level1.key" to "value"))["level1.key"]
-        assertThrows<ParseException> { source.asValue<Boolean>() }
+        assertFailsWith<ParseException> { source.asValue<Boolean>() }
     }
 
     @Test
     fun testFlatMapSource_givenCastOperation_onNonDoubleValue_itShouldThrowParseExceptionWhenCastingToDouble() {
         val source = FlatSource(map = mapOf("level1.key" to "value"))["level1.key"]
-        assertThrows<ParseException> { source.asValue<Double>() }
+        assertFailsWith<ParseException> { source.asValue<Double>() }
     }
 
     @Test
     fun testFlatMapSource_givenCastOperation_onNonIntegerValue_itShouldThrowParseExceptionWhenCastingToInteger() {
         val source = FlatSource(map = mapOf("level1.key" to "value"))["level1.key"]
-        assertThrows<ParseException> { source.asValue<Int>() }
+        assertFailsWith<ParseException> { source.asValue<Int>() }
     }
 
     @Test
     fun testFlatMapSource_givenCastOperation_onNonLongValue_itShouldThrowParseExceptionWhenCastingToLong() {
         val source = FlatSource(map = mapOf("level1.key" to "value"))["level1.key"]
-        assertThrows<ParseException> { source.asValue<Long>() }
+        assertFailsWith<ParseException> { source.asValue<Long>() }
     }
 
     @Test
