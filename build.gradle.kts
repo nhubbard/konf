@@ -89,8 +89,12 @@ dependencies {
     implementation("com.typesafe:config:1.4.3")
 
     // JS
-    implementation("org.graalvm.polyglot:polyglot:24.0.1")
-    implementation("org.graalvm.polyglot:js-community:24.0.1")
+    // WARNING!
+    // Don't upgrade the GraalVM dependency versions!
+    // The newer versions have different coordinates, and a bunch of unusual issues that have no documented fix on
+    // non-Graal JDKs.
+    implementation("org.graalvm.sdk:graal-sdk:23.0.3")
+    implementation("org.graalvm.js:js:23.0.3")
 
     // TOML
     implementation("com.moandjiezana.toml:toml4j:0.7.2")
