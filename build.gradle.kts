@@ -38,8 +38,8 @@ val signPublication by extra { !System.getenv("JITPACK").toBoolean() }
 plugins {
     java
     signing
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.allopen") version "1.9.23"
+    kotlin("jvm") version "1.9.24"
+    kotlin("plugin.allopen") version "1.9.24"
     id("org.jetbrains.dokka") version "1.9.20"
     id("org.jetbrains.kotlinx.kover") version "0.7.6"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
@@ -47,7 +47,7 @@ plugins {
 }
 
 group = "io.github.nhubbard"
-version = "2.0.3"
+version = "2.1.0"
 
 val projectDescription =
     "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"
@@ -75,22 +75,22 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation(kotlin("reflect"))
     implementation("org.reflections:reflections:0.10.2")
-    implementation("org.apache.commons:commons-text:1.11.0")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.16.1")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.16.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1")
+    implementation("org.apache.commons:commons-text:1.12.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.17.1")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
 
     // Git
-    implementation("org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r")
 
     // Hocon
     implementation("com.typesafe:config:1.4.3")
 
     // JS
-    implementation("org.graalvm.sdk:graal-sdk:23.0.3")
-    implementation("org.graalvm.js:js:23.0.3")
+    implementation("org.graalvm.sdk:graal-sdk:23.1.3")
+    implementation("org.graalvm.js:js:23.0.4")
 
     // TOML
     implementation("com.moandjiezana.toml:toml4j:0.7.2")
@@ -104,10 +104,10 @@ dependencies {
 
     // Core test dependencies
     testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
     testImplementation("com.sparkjava:spark-core:2.9.4")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.12")
+    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.13")
 
     // Snippet implementation
     snippetImplementation(sourceSets.main.get().output)
