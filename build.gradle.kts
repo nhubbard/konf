@@ -89,8 +89,8 @@ dependencies {
     implementation("com.typesafe:config:1.4.3")
 
     // JS
-    implementation("org.graalvm.sdk:graal-sdk:23.1.3")
-    implementation("org.graalvm.js:js:23.0.4")
+    implementation("org.graalvm.polyglot:polyglot:24.0.1")
+    implementation("org.graalvm.polyglot:js-community:24.0.1")
 
     // TOML
     implementation("com.moandjiezana.toml:toml4j:0.7.2")
