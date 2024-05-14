@@ -247,3 +247,14 @@ kover {
         names("benchmark", "snippet")
     }
 }
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        // Resolve Gson vulnerability from Toml4j
+        if (requested.group == "com.google.code.gson" && requested.name == "gson")
+            useVersion("2.10.1")
+        // Resolve Jetty vulnerability from Spark
+        if (requested.group == "org.eclipse.jetty" && requested.name.matches("^jetty-(server|xml|util|http)".toRegex()))
+            useVersion("9.4.54.v20240208")
+    }
+}
