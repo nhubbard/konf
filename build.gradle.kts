@@ -44,7 +44,6 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.7.6"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
-    id("com.github.nbaztec.coveralls-jacoco") version "1.2.20"
     id("ca.solo-studios.sonatype-publish") version "0.1.3"
 }
 
@@ -248,11 +247,6 @@ kover {
     excludeSourceSets {
         names("benchmark", "snippet")
     }
-}
-
-coverallsJacoco {
-    reportPath = "build/reports/kover/report.xml"
-    reportSourceSets = sourceSets.main.get().allSource
 }
 
 configurations.all {
