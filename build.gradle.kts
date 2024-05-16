@@ -44,6 +44,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.7.6"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
+    id("ca.solo-studios.sonatype-publish") version "0.1.3"
 }
 
 group = "io.github.nhubbard"

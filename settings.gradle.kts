@@ -17,6 +17,7 @@
 
 pluginManagement {
     repositories {
+        maven("https://maven.solo-studios.ca/releases/")
         mavenCentral()
         gradlePluginPortal()
     }
