@@ -21,20 +21,21 @@ jobs:
         env:
           OSS_USER_TOKEN: ${{ secrets.OSS_USER_TOKEN }}
           OSS_USER_PASSWORD: ${{ secrets.OSS_USER_PASSWORD }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: ./gradlew build
       - name: Report Coveralls (Linux)
         if: startsWith(runner.os, 'Linux')
         run: curl -sL https://coveralls.io/coveralls-linux.tar.gz | tar -xz && ./coveralls report build/reports/kover/report.xml
         env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       - name: Report Coveralls (Windows)
         if: startsWith(runner.os, 'Windows')
         run: curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.zip | zcat > ./coveralls.exe && ./coveralls.exe report build/reports/kover/report.xml
         env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       - name: Report Coveralls (macOS)
         if: startsWith(runner.os, 'macOS')
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           brew tap coverallsapp/coveralls --quiet
           brew install coveralls --quiet
