@@ -3,6 +3,7 @@
 [![Java 17+](https://img.shields.io/badge/Java-17+-4c7e9f.svg)](http://java.oracle.com)
 [![Maven metadata URL](https://img.shields.io/maven-central/v/io.github.nhubbard/konf)](https://search.maven.org/artifact/io.github.nhubbard/konf)
 [![JitPack](https://jitpack.io/v/nhubbard/konf.svg)](https://jitpack.io/#nhubbard/konf)
+[![Coverage Status](https://coveralls.io/repos/github/nhubbard/konf/badge.svg)](https://coveralls.io/github/nhubbard/konf)
 [![codebeat badge](https://codebeat.co/badges/37ec4fe4-893b-41ec-bd1c-56794fa3d0c5)](https://codebeat.co/projects/github-com-nhubbard-konf-master)
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
