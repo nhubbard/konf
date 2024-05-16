@@ -51,11 +51,6 @@ A type-safe cascading configuration library for Kotlin/Java/Android, supporting 
     - [Supported item types](#supported-item-types)
     - [Optional features](#optional-features)
     - [Build from source](#build-from-source)
-    - [Breaking Changes](#breaking-changes)
-        - [v0.19.0](#v0190)
-        - [v0.17.0](#v0170)
-        - [v0.15](#v015)
-        - [v0.10](#v010)
 - [License](#license)
 
 ## Prerequisites
