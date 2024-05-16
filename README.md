@@ -1,9 +1,9 @@
 # Konf
 
 [![Java 17+](https://img.shields.io/badge/Java-17+-4c7e9f.svg)](http://java.oracle.com)
-[![Maven metadata URL](https://img.shields.io/maven-central/v/com.nhubbard/konf)](https://search.maven.org/artifact/com.nhubbard/konf)
-[![JitPack](https://img.shields.io/jitpack/v/github/nhubbard/konf)](https://jitpack.io/#nhubbard/konf)
-[![codebeat badge](https://codebeat.co/badges/f69a1574-9d4c-4da5-be73-56fa7b180d2d)](https://codebeat.co/projects/github-com-nhubbard-konf-master)
+[![Maven metadata URL](https://img.shields.io/maven-central/v/io.github.nhubbard/konf)](https://search.maven.org/artifact/io.github.nhubbard/konf)
+[![JitPack](https://jitpack.io/v/nhubbard/konf.svg)](https://jitpack.io/#nhubbard/konf)
+[![codebeat badge](https://codebeat.co/badges/37ec4fe4-893b-41ec-bd1c-56794fa3d0c5)](https://codebeat.co/projects/github-com-nhubbard-konf-master)
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
 A type-safe cascading configuration library for Kotlin/Java/Android, supporting most configuration formats.
@@ -73,20 +73,20 @@ This library has been published to [Maven Central](https://search.maven.org/arti
 <dependency>
   <groupId>io.github.nhubbard</groupId>
   <artifactId>konf</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'io.github.nhubbard:konf:2.0.0'
+implementation 'io.github.nhubbard:konf:2.1.0'
 ```
 
 ### Gradle Kotlin DSL
 
 ```kotlin
-implementation("io.github.nhubbard:konf:2.0.0")
+implementation("io.github.nhubbard:konf:2.1.0")
 ```
 
 ### Maven (master snapshot)
@@ -123,7 +123,7 @@ repositories {
 Add dependencies:
 
 ```groovy
-compile 'com.github.nhubbard:konf:master-SNAPSHOT'
+implementation 'com.github.nhubbard:konf:master-SNAPSHOT'
 ```
 
 ### Gradle Kotlin DSL (master snapshot)
@@ -132,14 +132,14 @@ Add the JitPack repository:
 
 ```kotlin
 repositories {
-    maven(url = "https://jitpack.io")
+    maven("https://jitpack.io")
 }
 ```
 
 Add dependencies:
 
 ```kotlin
-compile(group = "com.github.nhubbard", name = "konf", version = "master-SNAPSHOT")
+implementation("com.github.nhubbard:konf:master-SNAPSHOT")
 ```
 
 ## Quick start
@@ -888,50 +888,6 @@ To install the library in a local Maven repository for consumption in other proj
 ```
 ./gradlew clean install
 ```
-
-## Breaking Changes
-
-### v2.0.0
-
-* The entire codebase has been (at least temporarily) de-modularized due to the previous modular structure not working 
-  correctly after migrating to Gradle 8.0 to support newer versions of Kotlin.
-* All "default" providers have had their extension points moved into a subpackage to make the codebase easier to 
-  maintain.
-* The base package is now `com.nhubbard.konf` instead of `com.uchuhimo.konf` to ensure a clean separation from the
-  unmaintained original Konf framework.
-
-### v0.19.0
-
-Since all sources are substituted before loaded into config by default, all path variables will be substituted now.
-You can use `config.disable(Feature.SUBSTITUTE_SOURCE_BEFORE_LOADED)` to disable this change.
-
-### v0.17.0
-
-After the migration to tree-based source APIs, many deprecated APIs have been removed, including:
-
-- `Source`: all `isXXX` and `toXXX` APIs
-- `Config`: `layer`, `addSource` and `withSourceFrom`
-
-### v0.15
-
-After modularizing Konf, the `hocon`/`toml`/`xml`/`yaml`/`git`/`watchGit` functions in `DefaultLoaders` have become
-extension properties/functions and should be imported explicitly.
-
-For example, you should import `com.nhubbard.konf.source.hocon` before using `config.from.hocon`;
-in Java, `config.from().hocon` is unavailable, please use `config.from().source(HoconProvider.INSTANCE)` instead.
-
-If you use JitPack,
-you should use `com.github.nhubbard.konf:konf:<version>` instead of `com.github.nhubbard:konf:<version>` now.
-
-### v0.10
-
-APIs in `ConfigSpec` have been updated to support item name's auto-detection.
-
-Here are some examples:
-
-- `val host = optional("host", "0.0.0.0")` to `val host by optional("0.0.0.0")`
-- `val port = required<Int>("port")` to `val port by required<Int>()`
-- `val nextPort = lazy("nextPort") { config -> config[port] + 1 }` to `val nextPort by lazy { config -> config[port] + 1 }`
 
 # License
 

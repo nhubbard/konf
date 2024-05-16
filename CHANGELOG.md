@@ -48,3 +48,45 @@
 * The new runtime JDK target is 17, at least for now. That makes it target Android 14 (API 34) or higher. I am considering dropping it to Java 11 to allow for greater compatibility with more Android and JDK installations.
 * We now use all the most up-to-date versions of our dependencies. That means Kotlin 1.9.22, Gradle 8.6, etc.
 * Konf is 100% compatible with Kotlin 2.0 as written; our releases are compiled with the experimental K2 compiler right now.
+
+## 2.0.0
+
+* The entire codebase has been (at least temporarily) de-modularized due to the previous modular structure not working
+  correctly after migrating to Gradle 8.0 to support newer versions of Kotlin.
+* All "default" providers have had their extension points moved into a subpackage to make the codebase easier to
+  maintain.
+* The base package is now `io.github.nhubbard.konf` instead of `com.uchuhimo.konf` to ensure a clean separation from the
+  unmaintained original Konf framework.
+
+## 0.19.0
+
+Since all sources are substituted before loaded into config by default, all path variables will be substituted now.
+You can use `config.disable(Feature.SUBSTITUTE_SOURCE_BEFORE_LOADED)` to disable this change.
+
+## 0.17.0
+
+After the migration to tree-based source APIs, many deprecated APIs have been removed, including:
+
+- `Source`: all `isXXX` and `toXXX` APIs
+- `Config`: `layer`, `addSource` and `withSourceFrom`
+
+## 0.15
+
+After modularizing Konf, the `hocon`/`toml`/`xml`/`yaml`/`git`/`watchGit` functions in `DefaultLoaders` have become
+extension properties/functions and should be imported explicitly.
+
+For example, you should import `com.nhubbard.konf.source.hocon` before using `config.from.hocon`;
+in Java, `config.from().hocon` is unavailable, please use `config.from().source(HoconProvider.INSTANCE)` instead.
+
+If you use JitPack,
+you should use `com.github.nhubbard.konf:konf:<version>` instead of `com.github.nhubbard:konf:<version>` now.
+
+## 0.10
+
+APIs in `ConfigSpec` have been updated to support item name's auto-detection.
+
+Here are some examples:
+
+- `val host = optional("host", "0.0.0.0")` to `val host by optional("0.0.0.0")`
+- `val port = required<Int>("port")` to `val port by required<Int>()`
+- `val nextPort = lazy("nextPort") { config -> config[port] + 1 }` to `val nextPort by lazy { config -> config[port] + 1 }`
