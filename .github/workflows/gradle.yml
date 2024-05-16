@@ -21,4 +21,5 @@ jobs:
         env:
           OSS_USER_TOKEN: ${{ secrets.OSS_USER_TOKEN }}
           OSS_USER_PASSWORD: ${{ secrets.OSS_USER_PASSWORD }}
-        run: ./gradlew build
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: ./gradlew build coverallsJacoco
