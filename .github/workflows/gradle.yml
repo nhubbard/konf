@@ -30,8 +30,11 @@ jobs:
       - name: Report Coveralls (Windows)
         if: startsWith(runner.os, 'Windows')
         run: |
-          curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.zip | zcat > coveralls.exe
-          .\coveralls.exe report build/reports/kover/report.xml
+          Invoke-WebRequest -Uri "https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-windows.zip" -OutFile "coveralls-windows.zip"
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::ExtractToDirectory("coveralls-windows.zip", ".")
+          Remove-Item "coveralls-windows.zip"
+          Start-Process -FilePath ".\coveralls.exe" -ArgumentList "report build/reports/kover/report.xml" -NoNewWindow -Wait
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       - name: Report Coveralls (macOS)
