@@ -1,6 +1,6 @@
 # Konf
 
-[![Java 17+](https://img.shields.io/badge/Java-17+-4c7e9f.svg)](http://java.oracle.com)
+[![Java 11+](https://img.shields.io/badge/Java-11%2B-4c7e9f.svg)](https://adoptium.net)
 [![Maven metadata URL](https://img.shields.io/maven-central/v/io.github.nhubbard/konf)](https://search.maven.org/artifact/io.github.nhubbard/konf)
 [![JitPack](https://jitpack.io/v/nhubbard/konf.svg)](https://jitpack.io/#nhubbard/konf)
 [![Coverage Status](https://coveralls.io/repos/github/nhubbard/konf/badge.svg)](https://coveralls.io/github/nhubbard/konf)
