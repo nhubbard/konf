@@ -8,6 +8,9 @@
 * A bug affecting file watches on non-macOS platforms has been identified and fixed. The issue was caused by an erroneous generic cast unintentionally converting the watched path from the internal path type to a type alias of the same name that was exported from another file.
 * Log messages from the GraalVM Polyglot engine emitted when the Konf JavaScript interpreter is not running on a GraalVM JDK have now been suppressed.
 * A bug affecting YAML writer output for strings that contain `:` has been identified and fixed.
+* As promised in the release notes for version 2.0.2, the Java requirement has been reduced from JDK 21 to JDK 11.
+  * The only part of the project that still requires JDK 21 is the Maven Central publishing plugin for Gradle.
+  * All other build phases in Gradle, and the Konf runtime, are able to run on any version of the JDK 11+.
 
 ### Build
 
