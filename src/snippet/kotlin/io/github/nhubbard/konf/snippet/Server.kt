@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "EmptyMethod")
 
 package io.github.nhubbard.konf.snippet
 

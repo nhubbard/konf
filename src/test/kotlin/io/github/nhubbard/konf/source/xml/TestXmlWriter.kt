@@ -33,6 +33,7 @@ class TestXmlWriter {
     private val provider = {
         val config = Config {
             addSpec(object : ConfigSpec() {
+                @Suppress("unused")
                 val key by optional("value")
             })
         }

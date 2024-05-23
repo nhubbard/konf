@@ -28,6 +28,8 @@ import com.fasterxml.jackson.databind.type.CollectionType
 import com.fasterxml.jackson.databind.type.MapType
 
 object EmptyStringToCollectionDeserializerModifier : BeanDeserializerModifier() {
+    private fun readResolve(): Any = EmptyStringToCollectionDeserializerModifier
+
     override fun modifyMapDeserializer(
         config: DeserializationConfig?,
         type: MapType?,
