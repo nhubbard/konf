@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.*
 
 // Helper function to protect private properties from being published
@@ -94,8 +95,8 @@ dependencies {
     // Don't upgrade the GraalVM dependency versions!
     // The newer versions have different coordinates, and a bunch of unusual issues that have no documented fix on
     // non-Graal JDKs.
-    implementation("org.graalvm.sdk:graal-sdk:23.0.3")
-    implementation("org.graalvm.js:js:23.0.3")
+    implementation("org.graalvm.sdk:graal-sdk:22.3.5")
+    implementation("org.graalvm.js:js:22.3.5")
 
     // TOML
     implementation("com.moandjiezana.toml:toml4j:0.7.2")
@@ -149,6 +150,8 @@ tasks.test {
 }
 
 tasks.compileJava {
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
     options.encoding = "UTF-8"
 }
 
@@ -159,7 +162,7 @@ tasks.check {
 tasks.dokkaHtml {
     dokkaSourceSets {
         configureEach {
-            jdkVersion.set(17)
+            jdkVersion.set(11)
             reportUndocumented.set(false)
             sourceLink {
                 localDirectory.set(file("./"))
@@ -189,7 +192,11 @@ tasks.named<Jar>("javadocJar") {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(11)
+
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+    }
 
     sourceSets.all {
         languageSettings {

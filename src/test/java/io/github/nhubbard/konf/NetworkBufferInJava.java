@@ -24,11 +24,6 @@ public class NetworkBufferInJava {
     public static final RequiredItem<Integer> size = new RequiredItem<>(spec, "size", "size of buffer in KB") {};
     public static final LazyItem<Integer> maxSize = new LazyItem<>(spec, "maxSize", config -> config.get(size) * 2, "max size of buffer in KB") {};
     public static final OptionalItem<String> name = new OptionalItem<>(spec, "name", "buffer", "name of buffer") {};
-    public static final OptionalItem<NetworkBuffer.Type> type = new OptionalItem<>(spec, "type", NetworkBuffer.Type.OFF_HEAP, """
-            type of network buffer.
-            two type:
-            - on-heap
-            - off-heap
-            buffer is off-heap by default.""") {};
+    public static final OptionalItem<NetworkBuffer.Type> type = new OptionalItem<>(spec, "type", NetworkBuffer.Type.OFF_HEAP, "type of network buffer.\n two type:\n - on-heap\n - off-heap\n buffer is off-heap by default.") {};
     public static final OptionalItem<Integer> offset = new OptionalItem<>(spec, "offset", null, "initial offset of buffer", null, true) {};
 }
