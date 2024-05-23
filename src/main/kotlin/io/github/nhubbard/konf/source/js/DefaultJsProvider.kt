@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnusedReceiverParameter", "unused")
-
 package io.github.nhubbard.konf.source.js
 
 import io.github.nhubbard.konf.source.DefaultProviders

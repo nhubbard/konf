@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
-
 package io.github.nhubbard.konf
 
 import io.github.nhubbard.konf.helpers.NetworkBuffer
