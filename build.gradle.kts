@@ -38,10 +38,10 @@ val signPublication by extra { !System.getenv("JITPACK").toBoolean() }
 plugins {
     java
     signing
-    kotlin("jvm") version "1.9.24"
-    kotlin("plugin.allopen") version "1.9.24"
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.allopen") version "2.0.0"
     id("org.jetbrains.dokka") version "1.9.20"
-    id("org.jetbrains.kotlinx.kover") version "0.7.6"
+    id("org.jetbrains.kotlinx.kover") version "0.8.0"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
     id("ca.solo-studios.sonatype-publish") version "0.1.3"
@@ -73,7 +73,7 @@ benchmarkImplementation.extendsFrom(configurations.implementation.get())
 dependencies {
     // Core implementation dependencies
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation(kotlin("reflect"))
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.apache.commons:commons-text:1.12.0")
@@ -125,22 +125,24 @@ dependencies {
 }
 
 tasks.test {
-    useJUnitPlatform {
-        includeEngines("junit-jupiter")
-    }
+    useJUnitPlatform()
     testLogging.apply {
         showStandardStreams = true
         showExceptions = true
         showCauses = true
         showStackTraces = true
     }
-    systemProperties["org.slf4j.simpleLogger.defaultLogLevel"] = "warn"
-    systemProperties["junit.jupiter.execution.parallel.enabled"] = true
-    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
-    systemProperties["line.separator"] = "\n"
+    systemProperties(
+        "org.slf4j.simpleLogger.defaultLogLevel" to "warn",
+        "junit.jupiter.execution.parallel.enabled" to true,
+        "junit.jupiter.execution.parallel.mode.default" to "concurrent",
+        "line.separator" to "\n"
+    )
+    environment(
+        "SOURCE_TEST_TYPE" to "env",
+        "SOURCE_CAMELCASE" to "true"
+    )
     maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).takeIf { it > 0 } ?: 1
-    environment("SOURCE_TEST_TYPE", "env")
-    environment("SOURCE_CAMELCASE", "true")
 
     finalizedBy(tasks.koverHtmlReport)
     finalizedBy(tasks.koverXmlReport)
@@ -244,8 +246,10 @@ signing {
 }
 
 kover {
-    excludeSourceSets {
-        names("benchmark", "snippet")
+    currentProject {
+        sources {
+            excludedSourceSets.addAll("benchmark", "snippet")
+        }
     }
 }
 

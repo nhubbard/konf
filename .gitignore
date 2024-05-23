@@ -15,7 +15,6 @@ hs_err_pid*
 ### Eclipse template
 *.pydevproject
 .metadata
-.gradle
 bin/
 tmp/
 *.tmp
@@ -166,8 +165,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-
-
 ### Gradle template
 .gradle
 build/
@@ -189,5 +186,5 @@ act
 # Gradle extras
 property*/
 
-# Original Kover report for comparing pre-JUnit and post-JUnit coverage
-/original-kover/
+# Kotlin dot folder
+.kotlin
