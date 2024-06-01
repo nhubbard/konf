@@ -41,11 +41,11 @@ plugins {
     signing
     kotlin("jvm") version "2.0.0"
     kotlin("plugin.allopen") version "2.0.0"
-    id("org.jetbrains.dokka") version "1.9.20"
-    id("org.jetbrains.kotlinx.kover") version "0.8.0"
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.10"
-    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.3"
-    id("ca.solo-studios.sonatype-publish") version "0.1.3"
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.kover)
+    alias(libs.plugins.benchmark)
+    alias(libs.plugins.sonatype.publisher)
+    alias(libs.plugins.solo.publisher)
 }
 
 group = "io.github.nhubbard"
@@ -72,48 +72,46 @@ val benchmarkImplementation by configurations
 benchmarkImplementation.extendsFrom(configurations.implementation.get())
 
 dependencies {
-    // Core implementation dependencies
+    // Core Kotlin dependencies
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation(kotlin("reflect"))
-    implementation("org.reflections:reflections:0.10.2")
-    implementation("org.apache.commons:commons-text:1.12.0")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.17.1")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
+
+    // KotlinX Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+
+    // Reflections
+    implementation(libs.reflections)
+
+    // Apache Commons Text
+    implementation(libs.commons.text)
+
+    // FasterXML Jackson
+    implementation(libs.bundles.jackson)
 
     // Git
-    implementation("org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r")
+    implementation(libs.jgit)
 
     // Hocon
-    implementation("com.typesafe:config:1.4.3")
+    implementation(libs.hocon)
 
     // JS
-    // WARNING!
-    // Don't upgrade the GraalVM dependency versions!
-    // The newer versions have different coordinates, and a bunch of unusual issues that have no documented fix on
-    // non-Graal JDKs.
-    implementation("org.graalvm.sdk:graal-sdk:22.3.5")
-    implementation("org.graalvm.js:js:22.3.5")
+    implementation(libs.bundles.graal)
 
     // TOML
-    implementation("com.moandjiezana.toml:toml4j:0.7.2")
+    implementation(libs.toml)
 
     // XML
-    implementation("org.dom4j:dom4j:2.1.4")
-    implementation("jaxen:jaxen:2.0.0")
+    implementation(libs.dom4j)
+    implementation(libs.jaxen)
 
     // YAML
-    implementation("org.yaml:snakeyaml:2.2")
+    implementation(libs.snakeyaml)
 
     // Core test dependencies
     testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
-    testImplementation("com.sparkjava:spark-core:2.9.4")
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.13")
+    testImplementation(libs.junit.params)
+    testImplementation(libs.spark)
+    testRuntimeOnly(libs.slf4j.simple)
 
     // Snippet implementation
     snippetImplementation(sourceSets.main.get().output)
@@ -122,7 +120,7 @@ dependencies {
 
     // Benchmark implementation
     benchmarkImplementation(sourceSets.main.get().output)
-    benchmarkImplementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.10")
+    benchmarkImplementation(libs.kotlinx.benchmark.runtime)
 }
 
 tasks.test {
