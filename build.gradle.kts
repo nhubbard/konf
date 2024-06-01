@@ -191,6 +191,12 @@ tasks.named<Jar>("javadocJar") {
     excludes.addAll(tasks.javadoc.get().destinationDir?.listFiles()?.map { it.toString() } ?: listOf())
 }
 
+// This makes sure that Gradle is always run using JDK 21, independent of the build requirements for Konf.
+tasks.updateDaemonJvm {
+    @Suppress("UnstableApiUsage")
+    jvmVersion = JavaVersion.VERSION_21
+}
+
 kotlin {
     jvmToolchain(11)
 
