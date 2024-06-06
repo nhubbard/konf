@@ -27,6 +27,7 @@ import org.junit.jupiter.api.TestInstance
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.writeText
+import kotlin.test.assertFailsWith
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestInvalidWatchKey {
@@ -48,22 +49,20 @@ class TestInvalidWatchKey {
     fun testWatchKey_onBecomingInvalid_itThrows() {
         // This test does not cover the correct branches on macOS
         if ("mac" !in System.getProperty("os.name").lowercase()) {
-            // Write valid test data to input file
-            inputFile.writeText(input)
-            // Open valid data
-            val config = Config {
-                addSpec(InvalidWatchKey)
-            }.from.json.watchFile(inputFile.toFile(), delayTime = 50, unit = TimeUnit.MILLISECONDS)
-            // Make watch key invalid???
-            inputFile.deleteIfExists()
-            // Wait for several seconds...
-            MainScope().launch {
-                delay(10000)
+            assertFailsWith<UnsetValueException> {
+                // Write valid test data to input file
+                inputFile.writeText(input)
+                // Open valid data
+                val config = Config {
+                    addSpec(InvalidWatchKey)
+                }.from.json.watchFile(inputFile.toFile(), delayTime = 50, unit = TimeUnit.MILLISECONDS)
+                // Make watch key invalid???
+                inputFile.deleteIfExists()
+                // Wait for several seconds...
+                Thread.sleep(1000)
                 println(config[InvalidWatchKey.first])
                 println(config[InvalidWatchKey.second])
             }
-            // Attempt to access invalid value???
-            config[InvalidWatchKey.second]
         }
     }
 }
