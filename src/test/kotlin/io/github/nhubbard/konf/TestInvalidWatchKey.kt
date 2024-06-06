@@ -18,10 +18,13 @@
 package io.github.nhubbard.konf
 
 import io.github.nhubbard.konf.helpers.InvalidWatchKey
-import org.junit.jupiter.api.AfterAll
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.nio.file.Paths
+import java.util.concurrent.TimeUnit
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.writeText
 
@@ -34,24 +37,33 @@ class TestInvalidWatchKey {
     |  "second": "test_data"
     |}
     """.trimMargin()
-    private val inputFile = Paths.get("src/test/resources/invalid_watch.json")
+    private val inputFile = tempFileOf(input, suffix = ".json").toPath()
+
+    @BeforeAll
+    fun preTestSetup() {
+        inputFile.writeText(input)
+    }
 
     @Test
     fun testWatchKey_onBecomingInvalid_itThrows() {
+        // This test does not cover the correct branches on macOS
         if ("mac" !in System.getProperty("os.name").lowercase()) {
             // Write valid test data to input file
             inputFile.writeText(input)
             // Open valid data
-            Config {
+            val config = Config {
                 addSpec(InvalidWatchKey)
-            }.from.json.watchFile(inputFile.toFile())
-            // Overwrite the file with invalid data
-            inputFile.writeText("asofidmaposidfmpoasimdf")
+            }.from.json.watchFile(inputFile.toFile(), delayTime = 50, unit = TimeUnit.MILLISECONDS)
+            // Make watch key invalid???
+            inputFile.deleteIfExists()
+            // Wait for several seconds...
+            MainScope().launch {
+                delay(10000)
+                println(config[InvalidWatchKey.first])
+                println(config[InvalidWatchKey.second])
+            }
+            // Attempt to access invalid value???
+            config[InvalidWatchKey.second]
         }
-    }
-
-    @AfterAll
-    fun postTestCleanup() {
-        inputFile.deleteIfExists()
     }
 }

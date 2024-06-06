@@ -8,11 +8,14 @@
 ## Medium Projects
 
 * [ ] Figure out how to use newer versions of GraalVM on all platforms for the JS parser.
-* [ ] Finish and test the comment writer functionality from PR 48.
-* [ ] Add test coverage for any other code that isn't already covered.
+* [ ] Write tests:
+  * [ ] PR #48 (write descriptions as comments in exported config values)
+  * [ ] File watcher on Windows/Linux (inc. `InvalidWatchKeyException`)
+  * [ ] Description of required, optional, and lazy config items
+  * [ ] Other random areas that aren't explicitly listed in this
 
 ## Large Projects
 
 * [ ] Move all configuration format parsers to KotlinX Serialization instead of a mix of Jackson modules and various
       third-party parsers.
-  * This would enable use of Konf on Kotlin Multiplatform projects!
+  * This could help enable use of Konf on Kotlin Multiplatform projects, but it would be extremely challenging.
