@@ -39,8 +39,8 @@ val signPublication by extra { !System.getenv("JITPACK").toBoolean() }
 plugins {
     java
     signing
-    kotlin("jvm") version "2.0.0"
-    kotlin("plugin.allopen") version "2.0.0"
+    kotlin("jvm") version "2.0.20-Beta2"
+    kotlin("plugin.allopen") version "2.0.20-Beta2"
     alias(libs.plugins.dokka)
     alias(libs.plugins.kover)
     alias(libs.plugins.benchmark)
@@ -49,7 +49,7 @@ plugins {
 }
 
 group = "io.github.nhubbard"
-version = "2.1.0"
+version = "2.2.0"
 
 val projectDescription =
     "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"

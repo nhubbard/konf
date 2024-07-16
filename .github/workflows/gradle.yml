@@ -21,7 +21,7 @@ jobs:
         env:
           OSS_USER_TOKEN: ${{ secrets.OSS_USER_TOKEN }}
           OSS_USER_PASSWORD: ${{ secrets.OSS_USER_PASSWORD }}
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon
       - name: Report Coveralls (Linux)
         if: startsWith(runner.os, 'Linux')
         run: curl -sL https://coveralls.io/coveralls-linux.tar.gz | tar -xz && ./coveralls report build/reports/kover/report.xml
