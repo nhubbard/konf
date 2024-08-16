@@ -27,7 +27,7 @@ rootProject.name = "konf"
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-    id("com.gradle.develocity") version "3.17.5"
+    id("com.gradle.develocity") version "3.17.6"
 }
 
 develocity {
@@ -50,13 +50,13 @@ dependencyResolutionManagement {
 
             // Gradle plugins
             plugin("dokka", "org.jetbrains.dokka").version("1.9.20")
-            plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.2")
+            plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.3")
             plugin("benchmark", "org.jetbrains.kotlinx.benchmark").version("0.4.11")
-            plugin("sonatype-publisher", "net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
+            plugin("sonatype-publisher", "net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.4")
             plugin("solo-publisher", "ca.solo-studios.sonatype-publish").version("0.2.3")
 
             // Dependencies
-            library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").version("1.9.0-RC")
+            library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").version("1.9.0-RC.2")
             library("reflections", "org.reflections", "reflections").version("0.10.2")
             library("commons-text", "org.apache.commons", "commons-text").version("1.12.0")
             library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").versionRef("jackson")
@@ -74,7 +74,7 @@ dependencyResolutionManagement {
             library("snakeyaml", "org.yaml", "snakeyaml").version("2.2")
 
             // Test dependencies
-            library("junit-params", "org.junit.jupiter", "junit-jupiter-params").version("5.11.0-M2")
+            library("junit-params", "org.junit.jupiter", "junit-jupiter-params").version("5.11.0")
             library("spark", "com.sparkjava", "spark-core").version("2.9.4")
             library("slf4j-simple", "org.slf4j", "slf4j-simple").version("2.1.0-alpha1")
 

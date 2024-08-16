@@ -39,8 +39,8 @@ val signPublication by extra { !System.getenv("JITPACK").toBoolean() }
 plugins {
     java
     signing
-    kotlin("jvm") version "2.0.20-Beta2"
-    kotlin("plugin.allopen") version "2.0.20-Beta2"
+    kotlin("jvm") version "2.0.20-RC2"
+    kotlin("plugin.allopen") version "2.0.20-RC2"
     alias(libs.plugins.dokka)
     alias(libs.plugins.kover)
     alias(libs.plugins.benchmark)
@@ -49,7 +49,7 @@ plugins {
 }
 
 group = "io.github.nhubbard"
-version = "2.2.0"
+version = "2.2.1"
 
 val projectDescription =
     "A type-safe cascading configuration library for Kotlin and Java, supporting most configuration formats"
@@ -268,9 +268,9 @@ configurations.all {
     resolutionStrategy.eachDependency {
         // Resolve Gson vulnerability from Toml4j
         if (requested.group == "com.google.code.gson" && requested.name == "gson")
-            useVersion("2.10.1")
+            useVersion("2.11.0")
         // Resolve Jetty vulnerability from Spark
         if (requested.group == "org.eclipse.jetty" && requested.name.matches("^jetty-(server|xml|util|http)".toRegex()))
-            useVersion("9.4.54.v20240208")
+            useVersion("9.4.55.v20240627")
     }
 }
