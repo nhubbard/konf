@@ -39,8 +39,8 @@ val signPublication by extra { !System.getenv("JITPACK").toBoolean() }
 plugins {
     java
     signing
-    kotlin("jvm") version "2.0.20-RC2"
-    kotlin("plugin.allopen") version "2.0.20-RC2"
+    kotlin("jvm") version "2.1.0"
+    kotlin("plugin.allopen") version "2.1.0"
     alias(libs.plugins.dokka)
     alias(libs.plugins.kover)
     alias(libs.plugins.benchmark)
@@ -109,7 +109,9 @@ dependencies {
 
     // Core test dependencies
     testImplementation(kotlin("test"))
+    testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.params)
+    testRuntimeOnly(libs.junit.launcher)
     testImplementation(libs.spark)
     testRuntimeOnly(libs.slf4j.simple)
 
@@ -190,10 +192,9 @@ tasks.named<Jar>("javadocJar") {
 }
 
 // This makes sure that Gradle is always run using JDK 21, independent of the build requirements for Konf.
-tasks.updateDaemonJvm {
-    @Suppress("UnstableApiUsage")
-    jvmVersion = JavaVersion.VERSION_21
-}
+// tasks.updateDaemonJvm {
+//    jvmVersion = JavaVersion.VERSION_21
+// }
 
 kotlin {
     jvmToolchain(11)

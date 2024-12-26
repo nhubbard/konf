@@ -26,8 +26,8 @@ pluginManagement {
 rootProject.name = "konf"
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-    id("com.gradle.develocity") version "3.17.6"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
+    id("com.gradle.develocity") version "3.19"
 }
 
 develocity {
@@ -49,16 +49,16 @@ dependencyResolutionManagement {
             version("graal", "22.3.5")
 
             // Gradle plugins
-            plugin("dokka", "org.jetbrains.dokka").version("1.9.20")
-            plugin("kover", "org.jetbrains.kotlinx.kover").version("0.8.3")
-            plugin("benchmark", "org.jetbrains.kotlinx.benchmark").version("0.4.11")
+            plugin("dokka", "org.jetbrains.dokka").version("2.0.0")
+            plugin("kover", "org.jetbrains.kotlinx.kover").version("0.9.0")
+            plugin("benchmark", "org.jetbrains.kotlinx.benchmark").version("0.4.13")
             plugin("sonatype-publisher", "net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.4")
             plugin("solo-publisher", "ca.solo-studios.sonatype-publish").version("0.2.3")
 
             // Dependencies
-            library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").version("1.9.0-RC.2")
+            library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").version("1.10.1")
             library("reflections", "org.reflections", "reflections").version("0.10.2")
-            library("commons-text", "org.apache.commons", "commons-text").version("1.12.0")
+            library("commons-text", "org.apache.commons", "commons-text").version("1.13.0")
             library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").versionRef("jackson")
             library("jackson-annotations", "com.fasterxml.jackson.core", "jackson-annotations").versionRef("jackson")
             library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").versionRef("jackson")
@@ -71,15 +71,17 @@ dependencyResolutionManagement {
             library("toml", "com.moandjiezana.toml", "toml4j").version("0.7.2")
             library("dom4j", "org.dom4j", "dom4j").version("2.1.4")
             library("jaxen", "jaxen", "jaxen").version("2.0.0")
-            library("snakeyaml", "org.yaml", "snakeyaml").version("2.2")
+            library("snakeyaml", "org.yaml", "snakeyaml").version("2.3")
 
             // Test dependencies
-            library("junit-params", "org.junit.jupiter", "junit-jupiter-params").version("5.11.0")
+            library("junit-jupiter", "org.junit.jupiter", "junit-jupiter").version("5.11.4")
+            library("junit-params", "org.junit.jupiter", "junit-jupiter-params").version("5.11.4")
+            library("junit-launcher", "org.junit.platform", "junit-platform-launcher").version("1.11.4")
             library("spark", "com.sparkjava", "spark-core").version("2.9.4")
-            library("slf4j-simple", "org.slf4j", "slf4j-simple").version("2.1.0-alpha1")
+            library("slf4j-simple", "org.slf4j", "slf4j-simple").version("2.0.16")
 
             // Benchmark dependencies
-            library("kotlinx-benchmark-runtime", "org.jetbrains.kotlinx", "kotlinx-benchmark-runtime").version("0.4.11")
+            library("kotlinx-benchmark-runtime", "org.jetbrains.kotlinx", "kotlinx-benchmark-runtime").version("0.4.13")
 
             // Library bundles
             bundle("jackson", listOf("jackson-core", "jackson-annotations", "jackson-databind", "jackson-kotlin", "jackson-jsr310"))
